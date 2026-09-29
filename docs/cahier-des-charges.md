@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.0 — validé par le chef de projet le 2026-09-29
+> **Statut :** v1.1 — validé par le chef de projet le 2026-09-29
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D12)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D13)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -15,6 +15,7 @@
 | v0.2 | 2026-09-29 | O5 remplacé par un objectif d'évolutivité ; sources détaillées dans `sources.md` ; ajout du README anglais (D9) |
 | v0.3 | 2026-09-29 | Articles sans date signalés (D11) ; dédoublonnage selon le niveau de confiance des sources, doublons affichés en « Aussi couvert par » (D10) ; README anglais reporté en J4 |
 | v1.0 | 2026-09-29 | Organisation qualité ajoutée (§8, D12) ; validation par le chef de projet |
+| v1.1 | 2026-09-29 | Replanification : mise en ligne de la V1 avancée au 2026-10-02 (D13) |
 
 ---
 
@@ -126,15 +127,15 @@ Justification des choix : voir [decisions.md](decisions.md).
 - **Qualité :** une issue n'est fermée qu'après une recette prouvant chaque critère d'acceptation ; sources et cohérence documentaire vérifiées de façon indépendante (D12).
 - **Rôles :** Richard — chef de projet (décide, arbitre, valide) ; Claude Code — assistant technique et méthodologique (propose, rédige, développe).
 
-| Jalon | Contenu | Livrable | Échéance proposée |
+| Jalon | Contenu | Livrable | Échéance cible |
 |---|---|---|---|
-| **J0 — Cadrage** | Cahier des charges, sources, décisions, risques, backlog, board | Repo public avec pilotage complet | 2026-10-02 |
-| **J1 — Collecte** | Lecture des 6 flux, format d'article commun | Module `collect` testé | 2026-10-06 |
-| **J2 — Traitement** | Nettoyage, fenêtre 7 jours, dédoublonnage, classement | Module `process` testé | 2026-10-09 |
-| **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-14 |
-| **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, option LLM | V1.1 | 2026-10-20 |
+| **J0 — Cadrage** | Cahier des charges, sources, décisions, risques, backlog, board | Repo public avec pilotage complet | 2026-09-29 |
+| **J1 — Collecte** | Lecture des 6 flux, format d'article commun | Module `collect` testé | 2026-09-30 |
+| **J2 — Traitement** | Nettoyage, fenêtre 7 jours, dédoublonnage, classement | Module `process` testé | 2026-10-01 |
+| **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
+| **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, option LLM | V1.1 | 2026-10-06 |
 
-> Les échéances sont une proposition, à arbitrer par le chef de projet.
+> Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la mise en ligne effective (jour de mise en ligne inclus) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
 
 ## 9. Critères de réussite
 

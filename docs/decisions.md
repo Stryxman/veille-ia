@@ -17,6 +17,7 @@
 | D10 | 2026-09-29 | Article retenu parmi des doublons | Niveau de confiance par source, puis antériorité ; doublons en « Aussi couvert par » |
 | D11 | 2026-09-29 | Articles sans date de publication | Conservés, datés de leur date de collecte, étiquette « Date de publication inconnue » |
 | D12 | 2026-09-29 | Contrôle qualité | Vérification indépendante aux moments clés : recette prouvée, sources, cohérence documentaire |
+| D13 | 2026-09-29 | Replanification | Mise en ligne de la V1 avancée du 2026-10-14 au 2026-10-02 |
 
 ---
 
@@ -159,3 +160,15 @@
   - **Vérification des sources :** à chaque ajout de source ou changement de niveau de confiance, un avis indépendant est établi avant comparaison avec le niveau proposé, et le flux est testé.
   - **Cohérence documentaire :** avant chaque enregistrement (commit) touchant la documentation ou la configuration, on vérifie que la modification est répercutée dans tous les documents concernés.
 - **Justification :** séparer la réalisation du contrôle limite les incohérences entre documents et les critères validés sans preuve ; les points de contrôle sont ciblés pour garder un coût raisonnable.
+
+## D13 — Replanification : mise en ligne de la V1 avancée
+
+- **Date :** 2026-09-29
+- **Contexte :** le planning initial (V1 le 2026-10-14) laissait une large marge. Le périmètre de la V1 est volontairement réduit (6 flux RSS, règles simples, une page statique) et peut être livré plus tôt ; un produit en ligne rapidement permet de mesurer son fonctionnement réel plus tôt.
+- **Options envisagées :**
+  1. V1 le 2026-10-02 — J0 le 29/09, J1 le 30/09, J2 le 01/10, J3 le 02/10, J4 le 06/10 ; suppose des arbitrages et recettes quotidiens.
+  2. V1 le 2026-10-03 — une journée de marge sur le traitement (doublons, classement), la partie la plus délicate.
+  3. Jalons sans échéance — souple, mais sans mesure des écarts entre prévu et réel.
+- **Décision :** option 1, V1 en ligne le 2026-10-02.
+- **Justification :** mise en ligne au plus tôt sur un périmètre maîtrisé ; les échéances restent des cibles, et tout écart est tracé.
+- **Conséquences :** risque de retard (R5) réévalué ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la mise en ligne effective (jour de mise en ligne inclus) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé.

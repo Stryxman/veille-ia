@@ -46,4 +46,4 @@ Chaque source reçoit un niveau de confiance. Lorsque plusieurs sources publient
 |---|---|---|
 | 2026-09-29 | Sélection initiale des 6 sources | [D5](decisions.md#d5--sources-et-fréquence-de-mise-à-jour) |
 | 2026-09-29 | Ajout des niveaux de confiance | [D10](decisions.md#d10--choix-de-larticle-retenu-parmi-des-doublons) |
-| 2026-09-29 | Vérification indépendante des 6 sources (niveaux confirmés) ; notes techniques S1 et S4 ajoutées | — |
+| 2026-09-29 | Vérification indépendante des 6 sources (niveaux confirmés) ; notes techniques S1 et S4 ajoutées | [D12](decisions.md#d12--contrôle-qualité) |
