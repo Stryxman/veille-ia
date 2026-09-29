@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Environnements et outils
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+
+# Page générée (publiée par GitHub Actions, jamais commitée)
+site/

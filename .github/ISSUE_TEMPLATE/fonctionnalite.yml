@@ -1,0 +1,27 @@
+name: Fonctionnalité
+description: Une fonctionnalité du backlog, avec ses critères d'acceptation
+labels: ["fonctionnalité"]
+body:
+  - type: textarea
+    id: contexte
+    attributes:
+      label: Contexte
+      description: Le besoin couvert, du point de vue de l'utilisateur.
+      placeholder: "En tant que lecteur, je veux… afin de…"
+    validations:
+      required: true
+  - type: textarea
+    id: criteres
+    attributes:
+      label: Critères d'acceptation
+      description: Conditions vérifiables pour considérer la fonctionnalité comme terminée.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: input
+    id: references
+    attributes:
+      label: Références
+      description: Sections du cahier des charges, décisions (D…), risques (R…).
+      placeholder: "CdC §4.1, D5, R1"
