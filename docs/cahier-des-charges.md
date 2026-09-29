@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v0.3 — à valider par le chef de projet
+> **Statut :** v1.0 — validé par le chef de projet le 2026-09-29
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D12)
@@ -14,6 +14,7 @@
 | v0.1 | 2026-09-29 | Première rédaction |
 | v0.2 | 2026-09-29 | O5 remplacé par un objectif d'évolutivité ; sources détaillées dans `sources.md` ; ajout du README anglais (D9) |
 | v0.3 | 2026-09-29 | Articles sans date signalés (D11) ; dédoublonnage selon le niveau de confiance des sources, doublons affichés en « Aussi couvert par » (D10) ; README anglais reporté en J4 |
+| v1.0 | 2026-09-29 | Organisation qualité ajoutée (§8, D12) ; validation par le chef de projet |
 
 ---
 
