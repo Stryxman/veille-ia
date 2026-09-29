@@ -16,6 +16,7 @@
 | D9 | 2026-09-29 | Documentation en anglais | `README.en.md` seul, rédigé en J4 ; docs de pilotage en français |
 | D10 | 2026-09-29 | Article retenu parmi des doublons | Niveau de confiance par source, puis antériorité ; doublons en « Aussi couvert par » |
 | D11 | 2026-09-29 | Articles sans date de publication | Conservés, datés de leur date de collecte, étiquette « Date de publication inconnue » |
+| D12 | 2026-09-29 | Contrôle qualité | Vérification indépendante aux moments clés : recette prouvée, sources, cohérence documentaire |
 
 ---
 
@@ -145,3 +146,16 @@
   3. Les conserver en les datant de leur date de collecte et en le signalant par une étiquette — aucune perte, et le lecteur sait que la date est approximative.
 - **Décision :** option 3. La date de collecte sert au tri et à la fenêtre de 7 jours ; la page affiche l'étiquette « Date de publication inconnue ».
 - **Justification :** ne perdre aucune information tout en restant transparent sur la fiabilité de la date affichée.
+
+## D12 — Contrôle qualité
+
+- **Date :** 2026-09-29
+- **Contexte :** les documents du projet se répondent (cahier des charges, sources, décisions, risques, issues) ; une modification non répercutée partout, ou un critère d'acceptation déclaré rempli sans preuve, dégrade la fiabilité du pilotage.
+- **Options envisagées :**
+  1. Contrôle par la personne qui réalise — rapide, mais les oublis de la réalisation se retrouvent dans le contrôle.
+  2. Vérification indépendante à des moments clés — un contrôle distinct de la réalisation, déclenché à des étapes définies.
+- **Décision :** option 2, avec trois points de contrôle :
+  - **Recette avant fermeture d'une issue :** chaque critère d'acceptation est vérifié un par un, preuve à l'appui (test, commande, capture) ; tout ajout hors périmètre est signalé.
+  - **Vérification des sources :** à chaque ajout de source ou changement de niveau de confiance, un avis indépendant est établi avant comparaison avec le niveau proposé, et le flux est testé.
+  - **Cohérence documentaire :** avant chaque enregistrement (commit) touchant la documentation ou la configuration, on vérifie que la modification est répercutée dans tous les documents concernés.
+- **Justification :** séparer la réalisation du contrôle limite les incohérences entre documents et les critères validés sans preuve ; les points de contrôle sont ciblés pour garder un coût raisonnable.

@@ -3,7 +3,7 @@
 > **Statut :** v0.3 — à valider par le chef de projet
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D11)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D12)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -122,6 +122,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 
 - **Méthode :** kanban (board GitHub Projects : À faire / En cours / Revue / Terminé) + jalons GitHub.
 - **Backlog :** une issue GitHub par fonctionnalité, avec critères d'acceptation.
+- **Qualité :** une issue n'est fermée qu'après une recette prouvant chaque critère d'acceptation ; sources et cohérence documentaire vérifiées de façon indépendante (D12).
 - **Rôles :** Richard — chef de projet (décide, arbitre, valide) ; Claude Code — assistant technique et méthodologique (propose, rédige, développe).
 
 | Jalon | Contenu | Livrable | Échéance proposée |
