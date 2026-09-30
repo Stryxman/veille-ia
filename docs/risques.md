@@ -1,7 +1,7 @@
 # Registre des risques
 
 > Probabilité notée **Faible / Moyenne / Élevée**, impact noté **Faible / Moyen / Élevé**. La colonne « Mise en œuvre » indique le jalon où la mesure s'applique. Registre revu à chaque fin de jalon.
-> **Statut :** version initiale validée par le chef de projet (Richard) le 2026-09-29 — revue à chaque fin de jalon.
+> **Statut :** version initiale validée par le chef de projet (Richard) le 2026-09-29 ; mise à jour liée à D13 (R5) validée le 2026-09-30 — revue à chaque fin de jalon.
 > **Dernière revue :** 2026-09-29 (J0)
 
 | ID | Risque | Probabilité | Impact | Mesure prévue | Mise en œuvre | Statut |

@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.1 — validé par le chef de projet le 2026-09-29
+> **Statut :** v1.1 — validé par le chef de projet le 2026-09-30 (v1.0 validée le 2026-09-29)
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D13)
