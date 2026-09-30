@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.2 — validé par le chef de projet le 2026-09-30 (v1.0 validée le 2026-09-29)
+> **Statut :** v1.3 — validé par le chef de projet le 2026-09-30
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D13)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D14)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -17,6 +17,7 @@
 | v1.0 | 2026-09-29 | Organisation qualité ajoutée (§8, D12) ; validation par le chef de projet |
 | v1.1 | 2026-09-29 | Replanification : mise en ligne de la V1 avancée au 2026-10-02 (D13) ; validée le 2026-09-30 |
 | v1.2 | 2026-09-30 | Vocabulaire du traitement (§4.2) et du planning (§8) aligné sur D10 (« regroupement des doublons ») |
+| v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) ; validée le 2026-09-30 (pull request #16) |
 
 ---
 
@@ -102,7 +103,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 - **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, la page précédente reste en ligne et l'exécution est signalée en échec.
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
 - **Maintenabilité :** code Python découpé en trois modules indépendants (`collect`, `process`, `render`), testés.
-- **Qualité :** tests automatisés (pytest) exécutés à chaque pull request ; les tests n'appellent pas le réseau.
+- **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff) exécutés à chaque pull request ; les tests n'appellent pas le réseau.
 - **Respect des sources :** seuls le titre, un court extrait et le lien vers l'article original sont affichés.
 - **Évolutivité :** sources et thèmes définis uniquement dans `config/sources.yaml` et `config/themes.yaml`.
 - **Langue :** documentation et page en français ; code, noms techniques et messages de commit en anglais. Un README en anglais (`README.en.md`) présente le projet aux lecteurs non francophones ; il est rédigé en J4, une fois le README français stabilisé.
@@ -114,7 +115,8 @@ config/sources.yaml ─► collect ─► process ─► render ─► site/inde
 config/themes.yaml ─────────────────┘
 ```
 
-- **Langage :** Python 3 (bibliothèques envisagées : `feedparser`, `Jinja2`, `PyYAML`, `pytest`).
+- **Langage :** Python ≥ 3.12 (bibliothèques : `feedparser`, `Jinja2`, `PyYAML` ; outils : `pytest`, `ruff`).
+- **Environnement :** pip + venv, dépendances déclarées dans `pyproject.toml` (D14).
 - **Exécution :** workflow GitHub Actions planifié (quotidien) + workflow d'intégration continue (tests).
 - **Hébergement :** GitHub Pages.
 - **Stockage :** aucun ; la page est entièrement régénérée à chaque exécution.

@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D13 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 confirmée le 2026-09-30).
+> **Statut :** décisions D1 à D14 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 et D14 le 2026-09-30).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -19,6 +19,7 @@
 | D11 | 2026-09-29 | Articles sans date de publication | Conservés, datés de leur date de collecte, étiquette « Date de publication inconnue » |
 | D12 | 2026-09-29 | Contrôle qualité | Vérification indépendante aux moments clés : recette prouvée, sources, cohérence documentaire |
 | D13 | 2026-09-29 | Replanification | Mise en ligne de la V1 avancée du 2026-10-14 au 2026-10-02 |
+| D14 | 2026-09-30 | Outillage de développement | ruff (qualité et format du code) ; pip + venv, dépendances dans `pyproject.toml` |
 
 ---
 
@@ -173,3 +174,16 @@
 - **Décision :** option 1, V1 en ligne le 2026-10-02.
 - **Justification :** mise en ligne au plus tôt sur un périmètre maîtrisé ; les échéances restent des cibles, et tout écart est tracé.
 - **Conséquences :** risque de retard (R5) réévalué ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la mise en ligne effective (jour de mise en ligne inclus) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé.
+
+## D14 — Outillage de développement
+
+- **Date :** 2026-09-30
+- **Contexte :** le code doit être vérifié automatiquement à chaque pull request (CdC §6) et installable de façon reproductible.
+- **Options envisagées (qualité du code) :**
+  1. ruff — un seul outil rapide pour l'analyse et le formatage, exécuté dans l'intégration continue.
+  2. Aucun outil de style — plus simple, mais style et erreurs courantes non contrôlés.
+- **Options envisagées (environnement) :**
+  1. pip + venv — outils standard de Python, rien à installer en plus ; dépendances déclarées dans `pyproject.toml`.
+  2. uv — plus rapide, versions figées, mais un outil supplémentaire à installer.
+- **Décision :** ruff ; pip + venv.
+- **Justification :** contrôle automatique de la qualité à coût nul, et installation reproductible avec les outils standard.

@@ -14,6 +14,16 @@ L'actualité IA est dispersée entre de nombreux sites et très redondante : une
 2. **Traitement** : nettoyage, conservation des 7 derniers jours, regroupement des doublons, classement par thème.
 3. **Restitution** : une page web unique, mise à jour chaque jour, gratuite et sans installation.
 
+## Développement
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -e ".[dev]"
+.venv/bin/pytest          # tests (sans accès réseau)
+.venv/bin/ruff check .    # qualité du code
+.venv/bin/ruff format --check .   # format du code
+```
+
 ## Documentation du projet
 
 | Document | Contenu |
