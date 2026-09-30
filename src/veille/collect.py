@@ -5,6 +5,7 @@ A failing source never stops the collection: it is reported as unavailable (R1).
 
 import calendar
 import gzip
+import io
 import logging
 import sys
 import urllib.request
@@ -18,6 +19,8 @@ from veille.config import load_sources
 from veille.models import Article, Source
 
 GZIP_MAGIC = b"\x1f\x8b"
+# Largest accepted feed, compressed or not (the largest configured feed is under 1 MiB).
+MAX_FEED_BYTES = 10 * 1024 * 1024
 USER_AGENT = "Mozilla/5.0 (compatible; veille-ia/0.1; +https://github.com/Stryxman/veille-ia)"
 TIMEOUT_SECONDS = 20
 
@@ -36,10 +39,17 @@ class CollectResult:
     unavailable: list[Source] = field(default_factory=list)
 
 
+def read_limited(stream, label: str) -> bytes:
+    data = stream.read(MAX_FEED_BYTES + 1)
+    if len(data) > MAX_FEED_BYTES:
+        raise FeedError(f"{label}: feed larger than {MAX_FEED_BYTES} bytes")
+    return data
+
+
 def fetch_feed(url: str) -> bytes:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
-        return response.read()
+        return read_limited(response, url)
 
 
 def _entry_date(entry) -> datetime | None:
@@ -54,15 +64,18 @@ def _entry_date(entry) -> datetime | None:
 def parse_feed(data: bytes, source: Source) -> list[Article]:
     if data.startswith(GZIP_MAGIC):
         # Some servers send gzip even when the client did not ask for it.
-        data = gzip.decompress(data)
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as compressed:
+            data = read_limited(compressed, source.id)
     parsed = feedparser.parse(data)
     if not parsed.version:
         raise FeedError(f"{source.id}: not an RSS/Atom feed")
     articles = []
+    skipped = 0
     for entry in parsed.entries:
         title = entry.get("title", "").strip()
         link = entry.get("link", "").strip()
         if not title or not link:
+            skipped += 1
             continue
         articles.append(
             Article(
@@ -74,6 +87,9 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
                 language=source.language,
             )
         )
+    if skipped:
+        noun = "entry" if skipped == 1 else "entries"
+        logger.warning("%s: %d %s skipped (missing title or link)", source.id, skipped, noun)
     return articles
 
 

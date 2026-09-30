@@ -1,9 +1,11 @@
 import gzip
+import io
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 
+import veille.collect as collect_module
 from veille.collect import FeedError, collect, parse_feed
 from veille.config import load_sources
 from veille.models import Source
@@ -52,6 +54,12 @@ def test_item_without_link_is_skipped():
     ]
 
 
+def test_skipped_items_are_logged(caplog):
+    with caplog.at_level("WARNING", logger="veille.collect"):
+        parse_feed(fixture("rss2.xml"), source())
+    assert "T1: 1 entry skipped (missing title or link)" in caplog.text
+
+
 def test_atom_uses_updated_date():
     [article] = parse_feed(fixture("atom.xml"), source())
     assert article.link == "https://example.org/atom-entry"
@@ -69,6 +77,19 @@ def test_gzip_compressed_feed_is_read():
     # Some servers send gzip even when the client did not ask for it.
     [article] = parse_feed(gzip.compress(fixture("atom.xml")), source())
     assert article.link == "https://example.org/atom-entry"
+
+
+def test_oversized_gzip_feed_is_rejected(monkeypatch):
+    # A tiny compressed payload must not expand without limit (decompression bomb).
+    monkeypatch.setattr(collect_module, "MAX_FEED_BYTES", 1_000)
+    with pytest.raises(FeedError, match="larger than"):
+        parse_feed(gzip.compress(b"x" * 5_000), source())
+
+
+def test_oversized_download_is_rejected(monkeypatch):
+    monkeypatch.setattr(collect_module, "MAX_FEED_BYTES", 1_000)
+    with pytest.raises(FeedError, match="larger than"):
+        collect_module.read_limited(io.BytesIO(b"x" * 5_000), "T1")
 
 
 def test_html_page_is_rejected():
