@@ -106,6 +106,27 @@ def test_oversized_download_is_rejected(monkeypatch):
         collect_module.read_limited(io.BytesIO(b"x" * 5_000), "T1")
 
 
+def test_two_digit_offset_is_not_shifted_twice():
+    feed = (
+        b'<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><title>x</title>'
+        b'<entry><title>t</title><link href="https://example.org/a"/>'
+        b"<updated>2026-09-30T09:36:48+02</updated></entry></feed>"
+    )
+    [article] = parse_feed(feed, source(timezone="Europe/Paris"))
+    assert article.published == datetime(2026, 9, 30, 7, 36, 48, tzinfo=UTC)
+
+
+def test_complete_feed_with_minor_xml_error_is_accepted():
+    # Common real-world glitch (undefined entity): the feed is complete and readable.
+    feed = (
+        b'<?xml version="1.0"?><rss version="2.0"><channel><title>x</title>'
+        b"<item><title>Caf&nbsp;IA</title><link>https://example.org/a</link></item>"
+        b"</channel></rss>"
+    )
+    [article] = parse_feed(feed, source())
+    assert article.link == "https://example.org/a"
+
+
 EMPTY_FEED = b'<?xml version="1.0"?><rss version="2.0"><channel><title>x</title></channel></rss>'
 UNUSABLE_FEED = (
     b'<?xml version="1.0"?><rss version="2.0"><channel><title>x</title>'

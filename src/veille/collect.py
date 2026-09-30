@@ -22,8 +22,13 @@ from veille.config import load_sources
 from veille.models import Article, Source
 
 GZIP_MAGIC = b"\x1f\x8b"
-# A date string ending with "Z", a numeric offset or a zone name carries its own timezone.
-EXPLICIT_OFFSET = re.compile(r"(Z|[+-]\d{2}:?\d{2}|[A-Za-z]{1,5})\s*$")
+# A date string carries its own timezone when it ends with "Z", a numeric offset after
+# the time (+02, +0200, +02:00) or a zone name (GMT, EDT...).
+EXPLICIT_OFFSET = re.compile(
+    r"(Z|\d{2}:\d{2}(:\d{2}(\.\d+)?)?\s*[+-]\d{2}(:?\d{2})?|[A-Za-z]{1,5})\s*$"
+)
+# A complete feed ends with the closing tag of its root element.
+CLOSING_ROOT = re.compile(rb"</\s*(?:[\w.-]+:)?(?:rss|feed|RDF)\s*>\s*$")
 # Largest accepted feed, compressed or not (the largest configured feed is under 1 MiB).
 MAX_FEED_BYTES = 10 * 1024 * 1024
 USER_AGENT = "Mozilla/5.0 (compatible; veille-ia/0.1; +https://github.com/Stryxman/veille-ia)"
@@ -79,7 +84,9 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
     parsed = feedparser.parse(data)
     if not parsed.version:
         raise FeedError(f"{source.id}: not an RSS/Atom feed")
-    if parsed.bozo and isinstance(parsed.bozo_exception, xml.sax.SAXException):
+    truncated = not CLOSING_ROOT.search(data)
+    if truncated and parsed.bozo and isinstance(parsed.bozo_exception, xml.sax.SAXException):
+        # Incomplete download; minor XML errors in a complete feed are tolerated.
         raise FeedError(f"{source.id}: malformed feed ({parsed.bozo_exception})")
     articles = []
     skipped = 0
