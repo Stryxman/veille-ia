@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns="http://purl.org/rss/1.0/">
+  <channel rdf:about="https://example.fr/rss.xml">
+    <title>Actualités</title>
+    <link>https://example.fr/</link>
+    <description>Flux de test</description>
+    <items><rdf:Seq><rdf:li rdf:resource="https://example.fr/strategie"/></rdf:Seq></items>
+  </channel>
+  <item rdf:about="https://example.fr/strategie">
+    <title>Stratégie IA : l'été des éditeurs</title>
+    <link>https://example.fr/strategie</link>
+    <description>Résumé accentué</description>
+    <dc:date>2026-09-30T09:36:48</dc:date>
+  </item>
+</rdf:RDF>

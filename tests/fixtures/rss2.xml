@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Example RSS</title>
+    <link>https://example.org/</link>
+    <description>Test feed</description>
+    <item>
+      <title>Dated article &amp; more</title>
+      <link>https://example.org/dated</link>
+      <description>&lt;p&gt;Summary of the dated article&lt;/p&gt;</description>
+      <pubDate>Tue, 29 Sep 2026 08:30:00 +0200</pubDate>
+    </item>
+    <item>
+      <title>Undated article</title>
+      <link>https://example.org/undated</link>
+      <description>No date here</description>
+    </item>
+    <item>
+      <title>Item without link is skipped</title>
+      <description>Missing link</description>
+    </item>
+  </channel>
+</rss>

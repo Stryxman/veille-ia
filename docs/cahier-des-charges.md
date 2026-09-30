@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.3 — validé par le chef de projet le 2026-09-30
+> **Statut :** v1.4 — validé par le chef de projet le 2026-09-30
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D14)
@@ -18,6 +18,7 @@
 | v1.1 | 2026-09-29 | Replanification : mise en ligne de la V1 avancée au 2026-10-02 (D13) ; validée le 2026-09-30 |
 | v1.2 | 2026-09-30 | Vocabulaire du traitement (§4.2) et du planning (§8) aligné sur D10 (« regroupement des doublons ») |
 | v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) ; validée le 2026-09-30 (pull request #16) |
+| v1.4 | 2026-09-30 | §4.1 : entrées sans titre ou sans lien ignorées et signalées dans le journal d'exécution ; §6 : taille maximale d'un flux (10 Mio) ; validée le 2026-09-30 (pull request #17) |
 
 ---
 
@@ -51,6 +52,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Le détail de chaque source (site, flux, langue, type, niveau de confiance, raison du choix) et la date de dernière vérification des flux sont documentés dans [sources.md](sources.md).
 - La liste des sources est définie dans un fichier de configuration (`config/sources.yaml`) : ajouter ou retirer une source ne nécessite pas de modifier le code.
 - Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait, langue. Un article sans date de publication n'est pas rejeté.
+- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
 
 ### 4.2 Traitement
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
@@ -100,7 +102,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 ## 6. Exigences non fonctionnelles
 
-- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, la page précédente reste en ligne et l'exécution est signalée en échec.
+- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé) est traité comme une source indisponible.
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
 - **Maintenabilité :** code Python découpé en trois modules indépendants (`collect`, `process`, `render`), testés.
 - **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff) exécutés à chaque pull request ; les tests n'appellent pas le réseau.
