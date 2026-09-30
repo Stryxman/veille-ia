@@ -12,6 +12,7 @@ class Source:
     site_url: str
     language: str
     trust_level: int
+    timezone: str = "UTC"  # used for feed dates that carry no offset (D15)
 
 
 @dataclass(frozen=True)

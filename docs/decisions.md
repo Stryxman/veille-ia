@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D14 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 et D14 le 2026-09-30).
+> **Statut :** décisions D1 à D15 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -20,6 +20,7 @@
 | D12 | 2026-09-29 | Contrôle qualité | Vérification indépendante aux moments clés : recette prouvée, sources, cohérence documentaire |
 | D13 | 2026-09-29 | Replanification | Mise en ligne de la V1 avancée du 2026-10-14 au 2026-10-02 |
 | D14 | 2026-09-30 | Outillage de développement | ruff (qualité et format du code) ; pip + venv, dépendances dans `pyproject.toml` |
+| D15 | 2026-09-30 | Dates publiées sans fuseau horaire | Fuseau déclaré par source dans la configuration (UTC par défaut) |
 
 ---
 
@@ -187,3 +188,13 @@
   2. uv — plus rapide, versions figées, mais un outil supplémentaire à installer.
 - **Décision :** ruff ; pip + venv.
 - **Justification :** contrôle automatique de la qualité à coût nul, et installation reproductible avec les outils standard.
+
+## D15 — Dates publiées sans fuseau horaire
+
+- **Date :** 2026-09-30
+- **Contexte :** certains flux donnent l'heure de publication sans fuseau horaire (cas réel : Le Monde Informatique, heure de Paris). Lue comme de l'heure UTC, elle décale les articles de 1 à 2 heures, ce qui fausse le tri et la fenêtre de 7 jours. Défaut relevé par la revue de code de fin de J1.
+- **Options envisagées :**
+  1. Fuseau déclaré par source — champ facultatif `timezone` dans `config/sources.yaml`, UTC par défaut ; ajustable par la configuration seule (O5).
+  2. Fuseau déduit de la langue (Paris pour les sources françaises) — plus simple, mais hypothèse fragile.
+- **Décision :** option 1 ; Le Monde Informatique est déclaré en `Europe/Paris`.
+- **Justification :** règle explicite, vérifiable et modifiable sans code ; une date qui porte son propre fuseau n'est jamais modifiée.

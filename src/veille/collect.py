@@ -7,11 +7,14 @@ import calendar
 import gzip
 import io
 import logging
+import re
 import sys
 import urllib.request
+import xml.sax
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 
 import feedparser
 
@@ -19,6 +22,8 @@ from veille.config import load_sources
 from veille.models import Article, Source
 
 GZIP_MAGIC = b"\x1f\x8b"
+# A date string ending with "Z", a numeric offset or a zone name carries its own timezone.
+EXPLICIT_OFFSET = re.compile(r"(Z|[+-]\d{2}:?\d{2}|[A-Za-z]{1,5})\s*$")
 # Largest accepted feed, compressed or not (the largest configured feed is under 1 MiB).
 MAX_FEED_BYTES = 10 * 1024 * 1024
 USER_AGENT = "Mozilla/5.0 (compatible; veille-ia/0.1; +https://github.com/Stryxman/veille-ia)"
@@ -52,12 +57,17 @@ def fetch_feed(url: str) -> bytes:
         return read_limited(response, url)
 
 
-def _entry_date(entry) -> datetime | None:
+def _entry_date(entry, source: Source) -> datetime | None:
     # RSS 2.0 uses pubDate (published); Atom and RSS 1.0 dc:date end up in "updated".
-    for key in ("published_parsed", "updated_parsed"):
-        value = entry.get(key)
-        if value:
-            return datetime.fromtimestamp(calendar.timegm(value), tz=UTC)
+    for key in ("published", "updated"):
+        parsed = entry.get(f"{key}_parsed")
+        if not parsed:
+            continue
+        if EXPLICIT_OFFSET.search(entry.get(key, "").strip()):
+            return datetime.fromtimestamp(calendar.timegm(parsed), tz=UTC)
+        # No offset in the feed: read the wall-clock time in the source's timezone (D15).
+        local = datetime(*parsed[:6], tzinfo=ZoneInfo(source.timezone))
+        return local.astimezone(UTC)
     return None
 
 
@@ -69,6 +79,8 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
     parsed = feedparser.parse(data)
     if not parsed.version:
         raise FeedError(f"{source.id}: not an RSS/Atom feed")
+    if parsed.bozo and isinstance(parsed.bozo_exception, xml.sax.SAXException):
+        raise FeedError(f"{source.id}: malformed feed ({parsed.bozo_exception})")
     articles = []
     skipped = 0
     for entry in parsed.entries:
@@ -82,7 +94,7 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
                 title=title,
                 link=link,
                 source=source,
-                published=_entry_date(entry),
+                published=_entry_date(entry, source),
                 summary=entry.get("summary", ""),
                 language=source.language,
             )
@@ -90,6 +102,8 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
     if skipped:
         noun = "entry" if skipped == 1 else "entries"
         logger.warning("%s: %d %s skipped (missing title or link)", source.id, skipped, noun)
+    if not articles:
+        raise FeedError(f"{source.id}: no usable entries")
     return articles
 
 

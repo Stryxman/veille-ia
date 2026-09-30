@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.4 — validé par le chef de projet le 2026-09-30
+> **Statut :** v1.5 — en revue (issue #19) ; v1.4 validée le 2026-09-30
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D14)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D15)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -19,6 +19,7 @@
 | v1.2 | 2026-09-30 | Vocabulaire du traitement (§4.2) et du planning (§8) aligné sur D10 (« regroupement des doublons ») |
 | v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) ; validée le 2026-09-30 (pull request #16) |
 | v1.4 | 2026-09-30 | §4.1 : entrées sans titre ou sans lien ignorées et signalées dans le journal d'exécution ; §6 : taille maximale d'un flux (10 Mio) ; validée le 2026-09-30 (pull request #17) |
+| v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible |
 
 ---
 
@@ -51,7 +52,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lecture automatique de **6 flux RSS** (4 anglophones, 2 francophones) : Hugging Face Blog, OpenAI News, TechCrunch (IA), The Verge (IA), ActuIA, Le Monde Informatique (IA).
 - Le détail de chaque source (site, flux, langue, type, niveau de confiance, raison du choix) et la date de dernière vérification des flux sont documentés dans [sources.md](sources.md).
 - La liste des sources est définie dans un fichier de configuration (`config/sources.yaml`) : ajouter ou retirer une source ne nécessite pas de modifier le code.
-- Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait, langue. Un article sans date de publication n'est pas rejeté.
+- Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait, langue. Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
 - Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
 
 ### 4.2 Traitement
@@ -102,7 +103,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 ## 6. Exigences non fonctionnelles
 
-- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé) est traité comme une source indisponible.
+- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible.
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
 - **Maintenabilité :** code Python découpé en trois modules indépendants (`collect`, `process`, `render`), testés.
 - **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff) exécutés à chaque pull request ; les tests n'appellent pas le réseau.
