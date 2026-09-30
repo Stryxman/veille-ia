@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.3 — en revue (D14) ; v1.2 validée le 2026-09-30
+> **Statut :** v1.3 — validé par le chef de projet le 2026-09-30
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D14)
@@ -17,7 +17,7 @@
 | v1.0 | 2026-09-29 | Organisation qualité ajoutée (§8, D12) ; validation par le chef de projet |
 | v1.1 | 2026-09-29 | Replanification : mise en ligne de la V1 avancée au 2026-10-02 (D13) ; validée le 2026-09-30 |
 | v1.2 | 2026-09-30 | Vocabulaire du traitement (§4.2) et du planning (§8) aligné sur D10 (« regroupement des doublons ») |
-| v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) |
+| v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) ; validée le 2026-09-30 (pull request #16) |
 
 ---
 
