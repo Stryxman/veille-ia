@@ -1,5 +1,6 @@
 import gzip
 import io
+import urllib.error
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -13,7 +14,7 @@ from veille.models import Source
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
-def source(id="T1", language="en", trust_level=2):
+def source(id="T1", language="en", trust_level=2, timezone="UTC"):
     return Source(
         id=id,
         name=f"Source {id}",
@@ -21,6 +22,7 @@ def source(id="T1", language="en", trust_level=2):
         site_url="https://example.org/",
         language=language,
         trust_level=trust_level,
+        timezone=timezone,
     )
 
 
@@ -67,10 +69,22 @@ def test_atom_uses_updated_date():
 
 
 def test_rdf_iso_8859_15_uses_dc_date():
-    [article] = parse_feed(fixture("rdf_iso_8859_15.xml"), source(language="fr"))
+    # The real feed gives Paris local time without an offset (D15).
+    feed_source = source(language="fr", timezone="Europe/Paris")
+    [article] = parse_feed(fixture("rdf_iso_8859_15.xml"), feed_source)
     assert article.title == "Stratégie IA : l'été des éditeurs"
     assert article.language == "fr"
+    assert article.published == datetime(2026, 9, 30, 7, 36, 48, tzinfo=UTC)
+
+
+def test_date_without_timezone_defaults_to_utc():
+    [article] = parse_feed(fixture("rdf_iso_8859_15.xml"), source(language="fr"))
     assert article.published == datetime(2026, 9, 30, 9, 36, 48, tzinfo=UTC)
+
+
+def test_date_with_its_own_offset_ignores_source_timezone():
+    articles = parse_feed(fixture("rss2.xml"), source(timezone="Europe/Paris"))
+    assert articles[0].published == datetime(2026, 9, 29, 6, 30, tzinfo=UTC)
 
 
 def test_gzip_compressed_feed_is_read():
@@ -90,6 +104,64 @@ def test_oversized_download_is_rejected(monkeypatch):
     monkeypatch.setattr(collect_module, "MAX_FEED_BYTES", 1_000)
     with pytest.raises(FeedError, match="larger than"):
         collect_module.read_limited(io.BytesIO(b"x" * 5_000), "T1")
+
+
+def test_two_digit_offset_is_not_shifted_twice():
+    feed = (
+        b'<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><title>x</title>'
+        b'<entry><title>t</title><link href="https://example.org/a"/>'
+        b"<updated>2026-09-30T09:36:48+02</updated></entry></feed>"
+    )
+    [article] = parse_feed(feed, source(timezone="Europe/Paris"))
+    assert article.published == datetime(2026, 9, 30, 7, 36, 48, tzinfo=UTC)
+
+
+def test_complete_feed_with_minor_xml_error_is_accepted():
+    # Common real-world glitch (undefined entity): the feed is complete and readable.
+    feed = (
+        b'<?xml version="1.0"?><rss version="2.0"><channel><title>x</title>'
+        b"<item><title>Caf&nbsp;IA</title><link>https://example.org/a</link></item>"
+        b"</channel></rss>"
+    )
+    [article] = parse_feed(feed, source())
+    assert article.link == "https://example.org/a"
+
+
+EMPTY_FEED = b'<?xml version="1.0"?><rss version="2.0"><channel><title>x</title></channel></rss>'
+UNUSABLE_FEED = (
+    b'<?xml version="1.0"?><rss version="2.0"><channel><title>x</title>'
+    b"<item><title>No link</title></item></channel></rss>"
+)
+
+
+def test_empty_feed_is_rejected():
+    with pytest.raises(FeedError, match="no usable entries"):
+        parse_feed(EMPTY_FEED, source())
+
+
+def test_feed_with_only_unusable_entries_is_rejected():
+    with pytest.raises(FeedError, match="no usable entries"):
+        parse_feed(UNUSABLE_FEED, source())
+
+
+def test_truncated_feed_is_rejected():
+    data = fixture("rss2.xml")
+    truncated = data[: data.index(b"<title>Undated") + 10]
+    with pytest.raises(FeedError, match="malformed"):
+        parse_feed(truncated, source())
+
+
+def test_http_error_source_is_isolated():
+    ok, down = source("OK"), source("DOWN")
+
+    def fetch(url):
+        if url == down.feed_url:
+            raise urllib.error.HTTPError(url, 503, "Service Unavailable", None, None)
+        return fixture("atom.xml")
+
+    result = collect([down, ok], fetch=fetch)
+    assert [a.source.id for a in result.articles] == ["OK"]
+    assert [s.id for s in result.unavailable] == ["DOWN"]
 
 
 def test_html_page_is_rejected():

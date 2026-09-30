@@ -2,7 +2,7 @@
 
 > Liste des sources collectées par la veille, avec la raison de leur sélection.
 > La configuration technique correspondante se trouve dans `config/sources.yaml` ; ce document et ce fichier doivent rester alignés.
-> **Statut :** validé par le chef de projet le 2026-09-30 (mise à jour validée avec la pull request #17)
+> **Statut :** validé par le chef de projet le 2026-09-30 (dernière mise à jour validée avec la pull request #20)
 > **Dernière vérification des flux :** 2026-09-30
 
 ## Critères de sélection
@@ -40,7 +40,7 @@ Chaque source reçoit un niveau de confiance. Lorsque plusieurs sources publient
 - **S2 — OpenAI :** le site web bloque les requêtes automatisées (code 403), mais le flux RSS répond normalement. Le flux contient tout l'historique depuis 2015 : la collecte doit filtrer par date.
 - **S4 — The Verge :** le flux ne contient que les 10 derniers articles ; une collecte quotidienne suffit à ne rien manquer.
 - **S5 — ActuIA :** publication par lots (environ une fois par semaine) ; la source peut ne proposer aucun article récent plusieurs jours de suite, ce qui est normal.
-- **S6 — Le Monde Informatique :** flux au format RSS 1.0 (RDF), encodé en ISO-8859-15 ; à couvrir par un test de collecte.
+- **S6 — Le Monde Informatique :** flux au format RSS 1.0 (RDF), encodé en ISO-8859-15 ; à couvrir par un test de collecte. Les dates sont publiées sans fuseau horaire, en heure de Paris : `timezone: Europe/Paris` dans la configuration (D15).
 
 ## Historique des modifications
 
@@ -50,3 +50,4 @@ Chaque source reçoit un niveau de confiance. Lorsque plusieurs sources publient
 | 2026-09-29 | Ajout des niveaux de confiance | [D10](decisions.md#d10--choix-de-larticle-retenu-parmi-des-doublons) |
 | 2026-09-29 | Vérification indépendante des 6 sources (niveaux confirmés) ; notes techniques S1 et S4 ajoutées (S2 et S6 rédigées lors de la sélection initiale) | [D12](decisions.md#d12--contrôle-qualité) |
 | 2026-09-30 | Création de `config/sources.yaml` ; nouvelle vérification indépendante (niveaux confirmés) ; note technique S5 ajoutée | [D12](decisions.md#d12--contrôle-qualité) |
+| 2026-09-30 | Fuseau horaire de S6 déclaré (`Europe/Paris`) | [D15](decisions.md#d15--dates-publiées-sans-fuseau-horaire) |

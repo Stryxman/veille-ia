@@ -1,6 +1,7 @@
 """Load and validate the source list (config/sources.yaml)."""
 
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import yaml
 
@@ -37,5 +38,10 @@ def load_sources(path: Path = DEFAULT_SOURCES_PATH) -> list[Source]:
         if entry["id"] in seen:
             raise ConfigError(f"{path}: duplicate source id {entry['id']}")
         seen.add(entry["id"])
-        sources.append(Source(**{name: entry[name] for name in FIELDS}))
+        timezone = entry.get("timezone", "UTC")
+        try:
+            ZoneInfo(timezone)
+        except (ZoneInfoNotFoundError, ValueError, TypeError):
+            raise ConfigError(f"{path}: source {label} has unknown timezone {timezone!r}") from None
+        sources.append(Source(**{name: entry[name] for name in FIELDS}, timezone=timezone))
     return sources
