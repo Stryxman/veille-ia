@@ -2,7 +2,7 @@
 
 Une page web qui rassemble chaque jour l'actualité de l'intelligence artificielle, dédoublonnée et classée par thème, à partir de sources françaises et anglophones.
 
-> **Statut :** cadrage (J0) en cours. Mise en ligne de la V1 visée le 2 octobre 2026.
+> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) en cours. Mise en ligne de la V1 visée le 2 octobre 2026.
 
 ## Le besoin
 

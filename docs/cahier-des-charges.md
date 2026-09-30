@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.1 — validé par le chef de projet le 2026-09-30 (v1.0 validée le 2026-09-29)
+> **Statut :** v1.2 — validé par le chef de projet le 2026-09-30 (v1.0 validée le 2026-09-29)
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D13)
@@ -15,7 +15,8 @@
 | v0.2 | 2026-09-29 | O5 remplacé par un objectif d'évolutivité ; sources détaillées dans `sources.md` ; ajout du README anglais (D9) |
 | v0.3 | 2026-09-29 | Articles sans date signalés (D11) ; dédoublonnage selon le niveau de confiance des sources, doublons affichés en « Aussi couvert par » (D10) ; README anglais reporté en J4 |
 | v1.0 | 2026-09-29 | Organisation qualité ajoutée (§8, D12) ; validation par le chef de projet |
-| v1.1 | 2026-09-29 | Replanification : mise en ligne de la V1 avancée au 2026-10-02 (D13) |
+| v1.1 | 2026-09-29 | Replanification : mise en ligne de la V1 avancée au 2026-10-02 (D13) ; validée le 2026-09-30 |
+| v1.2 | 2026-09-30 | Vocabulaire du traitement (§4.2) et du planning (§8) aligné sur D10 (« regroupement des doublons ») |
 
 ---
 
@@ -54,7 +55,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
 - **Fenêtre temporelle :** seuls les articles des **7 derniers jours** sont conservés.
 - **Article sans date de publication :** il est conservé et daté de sa date de collecte, qui sert au tri et à la fenêtre temporelle ; il est signalé sur la page par l'étiquette « Date de publication inconnue ».
-- **Dédoublonnage :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu.
+- **Regroupement des doublons :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu.
 - **Niveaux de confiance des sources** (définis dans `config/sources.yaml`, justifiés dans [sources.md](sources.md)) :
   1. Source primaire (l'éditeur qui fait l'annonce)
   2. Presse spécialisée IA ou tech
@@ -131,7 +132,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 |---|---|---|---|
 | **J0 — Cadrage** | Cahier des charges, sources, décisions, risques, backlog, board | Repo public avec pilotage complet | 2026-09-29 |
 | **J1 — Collecte** | Lecture des 6 flux, format d'article commun | Module `collect` testé | 2026-09-30 |
-| **J2 — Traitement** | Nettoyage, fenêtre 7 jours, dédoublonnage, classement | Module `process` testé | 2026-10-01 |
+| **J2 — Traitement** | Nettoyage, fenêtre 7 jours, regroupement des doublons, classement | Module `process` testé | 2026-10-01 |
 | **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
 | **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, option LLM | V1.1 | 2026-10-06 |
 
