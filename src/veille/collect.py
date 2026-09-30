@@ -4,6 +4,7 @@ A failing source never stops the collection: it is reported as unavailable (R1).
 """
 
 import calendar
+import gzip
 import logging
 import sys
 import urllib.request
@@ -16,6 +17,7 @@ import feedparser
 from veille.config import load_sources
 from veille.models import Article, Source
 
+GZIP_MAGIC = b"\x1f\x8b"
 USER_AGENT = "Mozilla/5.0 (compatible; veille-ia/0.1; +https://github.com/Stryxman/veille-ia)"
 TIMEOUT_SECONDS = 20
 
@@ -50,6 +52,9 @@ def _entry_date(entry) -> datetime | None:
 
 
 def parse_feed(data: bytes, source: Source) -> list[Article]:
+    if data.startswith(GZIP_MAGIC):
+        # Some servers send gzip even when the client did not ask for it.
+        data = gzip.decompress(data)
     parsed = feedparser.parse(data)
     if not parsed.version:
         raise FeedError(f"{source.id}: not an RSS/Atom feed")

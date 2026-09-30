@@ -1,3 +1,4 @@
+import gzip
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -62,6 +63,12 @@ def test_rdf_iso_8859_15_uses_dc_date():
     assert article.title == "Stratégie IA : l'été des éditeurs"
     assert article.language == "fr"
     assert article.published == datetime(2026, 9, 30, 9, 36, 48, tzinfo=UTC)
+
+
+def test_gzip_compressed_feed_is_read():
+    # Some servers send gzip even when the client did not ask for it.
+    [article] = parse_feed(gzip.compress(fixture("atom.xml")), source())
+    assert article.link == "https://example.org/atom-entry"
 
 
 def test_html_page_is_rejected():
