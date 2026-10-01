@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import yaml
 
-from veille.models import Source
+from veille.models import Source, Theme
 
 DEFAULT_SOURCES_PATH = Path("config/sources.yaml")
 FIELDS = ("id", "name", "feed_url", "site_url", "language", "trust_level")
@@ -45,3 +45,28 @@ def load_sources(path: Path = DEFAULT_SOURCES_PATH) -> list[Source]:
             raise ConfigError(f"{path}: source {label} has unknown timezone {timezone!r}") from None
         sources.append(Source(**{name: entry[name] for name in FIELDS}, timezone=timezone))
     return sources
+
+
+DEFAULT_THEMES_PATH = Path("config/themes.yaml")
+OTHER_THEME = "Autres"
+
+
+def load_themes(path: Path = DEFAULT_THEMES_PATH) -> list[Theme]:
+    data = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    entries = data.get("themes") if isinstance(data, dict) else None
+    if not isinstance(entries, list) or not entries:
+        raise ConfigError(f"{path}: 'themes' must list at least one theme")
+    themes: list[Theme] = []
+    for position, entry in enumerate(entries, start=1):
+        name = entry.get("name") if isinstance(entry, dict) else None
+        if not isinstance(name, str) or not name.strip():
+            raise ConfigError(f"{path}: theme #{position} needs a name")
+        reserved = name.strip().casefold() == OTHER_THEME.casefold()
+        if reserved or name in {t.name for t in themes}:
+            raise ConfigError(f"{path}: theme name {name!r} is duplicated or reserved")
+        keywords = entry.get("keywords")
+        valid = isinstance(keywords, list) and keywords
+        if not valid or not all(isinstance(k, str) and k.strip() for k in keywords):
+            raise ConfigError(f"{path}: theme {name} needs a non-empty list of keywords")
+        themes.append(Theme(name=name, keywords=tuple(keywords)))
+    return themes

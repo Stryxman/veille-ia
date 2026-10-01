@@ -2,7 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from veille.config import DEFAULT_SOURCES_PATH, ConfigError, load_sources
+from veille.config import (
+    DEFAULT_SOURCES_PATH,
+    DEFAULT_THEMES_PATH,
+    OTHER_THEME,
+    ConfigError,
+    load_sources,
+    load_themes,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -64,3 +71,34 @@ def test_config_requires_at_least_one_source(tmp_path):
     path.write_text("sources: []\n", encoding="utf-8")
     with pytest.raises(ConfigError, match="at least one source"):
         load_sources(path)
+
+
+def test_project_themes_follow_the_requirements():
+    names = [t.name for t in load_themes(ROOT / DEFAULT_THEMES_PATH)]
+    assert names == [
+        "Modèles & recherche",
+        "Produits & outils",
+        "Business & financement",
+        "Régulation & éthique",
+    ]
+
+
+def test_themes_require_keywords(tmp_path):
+    path = tmp_path / "themes.yaml"
+    path.write_text("themes:\n  - name: Vide\n    keywords: []\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="Vide.*keywords"):
+        load_themes(path)
+
+
+def test_other_theme_name_is_reserved(tmp_path):
+    path = tmp_path / "themes.yaml"
+    path.write_text(f"themes:\n  - name: {OTHER_THEME}\n    keywords: [x]\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="reserved"):
+        load_themes(path)
+
+
+def test_other_theme_name_is_reserved_whatever_the_case(tmp_path):
+    path = tmp_path / "themes.yaml"
+    path.write_text("themes:\n  - name: ' autres '\n    keywords: [x]\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="reserved"):
+        load_themes(path)

@@ -1,13 +1,19 @@
 """Process collected articles: clean, keep recent ones, group duplicates, classify by theme."""
 
 import html
+import logging
 import re
+import sys
+import unicodedata
+from collections import Counter
 from dataclasses import replace
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from difflib import SequenceMatcher
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from veille.models import Article, Story
+from veille.collect import collect
+from veille.config import OTHER_THEME, load_sources, load_themes
+from veille.models import Article, Story, Theme
 
 WINDOW = timedelta(days=7)
 EXCERPT_LENGTH = 300
@@ -64,6 +70,7 @@ def select_recent(articles: list[Article], now: datetime) -> list[Story]:
 TITLE_SIMILARITY = 0.9
 PUNCTUATION = re.compile(r"[^\w\s]")
 NUMBER = re.compile(r"\d+")
+TYPOGRAPHIC = str.maketrans({"’": "'", "‘": "'", "–": "-", "—": "-", "\u00a0": " "})
 
 
 def normalize_link(link: str) -> str:
@@ -127,3 +134,55 @@ def group_duplicates(stories: list[Story]) -> list[Story]:
                 also_covered.append(other.article)
         result.append(replace(lead, also_covered=tuple(also_covered)))
     return result
+
+
+def fold(text: str) -> str:
+    """Lower case without accents, for keyword matching."""
+    text = text.translate(TYPOGRAPHIC)  # ’ and – would otherwise be dropped, not matched
+    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
+
+
+def _keyword_patterns(themes: list[Theme]) -> list[tuple[str, list[re.Pattern[str]]]]:
+    return [
+        (theme.name, [re.compile(rf"(?<!\w){re.escape(fold(k))}(?!\w)") for k in theme.keywords])
+        for theme in themes
+    ]
+
+
+def classify(stories: list[Story], themes: list[Theme]) -> list[Story]:
+    patterns = _keyword_patterns(themes)
+    result = []
+    for story in stories:
+        text = fold(f"{story.article.title} {story.article.summary}")
+        best, best_score = OTHER_THEME, 0
+        for name, keywords in patterns:
+            score = sum(1 for keyword in keywords if keyword.search(text))
+            if score > best_score:  # strict: on a tie the first theme in file order stays
+                best, best_score = name, score
+        result.append(replace(story, theme=best))
+    return result
+
+
+def process(articles: list[Article], now: datetime, themes: list[Theme]) -> list[Story]:
+    stories = classify(group_duplicates(select_recent(articles, now)), themes)
+    return sorted(stories, key=lambda s: s.date, reverse=True)
+
+
+def main() -> int:
+    logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
+    themes = load_themes()
+    collected = collect(load_sources())
+    stories = process(collected.articles, datetime.now(UTC), themes)
+    counts = Counter(s.theme for s in stories)
+    grouped = sum(len(s.also_covered) for s in stories)
+    print(f"{len(collected.articles)} articles collected, {len(stories)} stories kept")
+    print(f"{grouped} duplicate articles grouped under another story")
+    for name in [t.name for t in themes] + [OTHER_THEME]:
+        print(f"  {name}: {counts[name]}")
+    share = (len(stories) - counts[OTHER_THEME]) * 100 / len(stories) if stories else 0.0
+    print(f"Classified outside '{OTHER_THEME}': {share:.0f} %")
+    return 0 if stories else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
