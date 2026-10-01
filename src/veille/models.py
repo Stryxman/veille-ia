@@ -34,3 +34,9 @@ class Story:
     date_is_known: bool
     also_covered: tuple[Article, ...] = ()
     theme: str = "Autres"
+
+
+@dataclass(frozen=True)
+class Theme:
+    name: str
+    keywords: tuple[str, ...]
