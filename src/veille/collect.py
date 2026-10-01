@@ -9,6 +9,7 @@ import io
 import logging
 import re
 import sys
+import urllib.parse
 import urllib.request
 import xml.sax
 from collections.abc import Callable
@@ -76,6 +77,11 @@ def _entry_date(entry, source: Source) -> datetime | None:
     return None
 
 
+def _is_web_link(link: str) -> bool:
+    """Only http(s) links are kept: a javascript: or data: link would run code on the page."""
+    return urllib.parse.urlsplit(link).scheme.lower() in {"http", "https"}
+
+
 def parse_feed(data: bytes, source: Source) -> list[Article]:
     if data.startswith(GZIP_MAGIC):
         # Some servers send gzip even when the client did not ask for it.
@@ -93,7 +99,7 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
     for entry in parsed.entries:
         title = entry.get("title", "").strip()
         link = entry.get("link", "").strip()
-        if not title or not link:
+        if not title or not _is_web_link(link):
             skipped += 1
             continue
         articles.append(
@@ -108,7 +114,7 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
         )
     if skipped:
         noun = "entry" if skipped == 1 else "entries"
-        logger.warning("%s: %d %s skipped (missing title or link)", source.id, skipped, noun)
+        logger.warning("%s: %d %s skipped (missing title or web link)", source.id, skipped, noun)
     if not articles:
         raise FeedError(f"{source.id}: no usable entries")
     return articles

@@ -56,10 +56,20 @@ def test_item_without_link_is_skipped():
     ]
 
 
+def test_item_whose_link_is_not_a_web_address_is_skipped():
+    feed = b"""<?xml version="1.0"?><rss version="2.0"><channel><title>T</title>
+<item><title>Script</title><link>javascript:alert(1)</link></item>
+<item><title>Data</title><link>data:text/html,x</link></item>
+<item><title>Web</title><link>HTTPS://example.org/ok</link></item>
+</channel></rss>"""
+    articles = parse_feed(feed, source())
+    assert [a.title for a in articles] == ["Web"]  # a javascript: link would run code on click
+
+
 def test_skipped_items_are_logged(caplog):
     with caplog.at_level("WARNING", logger="veille.collect"):
         parse_feed(fixture("rss2.xml"), source())
-    assert "T1: 1 entry skipped (missing title or link)" in caplog.text
+    assert "T1: 1 entry skipped (missing title or web link)" in caplog.text
 
 
 def test_atom_uses_updated_date():

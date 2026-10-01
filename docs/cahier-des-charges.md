@@ -22,7 +22,7 @@
 | v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible ; validée le 2026-09-30 (pull request #20) |
 | v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) ; validée le 2026-10-01 (pull request #22) |
 | v1.7 | 2026-10-01 | §4.2 : garde sur les mots pour le regroupement (D17) ; validée le 2026-10-01 (pull request #25) |
-| v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) |
+| v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : entrée ignorée si son lien n'est pas une adresse web |
 
 ---
 
@@ -56,7 +56,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Le détail de chaque source (site, flux, langue, type, niveau de confiance, raison du choix) et la date de dernière vérification des flux sont documentés dans [sources.md](sources.md).
 - La liste des sources est définie dans un fichier de configuration (`config/sources.yaml`) : ajouter ou retirer une source ne nécessite pas de modifier le code.
 - Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait (si le flux en fournit un), langue. Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
-- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
+- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; de même pour une entrée dont le lien n'est pas une adresse web (`http` ou `https`), qui pourrait exécuter du code sur la page (par exemple un lien `javascript:`) ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
 
 ### 4.2 Traitement
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
