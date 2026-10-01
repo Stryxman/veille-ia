@@ -2,7 +2,7 @@
 
 > Liste des sources collectées par la veille, avec la raison de leur sélection.
 > La configuration technique correspondante se trouve dans `config/sources.yaml` ; ce document et ce fichier doivent rester alignés.
-> **Statut :** validé par le chef de projet le 2026-09-30 (dernière mise à jour validée avec la pull request #20)
+> **Statut :** validé par le chef de projet le 2026-10-01 (dernière mise à jour validée avec la pull request #28)
 > **Dernière vérification des flux :** 2026-09-30
 
 ## Critères de sélection
@@ -36,8 +36,8 @@ Chaque source reçoit un niveau de confiance. Lorsque plusieurs sources publient
 
 ## Notes techniques
 
-- **S1 — Hugging Face :** le blog publie aussi des billets d'autres organisations (partenaires, laboratoires) ; ce sont également des annonces de première main, d'où le niveau 1. Le flux contient tout l'historique depuis 2020 : la collecte doit filtrer par date.
-- **S2 — OpenAI :** le site web bloque les requêtes automatisées (code 403), mais le flux RSS répond normalement. Le flux contient tout l'historique depuis 2015 : la collecte doit filtrer par date.
+- **S1 — Hugging Face :** le blog publie aussi des billets d'autres organisations (partenaires, laboratoires) ; ce sont également des annonces de première main, d'où le niveau 1. Le flux contient tout l'historique depuis 2020 : la collecte doit filtrer par date. Le flux ne fournit aucun texte (ni description ni résumé) : les articles de cette source s'affichent sans extrait. Récupération de la description publiée par l'éditeur étudiée en J4 ([#27](https://github.com/Stryxman/veille-ia/issues/27)).
+- **S2 — OpenAI :** le site web bloque les requêtes automatisées (code 403), mais le flux RSS répond normalement. Le flux contient tout l'historique depuis 2015 : la collecte doit filtrer par date. Quelques entrées du flux n'ont pas de description (106 sur 1 242 le 2026-10-01) : elles s'affichent sans extrait.
 - **S4 — The Verge :** le flux ne contient que les 10 derniers articles ; une collecte quotidienne suffit à ne rien manquer.
 - **S5 — ActuIA :** publication par lots (environ une fois par semaine) ; la source peut ne proposer aucun article récent plusieurs jours de suite, ce qui est normal.
 - **S6 — Le Monde Informatique :** flux au format RSS 1.0 (RDF), encodé en ISO-8859-15 ; à couvrir par un test de collecte. Les dates sont publiées sans fuseau horaire, en heure de Paris : `timezone: Europe/Paris` dans la configuration (D15).
@@ -51,3 +51,4 @@ Chaque source reçoit un niveau de confiance. Lorsque plusieurs sources publient
 | 2026-09-29 | Vérification indépendante des 6 sources (niveaux confirmés) ; notes techniques S1 et S4 ajoutées (S2 et S6 rédigées lors de la sélection initiale) | [D12](decisions.md#d12--contrôle-qualité) |
 | 2026-09-30 | Création de `config/sources.yaml` ; nouvelle vérification indépendante (niveaux confirmés) ; note technique S5 ajoutée | [D12](decisions.md#d12--contrôle-qualité) |
 | 2026-09-30 | Fuseau horaire de S6 déclaré (`Europe/Paris`) | [D15](decisions.md#d15--dates-publiées-sans-fuseau-horaire) |
+| 2026-10-01 | Notes techniques S1 et S2 : articles sans extrait | Issue [#10](https://github.com/Stryxman/veille-ia/issues/10) |

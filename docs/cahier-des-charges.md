@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.7 — validé par le chef de projet le 2026-10-01
+> **Statut :** v1.8 — validé par le chef de projet le 2026-10-01
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
@@ -22,6 +22,7 @@
 | v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible ; validée le 2026-09-30 (pull request #20) |
 | v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) ; validée le 2026-10-01 (pull request #22) |
 | v1.7 | 2026-10-01 | §4.2 : garde sur les mots pour le regroupement (D17) ; validée le 2026-10-01 (pull request #25) |
+| v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : lien relatif complété avec l'adresse du flux, entrée ignorée si son lien n'est pas une adresse web ; validée le 2026-10-01 (pull request #28) |
 
 ---
 
@@ -54,8 +55,8 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lecture automatique de **6 flux RSS** (4 anglophones, 2 francophones) : Hugging Face Blog, OpenAI News, TechCrunch (IA), The Verge (IA), ActuIA, Le Monde Informatique (IA).
 - Le détail de chaque source (site, flux, langue, type, niveau de confiance, raison du choix) et la date de dernière vérification des flux sont documentés dans [sources.md](sources.md).
 - La liste des sources est définie dans un fichier de configuration (`config/sources.yaml`) : ajouter ou retirer une source ne nécessite pas de modifier le code.
-- Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait, langue. Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
-- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
+- Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait (si le flux en fournit un), langue. Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
+- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; un lien relatif (par exemple `/blog/article`) est complété avec l'adresse du flux ; une entrée dont le lien, une fois complété, n'est pas une adresse web (`http` ou `https`) est ignorée, car un tel lien pourrait exécuter du code sur la page (par exemple un lien `javascript:`) ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
 
 ### 4.2 Traitement
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
@@ -77,7 +78,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 ### 4.3 Restitution
 - Une **page web statique unique**, en français, publiée sur GitHub Pages.
 - Articles groupés par thème, triés du plus récent au plus ancien.
-- Chaque article affiche : titre (lien vers la source originale), source, date, extrait.
+- Chaque article affiche : titre (lien vers la source originale), source, date, extrait (si le flux en fournit un : certains flux n'en donnent pas, voir [sources.md](sources.md)).
 - Un article sans date de publication affiche sa date de collecte et l'étiquette « Date de publication inconnue ».
 - Sous un article qui a des doublons : mention « Aussi couvert par : » suivie des autres sources, avec leurs liens.
 - En tête de page : date et heure de la dernière mise à jour, nombre d'articles.
