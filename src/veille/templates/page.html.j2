@@ -20,6 +20,8 @@ body { overflow-wrap: anywhere; margin: 0; background: var(--page); color: var(-
 a { color: var(--accent); }
 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 h1 { font-size: 1.75rem; line-height: 1.2; margin: 0; }
+.tagline { margin: 0.35rem 0 0.15rem; }
+.back { font-size: 0.9rem; }
 h2 { font-size: 1.15rem; margin: 2.5rem 0 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
 h2::before { content: ""; width: 0.65rem; height: 0.65rem; border-radius: 50%; background: var(--dot); flex: none; }
 h3 { font-size: 1.05rem; line-height: 1.35; margin: 0.25rem 0 0; }
@@ -28,7 +30,7 @@ h3 a:hover { text-decoration: underline; }
 p { margin: 0.25rem 0; }
 .meta, .source, .also, footer { color: var(--muted); font-size: 0.9rem; }
 nav ul { list-style: none; padding: 0; margin: 1.25rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.pill { display: inline-block; background: var(--bg); color: var(--fg); border-radius: 999px; padding: 0.2rem 0.75rem; font-size: 0.9rem; text-decoration: none; }
+.pill { display: inline-block; background: var(--bg); color: var(--fg); border-radius: 999px; padding: 0.35rem 0.8rem; font-size: 0.9rem; text-decoration: none; }
 .pill:hover { text-decoration: underline; }
 .count { font-weight: 600; margin-left: 0.25rem; }
 .c1 { --bg: var(--c1-bg); --fg: var(--c1-text); --dot: var(--c1-dot); }
@@ -49,9 +51,10 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem;
 <div class="page">
 <header>
 <h1>Veille IA</h1>
+<p class="tagline">L'actualité de l'intelligence artificielle des 7 derniers jours, dédoublonnée et classée par thème.</p>
 <p class="meta">Mis à jour le {{ generated_at | french_date(true) }} (heure de Paris) · {{ count }} article{{ 's' if count > 1 }} sur les 7 derniers jours</p>
 {% if sections %}
-<nav aria-label="Thèmes">
+<nav id="themes" aria-label="Thèmes">
 <ul>
 {% for anchor, name, items, colour in sections %}
 <li><a class="pill {{ colour }}" href="#{{ anchor }}">{{ name }} <span class="count">{{ items | length }}</span></a></li>
@@ -67,15 +70,16 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem;
 {% for story in items %}
 <article>
 <p class="source">{{ story.article.source.name }} · {{ story.date | french_date }}{% if not story.date_is_known %} <span class="tag">Date de publication inconnue</span>{% endif %}</p>
-<h3><a href="{{ story.article.link }}">{{ story.article.title }}</a></h3>
+<h3{% if story.article.language != "fr" %} lang="{{ story.article.language }}"{% endif %}><a href="{{ story.article.link }}">{{ story.article.title }}</a></h3>
 {% if story.article.summary %}
-<p>{{ story.article.summary }}</p>
+<p{% if story.article.language != "fr" %} lang="{{ story.article.language }}"{% endif %}>{{ story.article.summary }}</p>
 {% endif %}
 {% if story.also_covered %}
 <p class="also">Aussi couvert par : {% for other in story.also_covered %}<a href="{{ other.link }}">{{ other.source.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 </article>
 {% endfor %}
+<p><a class="back" href="#themes">Retour aux thèmes</a></p>
 </section>
 {% else %}
 <p>Aucun article sur les 7 derniers jours.</p>

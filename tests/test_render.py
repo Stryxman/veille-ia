@@ -139,3 +139,26 @@ def test_main_publishes_nothing_when_no_article_is_collected(tmp_path, monkeypat
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([], list(sources)))
     assert render_module.main(["--output", str(tmp_path)]) == 1
     assert not (tmp_path / "index.html").exists()
+
+
+def test_english_story_is_marked_as_english():
+    html = page([story("Model news", "Modèles & recherche", source=S1)])
+    assert '<h3 lang="en"><a href=' in html  # WCAG 3.1.2: screen readers switch voice
+    assert '<p lang="en">Résumé.</p>' in html
+
+
+def test_french_story_keeps_the_page_language():
+    html = page([story("Actualité", "Modèles & recherche", source=S2)])
+    assert "<h3><a href=" in html
+
+
+def test_each_section_links_back_to_the_themes():
+    html = page([story("A", "Modèles & recherche"), story("B", OTHER_THEME)])
+    assert '<nav id="themes" aria-label="Thèmes">' in html
+    assert html.count('<a class="back" href="#themes">Retour aux thèmes</a>') == 2
+
+
+def test_header_explains_the_page():
+    html = page([story("A", "Modèles & recherche")])
+    expected = "L'actualité de l'intelligence artificielle des 7 derniers jours"
+    assert f'<p class="tagline">{expected}, dédoublonnée et classée par thème.</p>' in html
