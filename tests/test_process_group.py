@@ -28,14 +28,57 @@ def test_title_normalisation_ignores_case_and_punctuation():
     assert normalize_title("OpenAI unveils GPT-6!") == normalize_title("openai unveils gpt 6")
 
 
-def test_same_link_is_one_story():
-    a, b = src("a", 2), src("b", 2)
+def test_same_link_from_another_source_is_listed():
+    a, b = src("a", 2), src("b", 3)
     stories = [
         story("Title one", "https://n.example/x/?utm_medium=feed", a),
         story("Another wording", "https://n.example/x", b),
     ]
     [result] = group_duplicates(stories)
+    assert result.article.source.id == "a"
+    assert [x.source.id for x in result.also_covered] == ["b"]
+
+
+def test_same_link_from_the_same_source_is_not_repeated():
+    a = src("a", 2)
+    stories = [
+        story("Title one", "https://n.example/x", a),
+        story("Title one", "https://n.example/x/?utm_source=rss", a, days_ago=1),
+    ]
+    [result] = group_duplicates(stories)
     assert result.also_covered == ()
+
+
+def test_titles_with_different_numbers_are_kept_apart():
+    # D16: versions, amounts or years that differ mean different news.
+    a, b = src("a", 2), src("b", 2)
+    stories = [
+        story("OpenAI unveils GPT-5 with new reasoning mode", "https://a.example/1", a),
+        story("OpenAI unveils GPT-6 with new reasoning mode", "https://b.example/1", b),
+    ]
+    assert len(group_duplicates(stories)) == 2
+
+
+def test_articles_are_compared_to_the_retained_article_not_chained():
+    # D16: A~B and B~C are similar enough, A~C is not: C stays a separate story.
+    lead, b, c = src("lead", 1), src("b", 2), src("c", 2)
+    stories = [
+        story(
+            "Anthropic opens a new research office in Paris to work on safety", "https://l/1", lead
+        ),
+        story(
+            "Anthropic opens a new research office in Paris to work on AI safety", "https://b/1", b
+        ),
+        story(
+            "Anthropic opens a new research office in Paris to work on AI safety policy rules",
+            "https://c/1",
+            c,
+        ),
+    ]
+    results = group_duplicates(stories)
+    assert len(results) == 2
+    grouped = next(r for r in results if r.article.source.id == "lead")
+    assert [x.source.id for x in grouped.also_covered] == ["b"]
 
 
 def test_near_identical_titles_from_two_sources_are_grouped():
@@ -89,3 +132,15 @@ def test_also_covered_is_ordered_by_trust_then_date():
     [result] = group_duplicates(stories)
     assert result.article.source.id == "lead"
     assert [x.source.id for x in result.also_covered] == ["second", "third"]
+
+
+def test_same_link_as_any_member_joins_the_story():
+    # B joins L by title; C shares B's link with another title: same story, not a new one.
+    lead, b, c = src("l", 1), src("b", 2), src("c", 3)
+    stories = [
+        story("Anthropic opens a research office in Paris", "https://l.example/1", lead),
+        story("Anthropic opens a research office in Paris!", "https://x.example/1", b),
+        story("Paris gets a new AI lab", "https://x.example/1", c),
+    ]
+    [result] = group_duplicates(stories)
+    assert [x.source.id for x in result.also_covered] == ["b", "c"]

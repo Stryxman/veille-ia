@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D15 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30).
+> **Statut :** décisions D1 à D15 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30) ; D16 arbitrée le 2026-10-01, en revue avec la pull request #22.
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -21,6 +21,7 @@
 | D13 | 2026-09-29 | Replanification | Mise en ligne de la V1 avancée du 2026-10-14 au 2026-10-02 |
 | D14 | 2026-09-30 | Outillage de développement | ruff (qualité et format du code) ; pip + venv, dépendances dans `pyproject.toml` |
 | D15 | 2026-09-30 | Dates publiées sans fuseau horaire | Fuseau déclaré par source dans la configuration (UTC par défaut) |
+| D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
 
 ---
 
@@ -198,3 +199,16 @@
   2. Fuseau déduit de la langue (Paris pour les sources françaises) — plus simple, mais hypothèse fragile.
 - **Décision :** option 1 ; Le Monde Informatique est déclaré en `Europe/Paris`.
 - **Justification :** règle explicite, vérifiable et modifiable sans code ; une date qui porte son propre fuseau n'est jamais modifiée.
+
+## D16 — Règles de regroupement des doublons
+
+- **Date :** 2026-10-01
+- **Contexte :** la recette du regroupement (issue #8) a montré deux effets indésirables du seul seuil de similarité de 90 % : des annonces différentes dont le titre ne diffère que d'un numéro de version (« GPT-5 » / « GPT-6 », similarité 0,98) étaient fusionnées, et des articles de plus en plus éloignés pouvaient être regroupés en chaîne (A proche de B, B proche de C, mais A éloigné de C).
+- **Options envisagées (nombres) :**
+  1. Titres dont les nombres diffèrent (versions, montants, années) jamais regroupés — règle simple et testable, adaptée à l'actualité IA.
+  2. Seuil de similarité seul — une annonce peut disparaître de la page, fusionnée avec une autre.
+- **Options envisagées (rattachement) :**
+  1. Le titre de chaque article est comparé à celui de l'article retenu de chaque histoire (similaire à 90 % ou plus) — pas de chaînage ; un lien déjà présent dans une histoire la rejoint toujours (même lien = même actualité).
+  2. Regroupement en chaîne — une histoire peut absorber des articles de plus en plus éloignés.
+- **Décision :** option 1 dans les deux cas. Un même lien publié par une autre source apparaît dans « Aussi couvert par » ; un même article publié deux fois par une même source n'est listé qu'une fois.
+- **Justification :** éviter qu'une actualité distincte disparaisse de la page ; règles explicites, vérifiables par des tests.

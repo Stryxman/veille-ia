@@ -63,6 +63,7 @@ def select_recent(articles: list[Article], now: datetime) -> list[Story]:
 
 TITLE_SIMILARITY = 0.9
 PUNCTUATION = re.compile(r"[^\w\s]")
+NUMBER = re.compile(r"\d+")
 
 
 def normalize_link(link: str) -> str:
@@ -88,33 +89,43 @@ def _rank(story: Story) -> tuple[int, datetime]:
     return (story.article.source.trust_level, story.date)
 
 
+def _same_story(link: str, title: str, links: set[str], lead_title: str) -> bool:
+    if link in links:  # same link as any article already in the story
+        return True
+    if NUMBER.findall(title) != NUMBER.findall(lead_title):
+        return False  # D16: different versions, amounts or years are different news
+    matcher = SequenceMatcher(None, title, lead_title)
+    return (  # cheap upper bounds first: most pairs are far apart
+        matcher.real_quick_ratio() >= TITLE_SIMILARITY
+        and matcher.quick_ratio() >= TITLE_SIMILARITY
+        and matcher.ratio() >= TITLE_SIMILARITY
+    )
+
+
 def group_duplicates(stories: list[Story]) -> list[Story]:
-    links = [normalize_link(s.article.link) for s in stories]
-    titles = [normalize_title(s.article.title) for s in stories]
-    parent = list(range(len(stories)))
-
-    def root(i: int) -> int:
-        while parent[i] != i:
-            parent[i] = parent[parent[i]]
-            i = parent[i]
-        return i
-
-    for i in range(len(stories)):
-        for j in range(i + 1, len(stories)):
-            same_link = links[i] == links[j]
-            if same_link or SequenceMatcher(None, titles[i], titles[j]).ratio() >= TITLE_SIMILARITY:
-                parent[root(j)] = root(i)
-
-    groups: dict[int, list[int]] = {}
-    for i in range(len(stories)):
-        groups.setdefault(root(i), []).append(i)
+    # D16: titles are compared with the retained article of each story (no chaining);
+    # a link already present in a story always joins it (same link = same news).
+    # stories are built in rank order, so the first member is the retained one (D10).
+    groups: list[tuple[set[str], str, list[Story]]] = []
+    for story in sorted(stories, key=_rank):
+        link = normalize_link(story.article.link)
+        title = normalize_title(story.article.title)
+        for links, lead_title, members in groups:
+            if _same_story(link, title, links, lead_title):
+                members.append(story)
+                links.add(link)
+                break
+        else:
+            groups.append(({link}, title, [story]))
 
     result = []
-    for members in groups.values():
-        members.sort(key=lambda i: _rank(stories[i]))
-        lead, *others = members
-        others = [i for i in others if links[i] != links[lead]]  # same article, not a second source
-        result.append(
-            replace(stories[lead], also_covered=tuple(stories[i].article for i in others))
-        )
+    for _, _, (lead, *others) in groups:
+        seen = {(lead.article.source.id, normalize_link(lead.article.link))}
+        also_covered = []
+        for other in others:
+            key = (other.article.source.id, normalize_link(other.article.link))
+            if key not in seen:  # the same article twice from one source is listed once
+                seen.add(key)
+                also_covered.append(other.article)
+        result.append(replace(lead, also_covered=tuple(also_covered)))
     return result

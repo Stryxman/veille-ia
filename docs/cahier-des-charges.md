@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.5 — validé par le chef de projet le 2026-09-30
+> **Statut :** v1.6 — en revue (pull request #22) ; v1.5 validée le 2026-09-30
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D15)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D16)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -20,6 +20,7 @@
 | v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) ; validée le 2026-09-30 (pull request #16) |
 | v1.4 | 2026-09-30 | §4.1 : entrées sans titre ou sans lien ignorées et signalées dans le journal d'exécution ; §6 : taille maximale d'un flux (10 Mio) ; validée le 2026-09-30 (pull request #17) |
 | v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible ; validée le 2026-09-30 (pull request #20) |
+| v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) |
 
 ---
 
@@ -59,7 +60,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
 - **Fenêtre temporelle :** seuls les articles des **7 derniers jours** sont conservés.
 - **Article sans date de publication :** il est conservé et daté de sa date de collecte, qui sert au tri et à la fenêtre temporelle ; il est signalé sur la page par l'étiquette « Date de publication inconnue ».
-- **Regroupement des doublons :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu.
+- **Regroupement des doublons :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu. Le titre d'un article est comparé à celui de l'article retenu de chaque histoire (pas de regroupement en chaîne) ; un lien déjà présent dans une histoire la rejoint toujours ; deux titres dont les nombres diffèrent (versions, montants, années) ne sont jamais regroupés (D16).
 - **Niveaux de confiance des sources** (définis dans `config/sources.yaml`, justifiés dans [sources.md](sources.md)) :
   1. Source primaire (l'éditeur qui fait l'annonce)
   2. Presse spécialisée IA ou tech
