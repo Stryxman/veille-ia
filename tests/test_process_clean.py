@@ -67,3 +67,16 @@ def test_selected_articles_are_cleaned():
     [story] = select_recent([article(title="<b>Hi</b> &amp; bye", summary="<p>x</p>")], NOW)
     assert story.article.title == "Hi & bye"
     assert story.article.summary == "x"
+
+
+def test_quoted_non_html_tag_is_kept():
+    # AI news often quotes tags such as <think>: they are text, not markup.
+    assert clean_text("How models use <think> tags") == "How models use <think> tags"
+
+
+def test_escaped_tag_in_html_summary_is_kept_as_text():
+    assert clean_text("<p>The &lt;think&gt; block</p>") == "The <think> block"
+
+
+def test_comparison_signs_are_kept():
+    assert clean_text("a < b and c > d") == "a < b and c > d"
