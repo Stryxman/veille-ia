@@ -80,3 +80,11 @@ def test_escaped_tag_in_html_summary_is_kept_as_text():
 
 def test_comparison_signs_are_kept():
     assert clean_text("a < b and c > d") == "a < b and c > d"
+
+
+def test_html5_markup_and_script_blocks_are_removed():
+    raw = (
+        "<article><header><time datetime='x'>Today</time></header><section>Body</section>"
+        "<script>track()</script><style>p{}</style></article>"
+    )
+    assert clean_text(raw) == "Today Body"
