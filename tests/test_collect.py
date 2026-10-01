@@ -66,6 +66,18 @@ def test_item_whose_link_is_not_a_web_address_is_skipped():
     assert [a.title for a in articles] == ["Web"]  # a javascript: link would run code on click
 
 
+def test_relative_link_is_completed_with_the_feed_address():
+    feed = b"""<?xml version="1.0"?><rss version="2.0"><channel><title>T</title>
+<item><title>Relative</title><link>/blog/article-1</link></item>
+<item><title>Scheme-relative</title><link>//cdn.example.org/a</link></item>
+</channel></rss>"""
+    articles = parse_feed(feed, source())  # feed address: https://example.org/T1.xml
+    assert [a.link for a in articles] == [
+        "https://example.org/blog/article-1",
+        "https://cdn.example.org/a",
+    ]
+
+
 def test_skipped_items_are_logged(caplog):
     with caplog.at_level("WARNING", logger="veille.collect"):
         parse_feed(fixture("rss2.xml"), source())

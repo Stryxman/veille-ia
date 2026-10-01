@@ -98,7 +98,9 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
     skipped = 0
     for entry in parsed.entries:
         title = entry.get("title", "").strip()
+        # a relative link is completed with the feed address, then must be http(s)
         link = entry.get("link", "").strip()
+        link = urllib.parse.urljoin(source.feed_url, link) if link else ""
         if not title or not _is_web_link(link):
             skipped += 1
             continue
