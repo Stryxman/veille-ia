@@ -169,3 +169,30 @@ def test_a_source_is_never_listed_under_its_own_article():
     ]
     [result] = group_duplicates(stories)
     assert result.also_covered == ()
+
+
+def test_long_titles_differing_by_one_entity_are_kept_apart():
+    # D17: 0.94 similar, but "google" and "meta" each appear in one title only.
+    a, b = src("a", 2), src("b", 2)
+    stories = [
+        story(
+            "La CNIL inflige une amende record à Google pour ses cookies publicitaires",
+            "https://a/1",
+            a,
+        ),
+        story(
+            "La CNIL inflige une amende record à Meta pour ses cookies publicitaires",
+            "https://b/1",
+            b,
+        ),
+    ]
+    assert len(group_duplicates(stories)) == 2
+
+
+def test_negated_title_is_kept_apart():
+    a, b = src("a", 2), src("b", 2)
+    stories = [
+        story("Microsoft lance Copilot en Europe", "https://a/1", a),
+        story("Microsoft ne lance pas Copilot en Europe", "https://b/1", b),
+    ]
+    assert len(group_duplicates(stories)) == 2

@@ -28,11 +28,15 @@ HTML_TAG = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 SPACES = re.compile(r"\s+")
+ENTITY = re.compile(r"&#?\w+;")
 
 
 def clean_text(raw: str) -> str:
-    text = raw
-    for _ in range(2):  # some feeds escape their HTML twice
+    text = html.unescape(HTML_TAG.sub(" ", raw))
+    # Some feeds escape their whole HTML twice: decode again only in that case (no real
+    # markup in the original, markup or entities revealed), so quoted tags and "&amp;x"
+    # in ordinary HTML are not decoded a second time.
+    if not HTML_TAG.search(raw) and (HTML_TAG.search(text) or ENTITY.search(text)):
         text = html.unescape(HTML_TAG.sub(" ", text))
     return SPACES.sub(" ", text).strip()
 
@@ -70,6 +74,7 @@ def select_recent(articles: list[Article], now: datetime) -> list[Story]:
 TITLE_SIMILARITY = 0.9
 PUNCTUATION = re.compile(r"[^\w\s]")
 NUMBER = re.compile(r"\d+")
+WORD = re.compile(r"\w{3,}")
 TYPOGRAPHIC = str.maketrans({"’": "'", "‘": "'", "–": "-", "—": "-", "\u00a0": " "})
 
 
@@ -99,6 +104,8 @@ def _rank(story: Story) -> tuple[int, datetime]:
 def _similar_titles(title: str, lead_title: str) -> bool:
     if NUMBER.findall(title) != NUMBER.findall(lead_title):
         return False  # D16: different versions, amounts or years are different news
+    if set(WORD.findall(title)) != set(WORD.findall(lead_title)):
+        return False  # D17: a word of 3+ letters in one title only (entity, negation...)
     matcher = SequenceMatcher(None, title, lead_title)
     return (  # cheap upper bounds first: most pairs are far apart
         matcher.real_quick_ratio() >= TITLE_SIMILARITY

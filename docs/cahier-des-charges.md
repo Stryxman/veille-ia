@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.6 — validé par le chef de projet le 2026-10-01
+> **Statut :** v1.7 — en revue (issue #24) ; v1.6 validée le 2026-10-01
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D16)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -21,6 +21,7 @@
 | v1.4 | 2026-09-30 | §4.1 : entrées sans titre ou sans lien ignorées et signalées dans le journal d'exécution ; §6 : taille maximale d'un flux (10 Mio) ; validée le 2026-09-30 (pull request #17) |
 | v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible ; validée le 2026-09-30 (pull request #20) |
 | v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) ; validée le 2026-10-01 (pull request #22) |
+| v1.7 | 2026-10-01 | §4.2 : garde sur les mots pour le regroupement (D17) |
 
 ---
 
@@ -60,7 +61,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
 - **Fenêtre temporelle :** seuls les articles des **7 derniers jours** sont conservés.
 - **Article sans date de publication :** il est conservé et daté de sa date de collecte, qui sert au tri et à la fenêtre temporelle ; il est signalé sur la page par l'étiquette « Date de publication inconnue ».
-- **Regroupement des doublons :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu. Le titre d'un article est comparé à celui de l'article retenu de chaque histoire (pas de regroupement en chaîne) ; un lien déjà présent dans une histoire la rejoint toujours, en priorité sur la comparaison des titres ; chaque autre source n'apparaît qu'une fois dans « Aussi couvert par », jamais sous son propre article ; deux titres dont les nombres diffèrent (versions, montants, années) ne sont jamais regroupés (D16).
+- **Regroupement des doublons :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu. Le titre d'un article est comparé à celui de l'article retenu de chaque histoire (pas de regroupement en chaîne) ; un lien déjà présent dans une histoire la rejoint toujours, en priorité sur la comparaison des titres ; chaque autre source n'apparaît qu'une fois dans « Aussi couvert par », jamais sous son propre article ; deux titres dont les nombres diffèrent (versions, montants, années) ne sont jamais regroupés (D16), ni deux titres dont un mot d'au moins 3 lettres n'apparaît que dans l'un des deux (D17).
 - **Niveaux de confiance des sources** (définis dans `config/sources.yaml`, justifiés dans [sources.md](sources.md)) :
   1. Source primaire (l'éditeur qui fait l'annonce)
   2. Presse spécialisée IA ou tech
