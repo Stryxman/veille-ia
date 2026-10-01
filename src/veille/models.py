@@ -23,3 +23,14 @@ class Article:
     published: datetime | None  # UTC; None when the feed gives no date
     summary: str
     language: str
+
+
+@dataclass(frozen=True)
+class Story:
+    """One piece of news: the retained article plus the duplicates grouped under it."""
+
+    article: Article
+    date: datetime  # publication date, or collection time when unknown (D11)
+    date_is_known: bool
+    also_covered: tuple[Article, ...] = ()
+    theme: str = "Autres"
