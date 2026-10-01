@@ -4,7 +4,7 @@ Une page web qui rassemble chaque jour l'actualité de l'intelligence artificiel
 
 > **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) en cours. Mise en ligne de la V1 visée le 2 octobre 2026.
 
-**Page en ligne :** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — mise à jour chaque jour vers 6 h, heure de Paris (5 h en heure d'hiver).
+**Page en ligne :** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — mise à jour chaque jour vers 6 h 15, heure de Paris (5 h 15 en heure d'hiver).
 
 ## Le besoin
 

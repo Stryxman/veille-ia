@@ -67,10 +67,11 @@ def test_themes_follow_configuration_order_and_empty_ones_are_hidden():
 
 def test_theme_colours_follow_configuration_position():
     html = page([story("Money", "Business & financement"), story("Other", OTHER_THEME)])
-    assert '<section class="c2" aria-labelledby="theme-1">' in html
-    assert '<section class="other" aria-labelledby="theme-2">' in html
+    # anchors follow the configuration too, so a bookmark survives an empty theme
+    assert '<section class="c2" aria-labelledby="theme-2">' in html
+    assert '<section class="other" aria-labelledby="theme-autres">' in html
     pill = (
-        '<a class="pill c2" href="#theme-1">Business &amp; financement <span class="count">1</span>'
+        '<a class="pill c2" href="#theme-2">Business &amp; financement <span class="count">1</span>'
     )
     assert pill in html
 
@@ -78,7 +79,7 @@ def test_theme_colours_follow_configuration_position():
 def test_theme_colours_start_again_after_the_sixth_theme():
     many = [Theme(f"T{index}", ("x",)) for index in range(1, 8)]
     html = render_page([story("A", "T7")], many, [S1], [], GENERATED)
-    assert '<section class="c1" aria-labelledby="theme-1">' in html
+    assert '<section class="c1" aria-labelledby="theme-7">' in html
 
 
 def test_story_shows_title_link_source_date_and_excerpt():
@@ -110,8 +111,12 @@ def test_also_covered_lists_other_sources_with_links():
 
 def test_footer_lists_sources_and_unavailable_ones():
     html = page([story("A", "Modèles & recherche")], unavailable=[S2])
+    assert "Source indisponible lors de la dernière mise à jour : ActuIA." in html
+    html = page([story("A", "Modèles & recherche")], unavailable=[S1, S2])
     assert '<a href="https://hf.example/">Hugging Face Blog</a>' in html
-    assert "Sources indisponibles lors de la dernière mise à jour : ActuIA." in html
+    assert (
+        "Sources indisponibles lors de la dernière mise à jour : Hugging Face Blog, ActuIA." in html
+    )
 
 
 def test_footer_says_when_all_sources_answered():
@@ -162,3 +167,12 @@ def test_header_explains_the_page():
     html = page([story("A", "Modèles & recherche")])
     expected = "L'actualité de l'intelligence artificielle des 7 derniers jours"
     assert f'<p class="tagline">{expected}, dédoublonnée et classée par thème.</p>' in html
+
+
+def test_main_publishes_nothing_when_no_story_is_recent(tmp_path, monkeypatch):
+    old = Article(
+        "Old news", "https://n.example/old", S1, datetime(2020, 1, 1, tzinfo=UTC), "x", "en"
+    )
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([old], []))
+    assert render_module.main(["--output", str(tmp_path)]) == 1  # previous page stays online
+    assert not (tmp_path / "index.html").exists()

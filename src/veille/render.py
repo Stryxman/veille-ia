@@ -44,15 +44,18 @@ def render_page(
         lstrip_blocks=True,
     )
     env.filters["french_date"] = french_date
-    # the colour follows the position in the configuration, so it stays stable when a theme is empty
-    # beyond COLOURS themes, colours start again (themes stay configurable without code, O5)
-    names = [(theme.name, f"c{index % COLOURS + 1}") for index, theme in enumerate(themes)]
-    names.append((OTHER_THEME, "other"))
+    # anchor and colour follow the position in the configuration, so they stay stable when a
+    # theme is empty; beyond COLOURS themes, colours start again (themes configurable, O5)
+    names = [
+        (f"theme-{index + 1}", theme.name, f"c{index % COLOURS + 1}")
+        for index, theme in enumerate(themes)
+    ]
+    names.append(("theme-autres", OTHER_THEME, "other"))
     sections = []
-    for name, colour in names:
+    for anchor, name, colour in names:
         items = [story for story in stories if story.theme == name]
         if items:  # no empty section nor table of contents entry
-            sections.append((f"theme-{len(sections) + 1}", name, items, colour))
+            sections.append((anchor, name, items, colour))
     return env.get_template("page.html.j2").render(
         sections=sections,
         count=len(stories),
@@ -75,6 +78,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1  # the workflow stops here, the previous page stays online
     now = datetime.now(UTC)
     stories = process(collected.articles, now, themes)
+    if not stories:
+        logging.error("No article in the last 7 days: the page is not generated")
+        return 1  # same as above: an empty page never replaces the previous one
     args.output.mkdir(parents=True, exist_ok=True)
     page = render_page(stories, themes, sources, collected.unavailable, now)
     (args.output / "index.html").write_text(page, encoding="utf-8")

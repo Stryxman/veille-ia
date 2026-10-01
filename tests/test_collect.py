@@ -78,6 +78,15 @@ def test_relative_link_is_completed_with_the_feed_address():
     ]
 
 
+def test_item_whose_link_has_no_site_is_skipped():
+    feed = b"""<?xml version="1.0"?><rss version="2.0"><channel><title>T</title>
+<item><title>Scheme only</title><link>https:</link></item>
+<item><title>No host</title><link>http:foo</link></item>
+<item><title>Web</title><link>https://example.org/ok</link></item>
+</channel></rss>"""
+    assert [a.title for a in parse_feed(feed, source())] == ["Web"]
+
+
 def test_skipped_items_are_logged(caplog):
     with caplog.at_level("WARNING", logger="veille.collect"):
         parse_feed(fixture("rss2.xml"), source())

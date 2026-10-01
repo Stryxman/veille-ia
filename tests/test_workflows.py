@@ -11,7 +11,7 @@ def workflow():
 
 def test_publication_runs_daily_and_on_demand():
     triggers = workflow()[True]  # YAML 1.1 reads the "on" key as True
-    assert triggers["schedule"] == [{"cron": "0 4 * * *"}]
+    assert triggers["schedule"] == [{"cron": "17 4 * * *"}]
     assert "workflow_dispatch" in triggers
 
 
@@ -30,3 +30,8 @@ def test_publication_has_only_the_permissions_it_needs():
     # only the deploy job may publish to Pages; the build job reads external feeds
     assert workflow()["permissions"] == {"contents": "read"}
     assert workflow()["jobs"]["deploy"]["permissions"] == {"pages": "write", "id-token": "write"}
+
+
+def test_publication_steps_cannot_hang():
+    jobs = workflow()["jobs"]
+    assert all(job.get("timeout-minutes") for job in jobs.values())

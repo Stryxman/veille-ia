@@ -77,9 +77,18 @@ def _entry_date(entry, source: Source) -> datetime | None:
     return None
 
 
-def _is_web_link(link: str) -> bool:
-    """Only http(s) links are kept: a javascript: or data: link would run code on the page."""
-    return urllib.parse.urlsplit(link).scheme.lower() in {"http", "https"}
+def _web_link(link: str, feed_url: str) -> str:
+    """Return a usable http(s) link, or "" when the entry must be skipped.
+
+    A relative link is completed with the feed address. Any other scheme (javascript:, data:)
+    could run code on the page, and a link without a site (https:) leads nowhere.
+    """
+    if not link:
+        return ""
+    parts = urllib.parse.urlsplit(link)
+    if not parts.scheme:
+        return urllib.parse.urljoin(feed_url, link)
+    return link if parts.scheme.lower() in {"http", "https"} and parts.netloc else ""
 
 
 def parse_feed(data: bytes, source: Source) -> list[Article]:
@@ -98,10 +107,8 @@ def parse_feed(data: bytes, source: Source) -> list[Article]:
     skipped = 0
     for entry in parsed.entries:
         title = entry.get("title", "").strip()
-        # a relative link is completed with the feed address, then must be http(s)
-        link = entry.get("link", "").strip()
-        link = urllib.parse.urljoin(source.feed_url, link) if link else ""
-        if not title or not _is_web_link(link):
+        link = _web_link(entry.get("link", "").strip(), source.feed_url)
+        if not title or not link:
             skipped += 1
             continue
         articles.append(
