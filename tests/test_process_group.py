@@ -144,3 +144,28 @@ def test_same_link_as_any_member_joins_the_story():
     ]
     [result] = group_duplicates(stories)
     assert [x.source.id for x in result.also_covered] == ["b", "c"]
+
+
+def test_link_match_takes_priority_over_title_match():
+    # C has A's title but B's link: the link decides (D16), so C joins B's story.
+    a, b, c = src("a", 1), src("b", 2), src("c", 3)
+    stories = [
+        story("Anthropic opens a research office in Paris", "https://a.example/1", a),
+        story("Unrelated headline about chips", "https://shared.example/1", b),
+        story("Anthropic opens a research office in Paris.", "https://shared.example/1", c),
+    ]
+    results = {
+        r.article.source.id: [x.source.id for x in r.also_covered]
+        for r in group_duplicates(stories)
+    }
+    assert results == {"a": [], "b": ["c"]}
+
+
+def test_a_source_is_never_listed_under_its_own_article():
+    a = src("a", 2)
+    stories = [
+        story("Anthropic ships Claude 6", "https://a.example/1", a),
+        story("Anthropic ships Claude 6", "https://a.example/2", a, days_ago=1),
+    ]
+    [result] = group_duplicates(stories)
+    assert result.also_covered == ()

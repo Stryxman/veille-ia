@@ -208,7 +208,7 @@
   1. Titres dont les nombres diffèrent (versions, montants, années) jamais regroupés — règle simple et testable, adaptée à l'actualité IA.
   2. Seuil de similarité seul — une annonce peut disparaître de la page, fusionnée avec une autre.
 - **Options envisagées (rattachement) :**
-  1. Le titre de chaque article est comparé à celui de l'article retenu de chaque histoire (similaire à 90 % ou plus) — pas de chaînage ; un lien déjà présent dans une histoire la rejoint toujours (même lien = même actualité).
+  1. Le titre de chaque article est comparé à celui de l'article retenu de chaque histoire (similaire à 90 % ou plus) — pas de chaînage ; un lien déjà présent dans une histoire la rejoint toujours, en priorité sur la comparaison des titres (même lien = même actualité).
   2. Regroupement en chaîne — une histoire peut absorber des articles de plus en plus éloignés.
-- **Décision :** option 1 dans les deux cas. Un même lien publié par une autre source apparaît dans « Aussi couvert par » ; un même article publié deux fois par une même source n'est listé qu'une fois.
+- **Décision :** option 1 dans les deux cas. Un même lien publié par une autre source apparaît dans « Aussi couvert par » ; chaque autre source n'y figure qu'une fois, et une source n'est jamais listée sous son propre article.
 - **Justification :** éviter qu'une actualité distincte disparaisse de la page ; règles explicites, vérifiables par des tests.

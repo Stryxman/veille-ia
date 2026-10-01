@@ -89,9 +89,7 @@ def _rank(story: Story) -> tuple[int, datetime]:
     return (story.article.source.trust_level, story.date)
 
 
-def _same_story(link: str, title: str, links: set[str], lead_title: str) -> bool:
-    if link in links:  # same link as any article already in the story
-        return True
+def _similar_titles(title: str, lead_title: str) -> bool:
     if NUMBER.findall(title) != NUMBER.findall(lead_title):
         return False  # D16: different versions, amounts or years are different news
     matcher = SequenceMatcher(None, title, lead_title)
@@ -103,29 +101,29 @@ def _same_story(link: str, title: str, links: set[str], lead_title: str) -> bool
 
 
 def group_duplicates(stories: list[Story]) -> list[Story]:
-    # D16: titles are compared with the retained article of each story (no chaining);
-    # a link already present in a story always joins it (same link = same news).
-    # stories are built in rank order, so the first member is the retained one (D10).
+    # Stories are built in rank order, so the first member is the retained article (D10).
+    # D16: a link already present in a story always joins it (checked first, in every story);
+    # otherwise the title is compared with each story's retained article (no chaining).
     groups: list[tuple[set[str], str, list[Story]]] = []
     for story in sorted(stories, key=_rank):
         link = normalize_link(story.article.link)
         title = normalize_title(story.article.title)
-        for links, lead_title, members in groups:
-            if _same_story(link, title, links, lead_title):
-                members.append(story)
-                links.add(link)
-                break
-        else:
+        target = next((g for g in groups if link in g[0]), None)
+        if target is None:
+            target = next((g for g in groups if _similar_titles(title, g[1])), None)
+        if target is None:
             groups.append(({link}, title, [story]))
+        else:
+            target[0].add(link)
+            target[2].append(story)
 
     result = []
     for _, _, (lead, *others) in groups:
-        seen = {(lead.article.source.id, normalize_link(lead.article.link))}
+        listed = {lead.article.source.id}
         also_covered = []
         for other in others:
-            key = (other.article.source.id, normalize_link(other.article.link))
-            if key not in seen:  # the same article twice from one source is listed once
-                seen.add(key)
+            if other.article.source.id not in listed:  # each other source once, never its own
+                listed.add(other.article.source.id)
                 also_covered.append(other.article)
         result.append(replace(lead, also_covered=tuple(also_covered)))
     return result
