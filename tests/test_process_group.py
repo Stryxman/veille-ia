@@ -60,20 +60,13 @@ def test_titles_with_different_numbers_are_kept_apart():
 
 
 def test_articles_are_compared_to_the_retained_article_not_chained():
-    # D16: A~B and B~C are similar enough, A~C is not: C stays a separate story.
+    # D16: only small words differ (so D17 does not separate them); A~B and B~C are
+    # similar enough, A~C is not: C stays a separate story instead of chaining through B.
     lead, b, c = src("lead", 1), src("b", 2), src("c", 2)
     stories = [
-        story(
-            "Anthropic opens a new research office in Paris to work on safety", "https://l/1", lead
-        ),
-        story(
-            "Anthropic opens a new research office in Paris to work on AI safety", "https://b/1", b
-        ),
-        story(
-            "Anthropic opens a new research office in Paris to work on AI safety policy rules",
-            "https://c/1",
-            c,
-        ),
+        story("OpenAI and Microsoft sign cloud deal for Europe", "https://l/1", lead),
+        story("OpenAI and Microsoft to sign a cloud deal for Europe", "https://b/1", b),
+        story("OpenAI and Microsoft to sign a cloud deal for EU in Europe", "https://c/1", c),
     ]
     results = group_duplicates(stories)
     assert len(results) == 2
