@@ -1,0 +1,44 @@
+name: Publication
+
+on:
+  schedule:
+    - cron: "0 4 * * *"  # 06:00 in Paris in summer time, 05:00 in winter time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install .
+      - name: Build the page
+        # Fails (exit 1) when no article is collected: nothing is deployed,
+        # the previous page stays online.
+        run: python -m veille.render --output site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:  # only this job publishes
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
