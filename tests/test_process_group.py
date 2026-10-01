@@ -60,20 +60,13 @@ def test_titles_with_different_numbers_are_kept_apart():
 
 
 def test_articles_are_compared_to_the_retained_article_not_chained():
-    # D16: A~B and B~C are similar enough, A~C is not: C stays a separate story.
+    # D16: only small words differ (so D17 does not separate them); A~B and B~C are
+    # similar enough, A~C is not: C stays a separate story instead of chaining through B.
     lead, b, c = src("lead", 1), src("b", 2), src("c", 2)
     stories = [
-        story(
-            "Anthropic opens a new research office in Paris to work on safety", "https://l/1", lead
-        ),
-        story(
-            "Anthropic opens a new research office in Paris to work on AI safety", "https://b/1", b
-        ),
-        story(
-            "Anthropic opens a new research office in Paris to work on AI safety policy rules",
-            "https://c/1",
-            c,
-        ),
+        story("OpenAI and Microsoft sign cloud deal for Europe", "https://l/1", lead),
+        story("OpenAI and Microsoft to sign a cloud deal for Europe", "https://b/1", b),
+        story("OpenAI and Microsoft to sign a cloud deal for EU in Europe", "https://c/1", c),
     ]
     results = group_duplicates(stories)
     assert len(results) == 2
@@ -169,3 +162,30 @@ def test_a_source_is_never_listed_under_its_own_article():
     ]
     [result] = group_duplicates(stories)
     assert result.also_covered == ()
+
+
+def test_long_titles_differing_by_one_entity_are_kept_apart():
+    # D17: 0.94 similar, but "google" and "meta" each appear in one title only.
+    a, b = src("a", 2), src("b", 2)
+    stories = [
+        story(
+            "La CNIL inflige une amende record à Google pour ses cookies publicitaires",
+            "https://a/1",
+            a,
+        ),
+        story(
+            "La CNIL inflige une amende record à Meta pour ses cookies publicitaires",
+            "https://b/1",
+            b,
+        ),
+    ]
+    assert len(group_duplicates(stories)) == 2
+
+
+def test_negated_title_is_kept_apart():
+    a, b = src("a", 2), src("b", 2)
+    stories = [
+        story("Microsoft lance Copilot en Europe", "https://a/1", a),
+        story("Microsoft ne lance pas Copilot en Europe", "https://b/1", b),
+    ]
+    assert len(group_duplicates(stories)) == 2

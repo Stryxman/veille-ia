@@ -88,3 +88,13 @@ def test_html5_markup_and_script_blocks_are_removed():
         "<script>track()</script><style>p{}</style></article>"
     )
     assert clean_text(raw) == "Today Body"
+
+
+def test_single_escaped_ampersand_is_not_decoded_twice():
+    assert clean_text("Read more: https://x.example/?id=1&amp;section=ai") == (
+        "Read more: https://x.example/?id=1&section=ai"
+    )
+
+
+def test_quoted_html_tag_in_html_summary_is_kept_as_text():
+    assert clean_text("<p>Use the &lt;b&gt; tag</p>") == "Use the <b> tag"

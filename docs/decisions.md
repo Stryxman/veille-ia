@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D16 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 le 2026-10-01).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -22,6 +22,7 @@
 | D14 | 2026-09-30 | Outillage de développement | ruff (qualité et format du code) ; pip + venv, dépendances dans `pyproject.toml` |
 | D15 | 2026-09-30 | Dates publiées sans fuseau horaire | Fuseau déclaré par source dans la configuration (UTC par défaut) |
 | D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
+| D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
 
 ---
 
@@ -212,3 +213,14 @@
   2. Regroupement en chaîne — une histoire peut absorber des articles de plus en plus éloignés.
 - **Décision :** option 1 dans les deux cas. Un même lien publié par une autre source apparaît dans « Aussi couvert par » ; chaque autre source n'y figure qu'une fois, et une source n'est jamais listée sous son propre article.
 - **Justification :** éviter qu'une actualité distincte disparaisse de la page ; règles explicites, vérifiables par des tests.
+
+## D17 — Garde sur les mots pour le regroupement
+
+- **Date :** 2026-10-01
+- **Contexte :** la revue de code de fin de J2 a montré que le seuil de 90 %, calculé lettre par lettre, regroupe encore des titres longs qui ne diffèrent que par un mot (« amende à Google » / « amende à Meta » : 0,94 ; « lance » / « ne lance pas » : 0,90). La seconde actualité disparaîtrait de la page, ce que D16 vise à éviter.
+- **Options envisagées :**
+  1. Garde sur les mots — en plus du seuil, aucun mot d'au moins 3 lettres ne doit apparaître dans un seul des deux titres. Les doublons qui ne diffèrent que par la ponctuation ou de petits mots restent regroupés.
+  2. Similarité calculée sur les mots plutôt que sur les lettres — efficace sur les titres courts, moins sur les titres très longs.
+  3. Accepter le risque — cas rare, mais perte silencieuse.
+- **Décision :** option 1.
+- **Justification :** aucune actualité distincte ne doit disparaître ; un doublon reformulé d'un mot n'est plus regroupé, ce qui est préférable à une perte d'information (lié à R12).
