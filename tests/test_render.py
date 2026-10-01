@@ -1,0 +1,141 @@
+from datetime import UTC, datetime
+
+from veille import render as render_module
+from veille.collect import CollectResult
+from veille.config import OTHER_THEME
+from veille.models import Article, Source, Story, Theme
+from veille.render import french_date, render_page
+
+GENERATED = datetime(2026, 10, 2, 4, 0, tzinfo=UTC)
+S1 = Source("S1", "Hugging Face Blog", "https://hf.example/feed", "https://hf.example/", "en", 1)
+S2 = Source("S2", "ActuIA", "https://actuia.example/feed", "https://actuia.example/", "fr", 2)
+THEMES = [Theme("Modèles & recherche", ("model",)), Theme("Business & financement", ("funding",))]
+
+
+def story(title, theme, source=S1, known=True, also=(), summary="Résumé.", link=None):
+    article = Article(
+        title,
+        link or f"https://x.example/{abs(hash(title))}",
+        source,
+        GENERATED if known else None,
+        summary,
+        source.language,
+    )
+    return Story(article, GENERATED, known, tuple(also), theme)
+
+
+def page(stories, unavailable=()):
+    return render_page(stories, THEMES, [S1, S2], list(unavailable), GENERATED)
+
+
+def test_french_dates_in_paris_time():
+    assert french_date(GENERATED) == "2 octobre 2026"
+    assert french_date(GENERATED, with_time=True) == "2 octobre 2026 à 06:00"
+    assert french_date(datetime(2026, 10, 1, 12, tzinfo=UTC)) == "1er octobre 2026"
+    assert (
+        french_date(datetime(2026, 12, 1, 5, tzinfo=UTC), with_time=True)
+        == "1er décembre 2026 à 06:00"
+    )
+
+
+def test_page_is_in_french_and_readable_on_mobile():
+    html = page([story("A", "Modèles & recherche")])
+    assert '<html lang="fr">' in html
+    assert '<meta name="viewport" content="width=device-width, initial-scale=1">' in html
+    assert (
+        "body { overflow-wrap: anywhere;" in html
+    )  # titles and pills wrap too, not only paragraphs
+
+
+def test_header_shows_update_time_and_count():
+    html = page([story("A", "Modèles & recherche"), story("B", OTHER_THEME)])
+    assert "Mis à jour le 2 octobre 2026 à 06:00 (heure de Paris)" in html
+    assert "2 articles" in html
+
+
+def test_header_count_is_singular_for_one_article():
+    assert "· 1 article sur les 7 derniers jours" in page([story("A", "Modèles & recherche")])
+    assert "· 0 article sur les 7 derniers jours" in page([])
+
+
+def test_themes_follow_configuration_order_and_empty_ones_are_hidden():
+    html = page([story("Other", OTHER_THEME), story("Money", "Business & financement")])
+    assert html.index("Business &amp; financement</h2>") < html.index(f"{OTHER_THEME}</h2>")
+    assert "Modèles &amp; recherche</h2>" not in html
+    assert "Modèles &amp; recherche <span" not in html
+
+
+def test_theme_colours_follow_configuration_position():
+    html = page([story("Money", "Business & financement"), story("Other", OTHER_THEME)])
+    assert '<section class="c2" aria-labelledby="theme-1">' in html
+    assert '<section class="other" aria-labelledby="theme-2">' in html
+    pill = (
+        '<a class="pill c2" href="#theme-1">Business &amp; financement <span class="count">1</span>'
+    )
+    assert pill in html
+
+
+def test_theme_colours_start_again_after_the_sixth_theme():
+    many = [Theme(f"T{index}", ("x",)) for index in range(1, 8)]
+    html = render_page([story("A", "T7")], many, [S1], [], GENERATED)
+    assert '<section class="c1" aria-labelledby="theme-1">' in html
+
+
+def test_story_shows_title_link_source_date_and_excerpt():
+    html = page(
+        [
+            story(
+                "Gemini 4 released",
+                "Modèles & recherche",
+                link="https://g.example/4",
+                summary="Google a présenté…",
+            )
+        ]
+    )
+    assert '<a href="https://g.example/4">Gemini 4 released</a>' in html
+    assert "Hugging Face Blog · 2 octobre 2026" in html
+    assert "Google a présenté…" in html
+
+
+def test_undated_story_shows_collection_date_and_label():
+    html = page([story("No date", "Modèles & recherche", known=False)])
+    assert '2 octobre 2026 <span class="tag">Date de publication inconnue</span>' in html
+
+
+def test_also_covered_lists_other_sources_with_links():
+    other = Article("Same news", "https://actuia.example/same", S2, GENERATED, "", "fr")
+    html = page([story("Same news", "Modèles & recherche", also=[other])])
+    assert 'Aussi couvert par : <a href="https://actuia.example/same">ActuIA</a>' in html
+
+
+def test_footer_lists_sources_and_unavailable_ones():
+    html = page([story("A", "Modèles & recherche")], unavailable=[S2])
+    assert '<a href="https://hf.example/">Hugging Face Blog</a>' in html
+    assert "Sources indisponibles lors de la dernière mise à jour : ActuIA." in html
+
+
+def test_footer_says_when_all_sources_answered():
+    assert "Toutes les sources ont répondu" in page([story("A", "Modèles & recherche")])
+
+
+def test_special_characters_cannot_break_the_page():
+    html = page([story('Use <script>alert(1)</script> & "quotes"', "Modèles & recherche")])
+    assert "<script>alert(1)</script>" not in html
+    assert "&lt;script&gt;alert(1)&lt;/script&gt; &amp;" in html
+
+
+def test_page_without_stories_says_so():
+    assert "Aucun article sur les 7 derniers jours." in page([])
+
+
+def test_main_writes_the_page(tmp_path, monkeypatch):
+    article = Article("Live news about a model", "https://n.example/1", S1, None, "x", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    assert "Live news about a model" in (tmp_path / "index.html").read_text(encoding="utf-8")
+
+
+def test_main_publishes_nothing_when_no_article_is_collected(tmp_path, monkeypatch):
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([], list(sources)))
+    assert render_module.main(["--output", str(tmp_path)]) == 1
+    assert not (tmp_path / "index.html").exists()

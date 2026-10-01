@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veille IA — l'actualité de l'intelligence artificielle</title>
+<meta name="description" content="L'actualité de l'intelligence artificielle des 7 derniers jours, dédoublonnée et classée par thème, mise à jour chaque jour.">
+<style>
+:root { color-scheme: light dark; --page: #f5f4f0; --card: #ffffff; --text: #1f1f1f; --muted: #5c5b57; --accent: #0b57d0; --line: #e2e0d9; --tag-bg: #fff4d6; --tag-text: #5c4000;
+  --c1-bg: #eeedfe; --c1-text: #3c3489; --c1-dot: #7f77dd; --c2-bg: #e1f5ee; --c2-text: #085041; --c2-dot: #1d9e75;
+  --c3-bg: #faeeda; --c3-text: #633806; --c3-dot: #ba7517; --c4-bg: #fbeaf0; --c4-text: #72243e; --c4-dot: #d4537e;
+  --c5-bg: #e6f1fb; --c5-text: #0c447c; --c5-dot: #378add; --c6-bg: #faece7; --c6-text: #712b13; --c6-dot: #d85a30;
+  --other-bg: #f1efe8; --other-text: #444441; --other-dot: #888780; }
+@media (prefers-color-scheme: dark) { :root { --page: #161616; --card: #202020; --text: #ececec; --muted: #b3b3b3; --accent: #8ab4f8; --line: #333333; --tag-bg: #3d3000; --tag-text: #ffd97a;
+  --c1-bg: #3c3489; --c1-text: #cecbf6; --c2-bg: #085041; --c2-text: #9fe1cb; --c3-bg: #633806; --c3-text: #fac775;
+  --c4-bg: #72243e; --c4-text: #f4c0d1; --c5-bg: #0c447c; --c5-text: #b5d4f4; --c6-bg: #712b13; --c6-text: #f5c4b3; --other-bg: #444441; --other-text: #d3d1c7; } }
+* { box-sizing: border-box; }
+body { overflow-wrap: anywhere; margin: 0; background: var(--page); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.page { max-width: 46rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+h1 { font-size: 1.75rem; line-height: 1.2; margin: 0; }
+h2 { font-size: 1.15rem; margin: 2.5rem 0 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+h2::before { content: ""; width: 0.65rem; height: 0.65rem; border-radius: 50%; background: var(--dot); flex: none; }
+h3 { font-size: 1.05rem; line-height: 1.35; margin: 0.25rem 0 0; }
+h3 a { color: var(--text); text-decoration: none; }
+h3 a:hover { text-decoration: underline; }
+p { margin: 0.25rem 0; }
+.meta, .source, .also, footer { color: var(--muted); font-size: 0.9rem; }
+nav ul { list-style: none; padding: 0; margin: 1.25rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.pill { display: inline-block; background: var(--bg); color: var(--fg); border-radius: 999px; padding: 0.2rem 0.75rem; font-size: 0.9rem; text-decoration: none; }
+.pill:hover { text-decoration: underline; }
+.count { font-weight: 600; margin-left: 0.25rem; }
+.c1 { --bg: var(--c1-bg); --fg: var(--c1-text); --dot: var(--c1-dot); }
+.c2 { --bg: var(--c2-bg); --fg: var(--c2-text); --dot: var(--c2-dot); }
+.c3 { --bg: var(--c3-bg); --fg: var(--c3-text); --dot: var(--c3-dot); }
+.c4 { --bg: var(--c4-bg); --fg: var(--c4-text); --dot: var(--c4-dot); }
+.c5 { --bg: var(--c5-bg); --fg: var(--c5-text); --dot: var(--c5-dot); }
+.c6 { --bg: var(--c6-bg); --fg: var(--c6-text); --dot: var(--c6-dot); }
+.other { --bg: var(--other-bg); --fg: var(--other-text); --dot: var(--other-dot); }
+article { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem 1.1rem; margin: 0 0 0.75rem; }
+article > p:not(.source):not(.also) { margin-top: 0.4rem; }
+.also { margin-top: 0.5rem; }
+.tag { background: var(--tag-bg); color: var(--tag-text); border-radius: 999px; padding: 0 0.5rem; font-size: 0.8rem; white-space: nowrap; }
+footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+<h1>Veille IA</h1>
+<p class="meta">Mis à jour le {{ generated_at | french_date(true) }} (heure de Paris) · {{ count }} article{{ 's' if count > 1 }} sur les 7 derniers jours</p>
+{% if sections %}
+<nav aria-label="Thèmes">
+<ul>
+{% for anchor, name, items, colour in sections %}
+<li><a class="pill {{ colour }}" href="#{{ anchor }}">{{ name }} <span class="count">{{ items | length }}</span></a></li>
+{% endfor %}
+</ul>
+</nav>
+{% endif %}
+</header>
+<main>
+{% for anchor, name, items, colour in sections %}
+<section class="{{ colour }}" aria-labelledby="{{ anchor }}">
+<h2 id="{{ anchor }}">{{ name }}</h2>
+{% for story in items %}
+<article>
+<p class="source">{{ story.article.source.name }} · {{ story.date | french_date }}{% if not story.date_is_known %} <span class="tag">Date de publication inconnue</span>{% endif %}</p>
+<h3><a href="{{ story.article.link }}">{{ story.article.title }}</a></h3>
+{% if story.article.summary %}
+<p>{{ story.article.summary }}</p>
+{% endif %}
+{% if story.also_covered %}
+<p class="also">Aussi couvert par : {% for other in story.also_covered %}<a href="{{ other.link }}">{{ other.source.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+{% endif %}
+</article>
+{% endfor %}
+</section>
+{% else %}
+<p>Aucun article sur les 7 derniers jours.</p>
+{% endfor %}
+</main>
+<footer>
+<p>Sources : {% for source in sources %}<a href="{{ source.site_url }}">{{ source.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</p>
+{% if unavailable %}
+<p>Sources indisponibles lors de la dernière mise à jour : {{ unavailable | map(attribute="name") | join(", ") }}.</p>
+{% else %}
+<p>Toutes les sources ont répondu lors de la dernière mise à jour.</p>
+{% endif %}
+<p>Titres, extraits et liens appartiennent à leurs éditeurs. <a href="{{ repository_url }}">Code source et documentation du projet</a>.</p>
+</footer>
+</div>
+</body>
+</html>
