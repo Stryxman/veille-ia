@@ -2,7 +2,7 @@
 
 > Liste des sources collectées par la veille, avec la raison de leur sélection.
 > La configuration technique correspondante se trouve dans `config/sources.yaml` ; ce document et ce fichier doivent rester alignés.
-> **Statut :** mise à jour du 2026-10-01 en revue (issue #10) ; version précédente validée le 2026-09-30 (pull request #20)
+> **Statut :** validé par le chef de projet le 2026-10-01 (dernière mise à jour validée avec la pull request #28)
 > **Dernière vérification des flux :** 2026-09-30
 
 ## Critères de sélection

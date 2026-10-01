@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.8 — en revue (issue #10) ; v1.7 validée le 2026-10-01
+> **Statut :** v1.8 — validé par le chef de projet le 2026-10-01
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
@@ -22,7 +22,7 @@
 | v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible ; validée le 2026-09-30 (pull request #20) |
 | v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) ; validée le 2026-10-01 (pull request #22) |
 | v1.7 | 2026-10-01 | §4.2 : garde sur les mots pour le regroupement (D17) ; validée le 2026-10-01 (pull request #25) |
-| v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : lien relatif complété avec l'adresse du flux, entrée ignorée si son lien n'est pas une adresse web |
+| v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : lien relatif complété avec l'adresse du flux, entrée ignorée si son lien n'est pas une adresse web ; validée le 2026-10-01 (pull request #28) |
 
 ---
 
