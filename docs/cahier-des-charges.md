@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.6 — en revue (pull request #22) ; v1.5 validée le 2026-09-30
+> **Statut :** v1.6 — validé par le chef de projet le 2026-10-01
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D16)
@@ -20,7 +20,7 @@
 | v1.3 | 2026-09-30 | Outillage : ruff, pip + venv (D14) ; validée le 2026-09-30 (pull request #16) |
 | v1.4 | 2026-09-30 | §4.1 : entrées sans titre ou sans lien ignorées et signalées dans le journal d'exécution ; §6 : taille maximale d'un flux (10 Mio) ; validée le 2026-09-30 (pull request #17) |
 | v1.5 | 2026-09-30 | §4.1 : dates sans fuseau horaire (D15) ; §6 : flux vide, tronqué ou sans entrée exploitable traité comme indisponible ; validée le 2026-09-30 (pull request #20) |
-| v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) |
+| v1.6 | 2026-10-01 | §4.2 : règles de regroupement des doublons (D16) ; validée le 2026-10-01 (pull request #22) |
 
 ---
 

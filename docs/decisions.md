@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D15 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30) ; D16 arbitrée le 2026-10-01, en revue avec la pull request #22.
+> **Statut :** décisions D1 à D16 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 le 2026-10-01).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
