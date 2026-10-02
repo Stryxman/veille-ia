@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.11 — en revue (pull request #33) ; v1.10 validée le 2026-10-02
+> **Statut :** v1.11 — validé par le chef de projet le 2026-10-02
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
@@ -25,7 +25,7 @@
 | v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : lien relatif complété avec l'adresse du flux, entrée ignorée si son lien n'est pas une adresse web ; validée le 2026-10-01 (pull request #28) |
 | v1.9 | 2026-10-01 | §4.4 : horaire de la mise à jour quotidienne ; validée le 2026-10-02 (pull request #29) |
 | v1.10 | 2026-10-02 | §4.1 : lien sans nom de site ignoré ; §4.4 : lancement décalé de l'heure pile ; §6 : aucun article des 7 derniers jours traité comme aucune source ; validée le 2026-10-02 (pull request #32) |
-| v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) |
+| v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) ; validée le 2026-10-02 (pull request #33) |
 
 ---
 
