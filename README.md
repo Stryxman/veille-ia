@@ -2,7 +2,7 @@
 
 Une page web qui rassemble chaque jour l'actualité de l'intelligence artificielle, dédoublonnée et classée par thème, à partir de sources françaises et anglophones.
 
-> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) en cours. Mise en ligne de la V1 visée le 2 octobre 2026.
+> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) : V1 en ligne le 2 octobre 2026, clôture du jalon après la première mise à jour automatique.
 
 **Page en ligne :** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — mise à jour chaque jour vers 6 h 15, heure de Paris (5 h 15 en heure d'hiver).
 
