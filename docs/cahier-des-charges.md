@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.9 — validé par le chef de projet le 2026-10-02
+> **Statut :** v1.10 — validé par le chef de projet le 2026-10-02
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
@@ -24,6 +24,7 @@
 | v1.7 | 2026-10-01 | §4.2 : garde sur les mots pour le regroupement (D17) ; validée le 2026-10-01 (pull request #25) |
 | v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : lien relatif complété avec l'adresse du flux, entrée ignorée si son lien n'est pas une adresse web ; validée le 2026-10-01 (pull request #28) |
 | v1.9 | 2026-10-01 | §4.4 : horaire de la mise à jour quotidienne ; validée le 2026-10-02 (pull request #29) |
+| v1.10 | 2026-10-02 | §4.1 : lien sans nom de site ignoré ; §4.4 : lancement décalé de l'heure pile ; §6 : aucun article des 7 derniers jours traité comme aucune source ; validée le 2026-10-02 (pull request #32) |
 
 ---
 
@@ -57,7 +58,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Le détail de chaque source (site, flux, langue, type, niveau de confiance, raison du choix) et la date de dernière vérification des flux sont documentés dans [sources.md](sources.md).
 - La liste des sources est définie dans un fichier de configuration (`config/sources.yaml`) : ajouter ou retirer une source ne nécessite pas de modifier le code.
 - Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait (si le flux en fournit un), langue. Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
-- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; un lien relatif (par exemple `/blog/article`) est complété avec l'adresse du flux ; une entrée dont le lien, une fois complété, n'est pas une adresse web (`http` ou `https`) est ignorée, car un tel lien pourrait exécuter du code sur la page (par exemple un lien `javascript:`) ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
+- Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; un lien relatif (par exemple `/blog/article`) est complété avec l'adresse du flux ; une entrée dont le lien, une fois complété, n'est pas une adresse web (`http` ou `https`, avec un nom de site) est ignorée, car un tel lien pourrait exécuter du code sur la page (par exemple un lien `javascript:`) ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
 
 ### 4.2 Traitement
 - **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
@@ -87,7 +88,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lisible sur mobile.
 
 ### 4.4 Automatisation
-- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → génération → publication. Lancement vers 6 h, heure de Paris (5 h en heure d'hiver).
+- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → génération → publication. Lancement vers 6 h 15, heure de Paris (5 h 15 en heure d'hiver), en dehors de l'heure pile où GitHub retarde le plus les exécutions planifiées.
 - Déclenchement manuel possible (bouton « Run workflow »).
 
 ## 5. Hors périmètre V1
@@ -107,7 +108,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 ## 6. Exigences non fonctionnelles
 
-- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible.
+- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible.
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
 - **Maintenabilité :** code Python découpé en trois modules indépendants (`collect`, `process`, `render`), testés.
 - **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff) exécutés à chaque pull request ; les tests n'appellent pas le réseau.

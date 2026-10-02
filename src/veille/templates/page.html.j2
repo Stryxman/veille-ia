@@ -88,7 +88,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem;
 <footer>
 <p>Sources : {% for source in sources %}<a href="{{ source.site_url }}">{{ source.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</p>
 {% if unavailable %}
-<p>Sources indisponibles lors de la dernière mise à jour : {{ unavailable | map(attribute="name") | join(", ") }}.</p>
+<p>{{ 'Sources indisponibles' if unavailable | length > 1 else 'Source indisponible' }} lors de la dernière mise à jour : {{ unavailable | map(attribute="name") | join(", ") }}.</p>
 {% else %}
 <p>Toutes les sources ont répondu lors de la dernière mise à jour.</p>
 {% endif %}

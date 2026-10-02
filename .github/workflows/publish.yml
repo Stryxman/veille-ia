@@ -2,7 +2,8 @@ name: Publication
 
 on:
   schedule:
-    - cron: "0 4 * * *"  # 06:00 in Paris in summer time, 05:00 in winter time
+    # 17 past the hour: GitHub delays or drops runs scheduled on the hour most often
+    - cron: "17 4 * * *"  # about 06:15 in Paris in summer time, 05:15 in winter time
   workflow_dispatch:
 
 permissions:
@@ -15,6 +16,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,6 +35,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:  # only this job publishes
       pages: write
       id-token: write
