@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -176,7 +176,7 @@
   3. Jalons sans échéance — souple, mais sans mesure des écarts entre prévu et réel.
 - **Décision :** option 1, V1 en ligne le 2026-10-02.
 - **Justification :** mise en ligne au plus tôt sur un périmètre maîtrisé ; les échéances restent des cibles, et tout écart est tracé.
-- **Conséquences :** risque de retard (R5) réévalué ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la mise en ligne effective (jour de mise en ligne inclus) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé.
+- **Conséquences :** risque de retard (R5) réévalué ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la première mise à jour automatique réussie (jour inclus) — précision du chef de projet du 2026-10-02, la mise en ligne s'étant faite par une publication manuelle et la première exécution planifiée n'ayant pas eu lieu ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé.
 
 ## D14 — Outillage de développement
 

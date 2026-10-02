@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.10 — validé par le chef de projet le 2026-10-02
+> **Statut :** v1.11 — validé par le chef de projet le 2026-10-02
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
@@ -25,6 +25,7 @@
 | v1.8 | 2026-10-01 | §4.1 et §4.3 : extrait affiché seulement si le flux en fournit un (voir sources.md) ; §4.1 : lien relatif complété avec l'adresse du flux, entrée ignorée si son lien n'est pas une adresse web ; validée le 2026-10-01 (pull request #28) |
 | v1.9 | 2026-10-01 | §4.4 : horaire de la mise à jour quotidienne ; validée le 2026-10-02 (pull request #29) |
 | v1.10 | 2026-10-02 | §4.1 : lien sans nom de site ignoré ; §4.4 : lancement décalé de l'heure pile ; §6 : aucun article des 7 derniers jours traité comme aucune source ; validée le 2026-10-02 (pull request #32) |
+| v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) ; validée le 2026-10-02 (pull request #33) |
 
 ---
 
@@ -146,7 +147,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 | **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
 | **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, option LLM | V1.1 | 2026-10-06 |
 
-> Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la mise en ligne effective (jour de mise en ligne inclus) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
+> Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la première mise à jour automatique réussie (jour inclus ; D13) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
 
 ## 9. Critères de réussite
 
