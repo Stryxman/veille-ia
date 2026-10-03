@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.12 — validé par le chef de projet le 2026-10-03
+> **Statut :** v1.13 — validé par le chef de projet le 2026-10-03
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D18)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -27,6 +27,7 @@
 | v1.10 | 2026-10-02 | §4.1 : lien sans nom de site ignoré ; §4.4 : lancement décalé de l'heure pile ; §6 : aucun article des 7 derniers jours traité comme aucune source ; validée le 2026-10-02 (pull request #32) |
 | v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) ; validée le 2026-10-02 (pull request #33) |
 | v1.12 | 2026-10-03 | §4.4 : trois lancements planifiés par jour ; validée le 2026-10-03 (pull request #35) |
+| v1.13 | 2026-10-03 | §4.1, §4.2, §4.3 : extrait manquant complété par le début du texte de la page de l'article (D18) ; §4.4 : étape d'extraits manquants ; §5 : exception au « scraping » exclu ; §6 : page d'article illisible sans effet sur la mise à jour, quatre modules ; §7 : étape `enrich`, bibliothèque `trafilatura` ; validée le 2026-10-03 (pull request #36) |
 
 ---
 
@@ -59,11 +60,11 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lecture automatique de **6 flux RSS** (4 anglophones, 2 francophones) : Hugging Face Blog, OpenAI News, TechCrunch (IA), The Verge (IA), ActuIA, Le Monde Informatique (IA).
 - Le détail de chaque source (site, flux, langue, type, niveau de confiance, raison du choix) et la date de dernière vérification des flux sont documentés dans [sources.md](sources.md).
 - La liste des sources est définie dans un fichier de configuration (`config/sources.yaml`) : ajouter ou retirer une source ne nécessite pas de modifier le code.
-- Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait (si le flux en fournit un), langue. Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
+- Pour chaque article, on conserve : titre, lien, source, date de publication (si disponible), extrait, langue. Un article retenu (7 derniers jours) dont le flux ne fournit pas d'extrait reçoit, si sa page peut être lue, le début de son texte principal, sans le titre répété (D18). Un article sans date de publication n'est pas rejeté. Une date publiée sans fuseau horaire est lue dans le fuseau déclaré pour la source (UTC par défaut, D15).
 - Une entrée de flux sans titre ou sans lien est ignorée, car elle ne peut ni être affichée ni renvoyer à l'article d'origine ; un lien relatif (par exemple `/blog/article`) est complété avec l'adresse du flux ; une entrée dont le lien, une fois complété, n'est pas une adresse web (`http` ou `https`, avec un nom de site) est ignorée, car un tel lien pourrait exécuter du code sur la page (par exemple un lien `javascript:`) ; le nombre d'entrées ignorées par source est signalé dans le journal d'exécution.
 
 ### 4.2 Traitement
-- **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères.
+- **Nettoyage :** suppression du HTML et des espaces superflus dans les titres et extraits ; extrait tronqué à environ 300 caractères, qu'il vienne du flux ou de la page de l'article (D18). L'extrait complété est pris en compte pour le classement par thème.
 - **Fenêtre temporelle :** seuls les articles des **7 derniers jours** sont conservés.
 - **Article sans date de publication :** il est conservé et daté de sa date de collecte, qui sert au tri et à la fenêtre temporelle ; il est signalé sur la page par l'étiquette « Date de publication inconnue ».
 - **Regroupement des doublons :** deux articles sont considérés comme doublons s'ils ont le même lien, ou des titres très similaires. L'article retenu est celui de la source au **meilleur niveau de confiance** ; à niveau égal, le plus ancien. Les autres sont rattachés à l'article retenu. Le titre d'un article est comparé à celui de l'article retenu de chaque histoire (pas de regroupement en chaîne) ; un lien déjà présent dans une histoire la rejoint toujours, en priorité sur la comparaison des titres ; chaque autre source n'apparaît qu'une fois dans « Aussi couvert par », jamais sous son propre article ; deux titres dont les nombres diffèrent (versions, montants, années) ne sont jamais regroupés (D16), ni deux titres dont un mot d'au moins 3 lettres n'apparaît que dans l'un des deux (D17).
@@ -82,7 +83,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 ### 4.3 Restitution
 - Une **page web statique unique**, en français, publiée sur GitHub Pages.
 - Articles groupés par thème, triés du plus récent au plus ancien.
-- Chaque article affiche : titre (lien vers la source originale), source, date, extrait (si le flux en fournit un : certains flux n'en donnent pas, voir [sources.md](sources.md)).
+- Chaque article affiche : titre (lien vers la source originale), source, date, extrait (s'il n'a pu être obtenu ni du flux ni de la page de l'article, l'article s'affiche sans extrait ; voir [sources.md](sources.md)).
 - Un article sans date de publication affiche sa date de collecte et l'étiquette « Date de publication inconnue ».
 - Sous un article qui a des doublons : mention « Aussi couvert par : » suivie des autres sources, avec leurs liens.
 - En tête de page : date et heure de la dernière mise à jour, nombre d'articles.
@@ -90,7 +91,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lisible sur mobile.
 
 ### 4.4 Automatisation
-- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → génération → publication. Trois lancements planifiés par jour, vers 6 h 15, 12 h 15 et 18 h 15, heure de Paris (une heure plus tôt en heure d'hiver), en dehors de l'heure pile : GitHub ne garantit pas les exécutions planifiées, et un seul lancement réussi suffit à mettre la page à jour dans la journée.
+- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → extraits manquants (D18) → génération → publication. Trois lancements planifiés par jour, vers 6 h 15, 12 h 15 et 18 h 15, heure de Paris (une heure plus tôt en heure d'hiver), en dehors de l'heure pile : GitHub ne garantit pas les exécutions planifiées, et un seul lancement réussi suffit à mettre la page à jour dans la journée.
 - Déclenchement manuel possible (bouton « Run workflow »).
 
 ## 5. Hors périmètre V1
@@ -103,16 +104,16 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 | Envoi du résumé par email | Candidat J4 |
 | Archives / historique des éditions précédentes | Candidat J4 |
 | Traduction des articles anglophones | Candidat J4 (via LLM) |
-| Sources non-RSS (API, réseaux sociaux, scraping) | Exclu |
+| Sources non-RSS (API, réseaux sociaux, scraping de sites comme source d'articles) | Exclu ; seule exception : lecture de la page d'un article déjà collecté pour compléter son extrait manquant (D18) |
 | Comptes utilisateurs, personnalisation, abonnements | Exclu |
 | Base de données | Exclu |
 | Serveur ou hébergement payant | Exclu |
 
 ## 6. Exigences non fonctionnelles
 
-- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible.
+- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible. Une page d'article illisible (inaccessible, refusée, sans texte) laisse l'article sans extrait et n'empêche pas la génération de la page (D18).
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
-- **Maintenabilité :** code Python découpé en trois modules indépendants (`collect`, `process`, `render`), testés.
+- **Maintenabilité :** code Python découpé en quatre modules indépendants (`collect`, `process`, `enrich`, `render`), testés.
 - **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff) exécutés à chaque pull request ; les tests n'appellent pas le réseau.
 - **Respect des sources :** seuls le titre, un court extrait et le lien vers l'article original sont affichés.
 - **Évolutivité :** sources et thèmes définis uniquement dans `config/sources.yaml` et `config/themes.yaml`.
@@ -121,11 +122,11 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 ## 7. Solution technique (résumé)
 
 ```
-config/sources.yaml ─► collect ─► process ─► render ─► site/index.html ─► GitHub Pages
-config/themes.yaml ─────────────────┘
+config/sources.yaml ─► collect ─► process ─► enrich ─► render ─► site/index.html ─► GitHub Pages
+config/themes.yaml ─────────────────┘   (enrich : extraits manquants, D18)
 ```
 
-- **Langage :** Python ≥ 3.12 (bibliothèques : `feedparser`, `Jinja2`, `PyYAML` ; outils : `pytest`, `ruff`).
+- **Langage :** Python ≥ 3.12 (bibliothèques : `feedparser`, `Jinja2`, `PyYAML`, `trafilatura` ; outils : `pytest`, `ruff`).
 - **Environnement :** pip + venv, dépendances déclarées dans `pyproject.toml` (D14).
 - **Exécution :** workflow GitHub Actions planifié (quotidien) + workflow d'intégration continue (tests).
 - **Hébergement :** GitHub Pages.

@@ -11,8 +11,9 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from veille.collect import collect
 from veille.config import OTHER_THEME, load_sources, load_themes
+from veille.enrich import enrich
 from veille.models import Source, Story, Theme
-from veille.process import process
+from veille.process import classify, process
 
 PARIS = ZoneInfo("Europe/Paris")
 MONTHS = (
@@ -81,6 +82,8 @@ def main(argv: list[str] | None = None) -> int:
     if not stories:
         logging.error("No article in the last 7 days: the page is not generated")
         return 1  # same as above: an empty page never replaces the previous one
+    # missing excerpts read from the article pages (D18), then used for the themes like the others
+    stories = classify(enrich(stories), themes)
     args.output.mkdir(parents=True, exist_ok=True)
     page = render_page(stories, themes, sources, collected.unavailable, now)
     (args.output / "index.html").write_text(page, encoding="utf-8")
