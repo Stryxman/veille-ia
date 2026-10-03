@@ -27,7 +27,7 @@
 | v1.10 | 2026-10-02 | §4.1 : lien sans nom de site ignoré ; §4.4 : lancement décalé de l'heure pile ; §6 : aucun article des 7 derniers jours traité comme aucune source ; validée le 2026-10-02 (pull request #32) |
 | v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) ; validée le 2026-10-02 (pull request #33) |
 | v1.12 | 2026-10-03 | §4.4 : trois lancements planifiés par jour ; validée le 2026-10-03 (pull request #35) |
-| v1.13 | 2026-10-03 | §4.1, §4.2, §4.3 : extrait manquant complété par le début du texte de la page de l'article (D18) ; §5 : exception au « scraping » exclu ; §6 : page d'article illisible sans effet sur la mise à jour, quatre modules ; §7 : étape `enrich`, bibliothèque `trafilatura` |
+| v1.13 | 2026-10-03 | §4.1, §4.2, §4.3 : extrait manquant complété par le début du texte de la page de l'article (D18) ; §4.4 : étape d'extraits manquants ; §5 : exception au « scraping » exclu ; §6 : page d'article illisible sans effet sur la mise à jour, quatre modules ; §7 : étape `enrich`, bibliothèque `trafilatura` |
 
 ---
 
@@ -91,7 +91,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lisible sur mobile.
 
 ### 4.4 Automatisation
-- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → génération → publication. Trois lancements planifiés par jour, vers 6 h 15, 12 h 15 et 18 h 15, heure de Paris (une heure plus tôt en heure d'hiver), en dehors de l'heure pile : GitHub ne garantit pas les exécutions planifiées, et un seul lancement réussi suffit à mettre la page à jour dans la journée.
+- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → extraits manquants (D18) → génération → publication. Trois lancements planifiés par jour, vers 6 h 15, 12 h 15 et 18 h 15, heure de Paris (une heure plus tôt en heure d'hiver), en dehors de l'heure pile : GitHub ne garantit pas les exécutions planifiées, et un seul lancement réussi suffit à mettre la page à jour dans la journée.
 - Déclenchement manuel possible (bouton « Run workflow »).
 
 ## 5. Hors périmètre V1

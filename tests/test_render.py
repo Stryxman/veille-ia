@@ -209,3 +209,14 @@ def test_markup_in_the_article_page_cannot_break_the_page(tmp_path, monkeypatch)
     assert render_module.main(["--output", str(tmp_path)]) == 0
     page_html = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert "<script>alert(1)" not in page_html  # page text is escaped like feed text (R13)
+
+
+def test_comparison_signs_in_the_article_page_are_escaped(tmp_path, monkeypatch):
+    article = Article("Live news about a model", "https://n.example/4", S1, None, "", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    paragraph = "The new model scores a &lt; b on one benchmark, which surprised the authors. " * 3
+    html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()
+    monkeypatch.setattr("veille.enrich.fetch_page", lambda url: html)
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    page_html = (tmp_path / "index.html").read_text(encoding="utf-8")
+    assert "scores a &lt; b on one benchmark" in page_html  # escaped by the template (R13)
