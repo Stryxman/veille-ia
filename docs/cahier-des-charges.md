@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.14 — validé par le chef de projet le 2026-10-03
+> **Statut :** v1.15 — en revue (pull request #38) ; v1.14 validée le 2026-10-03
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D19)
@@ -29,6 +29,7 @@
 | v1.12 | 2026-10-03 | §4.4 : trois lancements planifiés par jour ; validée le 2026-10-03 (pull request #35) |
 | v1.13 | 2026-10-03 | §4.1, §4.2, §4.3 : extrait manquant complété par le début du texte de la page de l'article (D18) ; §4.4 : étape d'extraits manquants ; §5 : exception au « scraping » exclu ; §6 : page d'article illisible sans effet sur la mise à jour, quatre modules ; §7 : étape `enrich`, bibliothèque `trafilatura` ; validée le 2026-10-03 (pull request #36) |
 | v1.14 | 2026-10-03 | §4.2, §5, §8 : LLM étudié et non retenu pour l'instant (D19) ; validée le 2026-10-03 (pull request #37) |
+| v1.15 | 2026-10-03 | §8 : contenu de J4 aligné sur le jalon (extraits manquants, découpage des thèmes) |
 
 ---
 
@@ -148,7 +149,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 | **J1 — Collecte** | Lecture des 6 flux, format d'article commun | Module `collect` testé | 2026-09-30 |
 | **J2 — Traitement** | Nettoyage, fenêtre 7 jours, regroupement des doublons, classement | Module `process` testé | 2026-10-01 |
 | **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
-| **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, étude LLM (non retenue, D19) | V1.1 | 2026-10-06 |
+| **J4 — Finitions (bonus)** | README FR et EN avec captures, extraits manquants (D18), découpage des thèmes (#26), étude LLM (non retenue, D19), bilan de projet | V1.1 | 2026-10-06 |
 
 > Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la première mise à jour automatique réussie (jour inclus ; D13) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
 
