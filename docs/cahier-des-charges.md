@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.13 — validé par le chef de projet le 2026-10-03
+> **Statut :** v1.14 — en revue (pull request #37) ; v1.13 validée le 2026-10-03
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D18)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D19)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -28,6 +28,7 @@
 | v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) ; validée le 2026-10-02 (pull request #33) |
 | v1.12 | 2026-10-03 | §4.4 : trois lancements planifiés par jour ; validée le 2026-10-03 (pull request #35) |
 | v1.13 | 2026-10-03 | §4.1, §4.2, §4.3 : extrait manquant complété par le début du texte de la page de l'article (D18) ; §4.4 : étape d'extraits manquants ; §5 : exception au « scraping » exclu ; §6 : page d'article illisible sans effet sur la mise à jour, quatre modules ; §7 : étape `enrich`, bibliothèque `trafilatura` ; validée le 2026-10-03 (pull request #36) |
+| v1.14 | 2026-10-03 | §4.2, §5, §8 : LLM étudié et non retenu pour l'instant (D19) |
 
 ---
 
@@ -72,7 +73,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
   1. Source primaire (l'éditeur qui fait l'annonce)
   2. Presse spécialisée IA ou tech
   3. Presse généraliste ou hors tech
-- **Limite V1 :** seuls les titres quasi identiques sont reconnus comme doublons ; deux articles traitant du même sujet avec des titres différents ne le sont pas (piste d'amélioration par LLM en J4).
+- **Limite V1 :** seuls les titres quasi identiques sont reconnus comme doublons ; deux articles traitant du même sujet avec des titres différents ne le sont pas (piste d'amélioration par LLM écartée pour l'instant, D19).
 - **Classement par thème** par mots-clés, définis dans `config/themes.yaml`. Thèmes initiaux :
   1. Modèles & recherche
   2. Produits & outils
@@ -100,10 +101,10 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 | Élément | Statut |
 |---|---|
-| Classement et résumé par modèle de langage (LLM) | Candidat J4 |
+| Classement et résumé par modèle de langage (LLM) | Étudié en J4, non retenu pour l'instant (D19) |
 | Envoi du résumé par email | Candidat J4 |
 | Archives / historique des éditions précédentes | Candidat J4 |
-| Traduction des articles anglophones | Candidat J4 (via LLM) |
+| Traduction des articles anglophones | Non retenu pour l'instant (supposait un LLM, D19) |
 | Sources non-RSS (API, réseaux sociaux, scraping de sites comme source d'articles) | Exclu ; seule exception : lecture de la page d'un article déjà collecté pour compléter son extrait manquant (D18) |
 | Comptes utilisateurs, personnalisation, abonnements | Exclu |
 | Base de données | Exclu |
@@ -147,7 +148,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 | **J1 — Collecte** | Lecture des 6 flux, format d'article commun | Module `collect` testé | 2026-09-30 |
 | **J2 — Traitement** | Nettoyage, fenêtre 7 jours, regroupement des doublons, classement | Module `process` testé | 2026-10-01 |
 | **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
-| **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, option LLM | V1.1 | 2026-10-06 |
+| **J4 — Finitions (bonus)** | README FR et EN avec captures, bilan de projet, étude LLM (non retenue, D19) | V1.1 | 2026-10-06 |
 
 > Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés à partir de la première mise à jour automatique réussie (jour inclus ; D13) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
 

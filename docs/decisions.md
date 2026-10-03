@@ -2,14 +2,14 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; D18 validée le 2026-10-03 (pull request #36).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; D18 validée le 2026-10-03 (pull request #36) ; D19 en revue avec la pull request #37.
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
 | D1 | 2026-09-29 | Mode de restitution | Page web statique (GitHub Pages) |
 | D2 | 2026-09-29 | Stack technique | Python |
 | D3 | 2026-09-29 | Exécution et hébergement | GitHub Actions planifié + GitHub Pages |
-| D4 | 2026-09-29 | Méthode de classement | Mots-clés en V1, LLM en J4 |
+| D4 | 2026-09-29 | Méthode de classement | Mots-clés en V1, LLM en J4 (étudié, non retenu : D19) |
 | D5 | 2026-09-29 | Sources et fréquence | ~6 flux RSS FR + EN, mise à jour quotidienne |
 | D6 | 2026-09-29 | Langue du projet | Docs et page en français, code en anglais |
 | D7 | 2026-09-29 | Nom et visibilité du repo | `veille-ia`, public dès J0 |
@@ -24,6 +24,7 @@
 | D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
 | D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
 | D18 | 2026-10-03 | Extraits manquants | Début du texte principal de la page de l'article, extrait avec `trafilatura` |
+| D19 | 2026-10-03 | Modèle de langage (LLM) | Pas de LLM pour l'instant : classement par mots-clés conservé |
 
 ---
 
@@ -70,6 +71,7 @@
   3. Mots-clés uniquement — le plus sûr, mais sans possibilité d'améliorer la qualité du classement au-delà des mots-clés.
 - **Décision :** option 1, mots-clés en V1 puis LLM en J4.
 - **Justification :** livrer vite une V1 fiable, puis enrichir de façon incrémentale en maîtrisant le risque (coût, secret, qualité).
+- **Suite :** le LLM a été étudié en J4 et n'est pas retenu pour l'instant (D19, 2026-10-03).
 
 ## D5 — Sources et fréquence de mise à jour
 
@@ -141,7 +143,7 @@
 - **Affichage des doublons envisagé :** suppression simple, ou mention « Aussi couvert par » sous l'article retenu.
 - **Décision :** option 1, avec la hiérarchie **source primaire (1) > presse spécialisée IA/tech (2) > presse généraliste ou hors tech (3)** ; les autres articles du groupe sont affichés en « Aussi couvert par », avec leurs liens.
 - **Justification :** l'information de première main prime, puis l'expertise du média ; la règle reste explicable et vérifiable. Afficher les autres sources ne perd aucune information et indique l'importance d'une actualité.
-- **Limite connue :** en V1, seuls les titres quasi identiques sont reconnus comme doublons ; la détection de « même sujet, titres différents » relève d'une analyse sémantique, à étudier avec le LLM en J4.
+- **Limite connue :** en V1, seuls les titres quasi identiques sont reconnus comme doublons ; la détection de « même sujet, titres différents » relève d'une analyse sémantique, à étudier avec le LLM en J4. Étude faite en J4 : LLM non retenu pour l'instant (D19).
 
 ## D11 — Articles sans date de publication
 
@@ -237,3 +239,15 @@
 - **Décision :** option 1.
 - **Justification :** gain immédiat et visible pour la source la plus touchée, avec une bibliothèque maintenue plutôt qu'une extraction propre à chaque site. Le texte est traité comme un extrait de flux : titre répété retiré, nettoyé, limité à environ 300 caractères (R6), affiché échappé (R13), et utilisé pour le classement par thème. Le site de Hugging Face autorise la lecture de ses pages par les robots (`robots.txt` : « Allow: / »).
 - **Conséquences :** nouvelle dépendance ; une requête par article retenu sans extrait (6 par exécution le 2026-10-03, environ 2 s, soit environ 18 par jour avec les trois lancements de §4.4) ; une page inaccessible ou sans texte laisse l'article sans extrait et n'arrête pas la mise à jour (CdC §6) ; seule exception au « scraping » exclu du périmètre (CdC §5). Le site d'OpenAI refuse les requêtes automatiques : ses rares articles sans extrait le resteront. L'extraction n'est pas parfaite : il arrive que le premier paragraphe soit sauté.
+
+## D19 — Modèle de langage (LLM)
+
+- **Date :** 2026-10-03
+- **Contexte :** D4 (classement), le cahier des charges §5 (résumé, traduction) et D10 (doublons de même sujet) prévoyaient d'étudier en J4 un modèle de langage (issue #15 ; étude publiée en commentaire de l'issue). Mesures du 2026-10-03 : 76 % des actualités classées par mots-clés (critère de réussite ≥ 70 % tenu), 18 sur 75 en « Autres » ; environ deux tiers des articles en anglais ; aucun doublon de même sujet regroupé (R12).
+- **Options envisagées :**
+  1. LLM pour le classement et un résumé en français d'une phrase — gain attendu : classement selon le sens (moins d'actualités en « Autres », moins d'erreurs), page lisible en français ; coût estimé par mois (environ 75 actualités par exécution, trois exécutions par jour) : Claude Haiku 4.5 ≈ 2,5 $, Claude Sonnet 5.5 ≈ 5 $, Mistral Small ≈ 0,4 $, GPT-5 mini ≈ 0,9 $ (prix hors Claude indicatifs) ; clé API à créer et à protéger (R7) ; sorties non déterministes. La détection des doublons de même sujet (R12) serait possible mais plus délicate à fiabiliser.
+  2. Essai comparatif de deux modèles avant de décider — décision mieux étayée, pour quelques centimes, mais suppose de créer la clé API dès maintenant.
+  3. Pas de LLM pour l'instant — classement par mots-clés conservé ; le découpage des thèmes est étudié par ailleurs (#26).
+- **Décision :** option 3.
+- **Justification :** la V1 tient son critère de classement (≥ 70 %, critère n° 5) sans LLM ; le projet reste gratuit, déterministe et sans secret à gérer ; le découpage des thèmes, étudié dans #26, pourrait améliorer la lecture par simple configuration.
+- **Conséquences :** pas de résumé ni de traduction en français ; les doublons de même sujet restent non regroupés (R12, limite acceptée) ; R7 devient sans objet ; la piste pourra être rouverte après le bilan, par une nouvelle décision.
