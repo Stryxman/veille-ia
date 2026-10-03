@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; D18 en revue avec la pull request #36.
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -23,6 +23,7 @@
 | D15 | 2026-09-30 | Dates publiées sans fuseau horaire | Fuseau déclaré par source dans la configuration (UTC par défaut) |
 | D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
 | D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
+| D18 | 2026-10-03 | Extraits manquants | Début du texte principal de la page de l'article, extrait avec `trafilatura` |
 
 ---
 
@@ -224,3 +225,15 @@
   3. Accepter le risque — cas rare, mais perte silencieuse.
 - **Décision :** option 1.
 - **Justification :** aucune actualité distincte ne doit disparaître ; un doublon reformulé d'un mot n'est plus regroupé, ce qui est préférable à une perte d'information (lié à R12).
+
+## D18 — Extraits manquants
+
+- **Date :** 2026-10-03
+- **Contexte :** le flux de Hugging Face (S1) ne fournit aucun texte, et quelques entrées d'OpenAI (S2) non plus : ces articles s'affichaient sans extrait (issue #27). La description que les pages de Hugging Face publient pour les réseaux sociaux est générique (« A Blog post by … on Hugging Face », ou le slogan du site) : mesurée le 2026-10-03 sur les 6 articles concernés, elle n'apporte rien au lecteur.
+- **Options envisagées :**
+  1. Extraire le texte principal de la page de l'article avec une bibliothèque reconnue (`trafilatura`, licence Apache 2.0) et en garder le début comme extrait — essai du 2026-10-03 : 6 articles sur 6 avec un vrai premier paragraphe, 0,3 à 0,5 s par page.
+  2. Utiliser la description de partage de la page, en écartant les descriptions génériques — sans dépendance, mais rien de visible pour les sources actuelles.
+  3. Ne rien faire et laisser le résumé au modèle de langage étudié en J4 (#15).
+- **Décision :** option 1.
+- **Justification :** gain immédiat et visible pour la source la plus touchée, avec une bibliothèque maintenue plutôt qu'une extraction propre à chaque site. Le texte est traité comme un extrait de flux : titre répété retiré, nettoyé, limité à environ 300 caractères (R6), affiché échappé (R13), et utilisé pour le classement par thème. Le site de Hugging Face autorise la lecture de ses pages par les robots (`robots.txt` : « Allow: / »).
+- **Conséquences :** nouvelle dépendance ; une requête par article retenu sans extrait (6 par exécution le 2026-10-03, environ 2 s, soit environ 18 par jour avec les trois lancements de §4.4) ; une page inaccessible ou sans texte laisse l'article sans extrait et n'arrête pas la mise à jour (CdC §6) ; seule exception au « scraping » exclu du périmètre (CdC §5). Le site d'OpenAI refuse les requêtes automatiques : ses rares articles sans extrait le resteront.

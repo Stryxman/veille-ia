@@ -176,3 +176,36 @@ def test_main_publishes_nothing_when_no_story_is_recent(tmp_path, monkeypatch):
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([old], []))
     assert render_module.main(["--output", str(tmp_path)]) == 1  # previous page stays online
     assert not (tmp_path / "index.html").exists()
+
+
+def test_main_completes_missing_excerpts_from_the_article_page(tmp_path, monkeypatch):
+    article = Article("Live news about a model", "https://n.example/1", S1, None, "", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    paragraph = "From the page: " + "a sentence about the model and its training data. " * 3
+    html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()
+    monkeypatch.setattr("veille.enrich.fetch_page", lambda url: html)
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    assert "From the page" in (tmp_path / "index.html").read_text(encoding="utf-8")
+
+
+def test_completed_excerpt_is_used_to_classify_the_story(tmp_path, monkeypatch):
+    article = Article("Company news", "https://n.example/2", S1, None, "", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    monkeypatch.setattr(render_module, "load_themes", lambda: THEMES)
+    paragraph = "The startup announced new funding today. " * 4
+    html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()
+    monkeypatch.setattr("veille.enrich.fetch_page", lambda url: html)
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    page_html = (tmp_path / "index.html").read_text(encoding="utf-8")
+    assert '<section class="c2" aria-labelledby="theme-2">' in page_html  # Business, not Autres
+
+
+def test_markup_in_the_article_page_cannot_break_the_page(tmp_path, monkeypatch):
+    article = Article("Live news about a model", "https://n.example/3", S1, None, "", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    paragraph = "Use &lt;script&gt;alert(1)&lt;/script&gt; carefully in a sentence. " * 3
+    html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()
+    monkeypatch.setattr("veille.enrich.fetch_page", lambda url: html)
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    page_html = (tmp_path / "index.html").read_text(encoding="utf-8")
+    assert "<script>alert(1)" not in page_html  # page text is escaped like feed text (R13)
