@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.11 — validé par le chef de projet le 2026-10-02
+> **Statut :** v1.12 — validé par le chef de projet le 2026-10-03
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D17)
@@ -26,6 +26,7 @@
 | v1.9 | 2026-10-01 | §4.4 : horaire de la mise à jour quotidienne ; validée le 2026-10-02 (pull request #29) |
 | v1.10 | 2026-10-02 | §4.1 : lien sans nom de site ignoré ; §4.4 : lancement décalé de l'heure pile ; §6 : aucun article des 7 derniers jours traité comme aucune source ; validée le 2026-10-02 (pull request #32) |
 | v1.11 | 2026-10-02 | §8 : critère n° 2 compté à partir de la première mise à jour automatique réussie (précision de D13) ; validée le 2026-10-02 (pull request #33) |
+| v1.12 | 2026-10-03 | §4.4 : trois lancements planifiés par jour ; validée le 2026-10-03 (pull request #35) |
 
 ---
 
@@ -89,7 +90,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lisible sur mobile.
 
 ### 4.4 Automatisation
-- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → génération → publication. Lancement vers 6 h 15, heure de Paris (5 h 15 en heure d'hiver), en dehors de l'heure pile où GitHub retarde le plus les exécutions planifiées.
+- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → génération → publication. Trois lancements planifiés par jour, vers 6 h 15, 12 h 15 et 18 h 15, heure de Paris (une heure plus tôt en heure d'hiver), en dehors de l'heure pile : GitHub ne garantit pas les exécutions planifiées, et un seul lancement réussi suffit à mettre la page à jour dans la journée.
 - Déclenchement manuel possible (bouton « Run workflow »).
 
 ## 5. Hors périmètre V1
