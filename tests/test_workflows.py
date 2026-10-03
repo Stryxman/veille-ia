@@ -11,7 +11,12 @@ def workflow():
 
 def test_publication_runs_daily_and_on_demand():
     triggers = workflow()[True]  # YAML 1.1 reads the "on" key as True
-    assert triggers["schedule"] == [{"cron": "17 4 * * *"}]
+    # three slots: GitHub does not guarantee scheduled runs, one run a day is enough
+    assert triggers["schedule"] == [
+        {"cron": "17 4 * * *"},
+        {"cron": "17 10 * * *"},
+        {"cron": "17 16 * * *"},
+    ]
     assert "workflow_dispatch" in triggers
 
 

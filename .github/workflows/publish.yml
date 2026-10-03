@@ -2,8 +2,12 @@ name: Publication
 
 on:
   schedule:
-    # 17 past the hour: GitHub delays or drops runs scheduled on the hour most often
-    - cron: "17 4 * * *"  # about 06:15 in Paris in summer time, 05:15 in winter time
+    # GitHub does not guarantee scheduled runs (2026-10-02 and 03 were skipped): three slots a
+    # day, 17 past the hour (runs on the hour are delayed or dropped most often). Paris time:
+    # about 06:15, 12:15 and 18:15 in summer, one hour earlier in winter.
+    - cron: "17 4 * * *"
+    - cron: "17 10 * * *"
+    - cron: "17 16 * * *"
   workflow_dispatch:
 
 permissions:
