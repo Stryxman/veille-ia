@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.15 — en revue (pull request #38) ; v1.14 validée le 2026-10-03
+> **Statut :** v1.15 — validé par le chef de projet le 2026-10-06
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D19)
@@ -29,7 +29,7 @@
 | v1.12 | 2026-10-03 | §4.4 : trois lancements planifiés par jour ; validée le 2026-10-03 (pull request #35) |
 | v1.13 | 2026-10-03 | §4.1, §4.2, §4.3 : extrait manquant complété par le début du texte de la page de l'article (D18) ; §4.4 : étape d'extraits manquants ; §5 : exception au « scraping » exclu ; §6 : page d'article illisible sans effet sur la mise à jour, quatre modules ; §7 : étape `enrich`, bibliothèque `trafilatura` ; validée le 2026-10-03 (pull request #36) |
 | v1.14 | 2026-10-03 | §4.2, §5, §8 : LLM étudié et non retenu pour l'instant (D19) ; validée le 2026-10-03 (pull request #37) |
-| v1.15 | 2026-10-03 | §8 : contenu de J4 aligné sur le jalon (extraits manquants, découpage des thèmes) |
+| v1.15 | 2026-10-03 | §8 : contenu de J4 aligné sur le jalon (extraits manquants, découpage des thèmes) ; validée le 2026-10-06 (pull request #38) |
 
 ---
 
