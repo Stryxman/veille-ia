@@ -4,9 +4,9 @@
 
 A web page that gathers the news about artificial intelligence every day, with duplicates grouped and articles sorted by theme, from French and English-language sources. The page and the project documents are in French.
 
-> **Status:** scoping (J0) completed on 30 September 2026; collection (J1) completed on 30 September 2026; processing (J2) completed on 1 October 2026; delivery (J3): V1 online on 2 October 2026, milestone to be closed after the first automatic update.
+> **Status:** scoping (J0) completed on 30 September 2026; collection (J1) completed on 30 September 2026; processing (J2) completed on 1 October 2026; delivery (J3) completed on 6 October 2026 (V1 online on 2 October, updated automatically since the 3rd); finishing (J4) in progress.
 
-**Live page:** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — updated automatically every day (runs scheduled around 6:15, 12:15 and 18:15, Paris time; one hour earlier in winter time).
+**Live page:** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — updated automatically several times a day (three scheduled runs; GitHub often runs them several hours late).
 
 | On a computer (light mode) | On a phone (dark mode) |
 |---|---|
@@ -21,7 +21,7 @@ AI news is scattered across many sites and highly redundant: the same announceme
 1. **Collection** of 6 RSS feeds, 4 in English and 2 in French ([sources and why they were chosen](docs/sources.md), in French). A failing source does not stop the others.
 2. **Processing**: text cleaning, only the last 7 days kept, duplicates grouped (the retained article comes from the most reliable source, the others are listed under "Aussi couvert par", i.e. "Also covered by"), excerpt completed from the article page when the feed gives none, classification by theme using keywords.
 3. **Delivery**: a single web page, in French, readable on a phone, in light or dark mode, with no account or installation.
-4. **Automatic publication** three times a day on GitHub Pages; if no source answers, the previous page stays online.
+4. **Automatic publication** on GitHub Pages (three scheduled runs a day); if no source answers, the previous page stays online.
 
 ```
 config/sources.yaml ─► collect ─► process ─► enrich ─► render ─► site/index.html ─► GitHub Pages
@@ -39,7 +39,7 @@ The project is run in short milestones, with project management documents kept u
 | J0 — Scoping | Specification, sources, decisions, risks | 30 September 2026 |
 | J1 — Collection | Reading the RSS feeds | 30 September 2026 |
 | J2 — Processing | Cleaning, duplicates, classification | 1 October 2026 |
-| J3 — Delivery | Web page, daily publication: V1 online | 2 October 2026 |
+| J3 — Delivery | Web page, daily publication: V1 online | 6 October 2026 (V1 online on 2 October) |
 | J4 — Finishing | Missing excerpts, language model study, themes, documentation, project report | target: 6 October 2026 |
 
 - **Recorded decisions**: every structural choice is recorded with the options considered and its rationale, then approved by the project manager ([decision log](docs/decisions.md)).
@@ -52,7 +52,7 @@ The project is run in short milestones, with project management documents kept u
 - Keyword classification remains approximate: some articles end up in "Autres" ("Other") or in a neighbouring theme ([R2](docs/risques.md)). A language model was studied and is not adopted for now ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
 - Only near-identical titles are recognised as duplicates: the same news item with different titles in French and English is not grouped ([R12](docs/risques.md)).
 - Some article pages refuse automated reading; their articles without an excerpt in the feed stay without an excerpt ([sources](docs/sources.md)).
-- GitHub guarantees neither the time nor even the execution of scheduled runs, hence three slots a day ([specification §4.4](docs/cahier-des-charges.md#44-automatisation), [R3](docs/risques.md)).
+- GitHub guarantees neither the time nor even the execution of scheduled runs (delays of 3 to 9 hours observed), hence three slots a day ([specification §4.4](docs/cahier-des-charges.md#44-automatisation), [R3](docs/risques.md)).
 
 ## Development
 
