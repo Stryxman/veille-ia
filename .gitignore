@@ -11,6 +11,7 @@ venv/
 .env
 .pytest_cache/
 .ruff_cache/
+.coverage
 
 # Page générée (publiée par GitHub Actions, jamais commitée)
 site/

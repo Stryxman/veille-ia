@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -19,7 +19,7 @@
 | D11 | 2026-09-29 | Articles sans date de publication | Conservés, datés de leur date de collecte, étiquette « Date de publication inconnue » |
 | D12 | 2026-09-29 | Contrôle qualité | Vérification indépendante aux moments clés : recette prouvée, sources, cohérence documentaire |
 | D13 | 2026-09-29 | Replanification | Mise en ligne de la V1 avancée du 2026-10-14 au 2026-10-02 |
-| D14 | 2026-09-30 | Outillage de développement | ruff (qualité et format du code) ; pip + venv, dépendances dans `pyproject.toml` |
+| D14 | 2026-09-30 | Outillage de développement | ruff (qualité et format du code) ; pip + venv, dépendances dans `pyproject.toml` ; nommage, complexité et couverture ≥ 85 % contrôlés (2026-10-06) |
 | D15 | 2026-09-30 | Dates publiées sans fuseau horaire | Fuseau déclaré par source dans la configuration (UTC par défaut) |
 | D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
 | D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
@@ -193,6 +193,7 @@
   2. uv — plus rapide, versions figées, mais un outil supplémentaire à installer.
 - **Décision :** ruff ; pip + venv.
 - **Justification :** contrôle automatique de la qualité à coût nul, et installation reproductible avec les outils standard.
+- **Précision (2026-10-06, #39) :** règles ruff de nommage (`N`) et de complexité (`C90`, au plus 10) activées ; couverture des tests mesurée avec `coverage` (outil de référence, sans extension pytest), la CI échoue sous 85 %.
 
 ## D15 — Dates publiées sans fuseau horaire
 

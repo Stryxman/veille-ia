@@ -60,9 +60,10 @@ The project is run in short milestones, with project management documents kept u
 python3 -m venv .venv
 .venv/bin/pip install -e ".[dev]"
 .venv/bin/pytest          # tests (no network access)
+.venv/bin/coverage run -m pytest && .venv/bin/coverage report   # test coverage (85% minimum in CI)
 .venv/bin/ruff check .    # code quality
 .venv/bin/ruff format --check .   # code formatting
-.venv/bin/python -m veille.render --output site   # builds the page in site/index.html
+.venv/bin/python -m veille.render --output site   # builds the page in site/index.html and prints the run summary
 ```
 
 ## Project documents (in French)

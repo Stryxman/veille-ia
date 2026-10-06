@@ -6,7 +6,7 @@ Closes #
 
 ## Vérifications
 
-- [ ] Les tests passent (`pytest`) et le code est propre (`ruff check`, `ruff format --check`)
+- [ ] Les tests passent (`pytest`), la couverture reste d'au moins 85 % (`coverage report`) et le code est propre (`ruff check`, `ruff format --check`)
 - [ ] Recette avant fusion, donc avant fermeture de l'issue : chaque critère d'acceptation est vérifié, preuve à l'appui (test, commande ou capture) (D12)
 - [ ] Aucun ajout hors périmètre, ou il est signalé et arbitré (D12, R4)
 - [ ] Documentation cohérente : la modification est répercutée dans tous les documents concernés (D12)
