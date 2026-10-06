@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, datetime
 
 from veille import render as render_module
@@ -220,3 +221,32 @@ def test_comparison_signs_in_the_article_page_are_escaped(tmp_path, monkeypatch)
     assert render_module.main(["--output", str(tmp_path)]) == 0
     page_html = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert "scores a &lt; b on one benchmark" in page_html  # escaped by the template (R13)
+
+
+def test_main_prints_a_run_summary(tmp_path, monkeypatch, capsys):
+    with_text = Article("Model news", "https://n.example/5", S1, None, "Model text.", "en")
+    no_text = Article("Other news", "https://n.example/6", S2, None, "", "fr")
+    monkeypatch.setattr(
+        render_module, "collect", lambda sources: CollectResult([with_text, no_text], [S2])
+    )
+    monkeypatch.setattr(render_module, "load_sources", lambda: [S1, S2])
+    monkeypatch.setattr(render_module, "load_themes", lambda: THEMES)
+    monkeypatch.setattr("veille.enrich.fetch_page", lambda url: b"<html></html>")
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "S1 Hugging Face Blog: 1 article(s)" in out
+    assert "S2 ActuIA: unavailable" in out
+    assert "Stories kept (7 days): 2" in out
+    assert "Excerpts completed from article pages: 0 of 1" in out
+    assert "Classified outside 'Autres': 50 %" in out
+    for step in ("collect", "process", "enrich", "render"):
+        assert re.search(rf"{step} \d+\.\d s", out)  # duration of each step, in seconds
+
+
+def test_failed_run_still_prints_the_sources_and_durations(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([], [S1, S2]))
+    monkeypatch.setattr(render_module, "load_sources", lambda: [S1, S2])
+    assert render_module.main(["--output", str(tmp_path)]) == 1
+    out = capsys.readouterr().out
+    assert "S1 Hugging Face Blog: unavailable" in out and "S2 ActuIA: unavailable" in out
+    assert re.search(r"Durations: collect \d+\.\d s", out)

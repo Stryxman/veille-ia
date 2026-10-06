@@ -60,9 +60,10 @@ Le projet est mené en jalons courts, avec des documents de pilotage tenus à jo
 python3 -m venv .venv
 .venv/bin/pip install -e ".[dev]"
 .venv/bin/pytest          # tests (sans accès réseau)
+.venv/bin/coverage run -m pytest && .venv/bin/coverage report   # couverture des tests (85 % minimum en CI)
 .venv/bin/ruff check .    # qualité du code
 .venv/bin/ruff format --check .   # format du code
-.venv/bin/python -m veille.render --output site   # génère la page dans site/index.html
+.venv/bin/python -m veille.render --output site   # génère la page dans site/index.html et affiche le bilan de l'exécution
 ```
 
 ## Documentation du projet

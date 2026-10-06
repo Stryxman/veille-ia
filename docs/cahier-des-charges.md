@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.16 — validé par le chef de projet le 2026-10-06
+> **Statut :** v1.17 — en revue (pull request #41) ; v1.16 validée le 2026-10-06
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D19)
@@ -31,6 +31,7 @@
 | v1.14 | 2026-10-03 | §4.2, §5, §8 : LLM étudié et non retenu pour l'instant (D19) ; validée le 2026-10-03 (pull request #37) |
 | v1.15 | 2026-10-03 | §8 : contenu de J4 aligné sur le jalon (extraits manquants, découpage des thèmes) ; validée le 2026-10-06 (pull request #38) |
 | v1.16 | 2026-10-06 | §4.4 : aucune heure de mise à jour promise (retards constatés) ; §8 : jours du critère n° 2 comptés en heure de Paris (précision de D13) ; validée le 2026-10-06 (pull request #40) |
+| v1.17 | 2026-10-06 | §6 : couverture des tests ≥ 85 %, nommage et complexité contrôlés, bilan de chaque exécution (#39) ; §7 : outil `coverage` |
 
 ---
 
@@ -117,7 +118,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 - **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible. Une page d'article illisible (inaccessible, refusée, sans texte) laisse l'article sans extrait et n'empêche pas la génération de la page (D18).
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
 - **Maintenabilité :** code Python découpé en quatre modules indépendants (`collect`, `process`, `enrich`, `render`), testés.
-- **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff) exécutés à chaque pull request ; les tests n'appellent pas le réseau.
+- **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff, y compris conventions de nommage et complexité) exécutés à chaque pull request ; la CI échoue si moins de 85 % du code est couvert par les tests ; les tests n'appellent pas le réseau. Chaque exécution affiche un bilan dans son journal (articles par source, histoires conservées, extraits complétés, taux de classement, durée de chaque étape) ; en cas d'échec, l'état des sources et la durée des étapes effectuées.
 - **Respect des sources :** seuls le titre, un court extrait et le lien vers l'article original sont affichés.
 - **Évolutivité :** sources et thèmes définis uniquement dans `config/sources.yaml` et `config/themes.yaml`.
 - **Langue :** documentation et page en français ; code, noms techniques et messages de commit en anglais. Un README en anglais (`README.en.md`) présente le projet aux lecteurs non francophones ; il est rédigé en J4, une fois le README français stabilisé.
@@ -129,9 +130,9 @@ config/sources.yaml ─► collect ─► process ─► enrich ─► render �
 config/themes.yaml ─────────────────┘   (enrich : extraits manquants, D18)
 ```
 
-- **Langage :** Python ≥ 3.12 (bibliothèques : `feedparser`, `Jinja2`, `PyYAML`, `trafilatura` ; outils : `pytest`, `ruff`).
+- **Langage :** Python ≥ 3.12 (bibliothèques : `feedparser`, `Jinja2`, `PyYAML`, `trafilatura` ; outils : `pytest`, `coverage`, `ruff`).
 - **Environnement :** pip + venv, dépendances déclarées dans `pyproject.toml` (D14).
-- **Exécution :** workflow GitHub Actions planifié (quotidien) + workflow d'intégration continue (tests).
+- **Exécution :** workflow GitHub Actions planifié (quotidien) + workflow d'intégration continue (tests, qualité du code et couverture).
 - **Hébergement :** GitHub Pages.
 - **Stockage :** aucun ; la page est entièrement régénérée à chaque exécution.
 

@@ -3,13 +3,15 @@
 import argparse
 import logging
 import sys
+import time
+from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from veille.collect import collect
+from veille.collect import CollectResult, collect
 from veille.config import OTHER_THEME, load_sources, load_themes
 from veille.enrich import enrich
 from veille.models import Source, Story, Theme
@@ -67,26 +69,81 @@ def render_page(
     )
 
 
+def source_lines(collected: CollectResult, sources: list[Source]) -> list[str]:
+    unavailable = {source.id for source in collected.unavailable}
+    per_source = Counter(article.source.id for article in collected.articles)
+    return [
+        f"{source.id} {source.name}: "
+        + ("unavailable" if source.id in unavailable else f"{per_source[source.id]} article(s)")
+        for source in sources
+    ]
+
+
+def durations_line(durations: dict[str, float]) -> str:
+    return "Durations: " + ", ".join(f"{step} {secs:.1f} s" for step, secs in durations.items())
+
+
+def _failed(
+    message: str, collected: CollectResult, sources: list[Source], durations: dict[str, float]
+) -> int:
+    # a failed run still reports its sources and timings: that is when they matter most
+    print("\n".join([*source_lines(collected, sources), durations_line(durations)]))
+    logging.error(message)
+    return 1  # the workflow stops here, the previous page stays online
+
+
+def run_summary(
+    collected: CollectResult,
+    sources: list[Source],
+    stories: list[Story],
+    without_excerpt: int,
+    durations: dict[str, float],
+) -> str:
+    """Run report printed in the workflow log (#39): what was read, kept and how long it took."""
+    lines = source_lines(collected, sources)
+    completed = without_excerpt - sum(1 for story in stories if not story.article.summary)
+    classified = sum(1 for story in stories if story.theme != OTHER_THEME)
+    lines += [
+        f"Stories kept (7 days): {len(stories)}",
+        f"Excerpts completed from article pages: {completed} of {without_excerpt}",
+        f"Classified outside '{OTHER_THEME}': {100 * classified / len(stories):.0f} %",
+        durations_line(durations),
+    ]
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the Veille IA page.")
     parser.add_argument("--output", type=Path, default=Path("site"))
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
     sources, themes = load_sources(), load_themes()
+    durations: dict[str, float] = {}
+    start = time.perf_counter()
     collected = collect(sources)
+    durations["collect"] = time.perf_counter() - start
     if not collected.articles:
-        logging.error("No article collected: the page is not generated")
-        return 1  # the workflow stops here, the previous page stays online
+        return _failed(
+            "No article collected: the page is not generated", collected, sources, durations
+        )
     now = datetime.now(UTC)
+    start = time.perf_counter()
     stories = process(collected.articles, now, themes)
-    if not stories:
-        logging.error("No article in the last 7 days: the page is not generated")
-        return 1  # same as above: an empty page never replaces the previous one
+    durations["process"] = time.perf_counter() - start
+    if not stories:  # an empty page never replaces the previous one
+        message = "No article in the last 7 days: the page is not generated"
+        return _failed(message, collected, sources, durations)
+    without_excerpt = sum(1 for story in stories if not story.article.summary)
+    start = time.perf_counter()
     # missing excerpts read from the article pages (D18), then used for the themes like the others
     stories = classify(enrich(stories), themes)
+    durations["enrich"] = time.perf_counter() - start
+    start = time.perf_counter()
     args.output.mkdir(parents=True, exist_ok=True)
     page = render_page(stories, themes, sources, collected.unavailable, now)
     (args.output / "index.html").write_text(page, encoding="utf-8")
+    durations["render"] = time.perf_counter() - start
+    print(run_summary(collected, sources, stories, without_excerpt, durations))
     print(f"Page written to {args.output / 'index.html'} ({len(stories)} stories)")
     return 0
 

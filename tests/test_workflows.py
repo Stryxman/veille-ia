@@ -40,3 +40,20 @@ def test_publication_has_only_the_permissions_it_needs():
 def test_publication_steps_cannot_hang():
     jobs = workflow()["jobs"]
     assert all(job.get("timeout-minutes") for job in jobs.values())
+
+
+def ci_steps():
+    data = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"))
+    return [step.get("run", "") for step in data["jobs"]["test"]["steps"]]
+
+
+def test_ci_fails_when_test_coverage_drops_below_85_percent():
+    assert any("coverage report --fail-under=85" in run for run in ci_steps())
+
+
+def test_naming_and_complexity_rules_are_checked():
+    import tomllib
+
+    lint = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["ruff"]
+    assert {"N", "C90"} <= set(lint["lint"]["select"])
+    assert lint["lint"]["mccabe"]["max-complexity"] == 10
