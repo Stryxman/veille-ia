@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.17 — en revue (pull request #41) ; v1.16 validée le 2026-10-06
+> **Statut :** v1.17 — validé par le chef de projet le 2026-10-06
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D19)
@@ -31,7 +31,7 @@
 | v1.14 | 2026-10-03 | §4.2, §5, §8 : LLM étudié et non retenu pour l'instant (D19) ; validée le 2026-10-03 (pull request #37) |
 | v1.15 | 2026-10-03 | §8 : contenu de J4 aligné sur le jalon (extraits manquants, découpage des thèmes) ; validée le 2026-10-06 (pull request #38) |
 | v1.16 | 2026-10-06 | §4.4 : aucune heure de mise à jour promise (retards constatés) ; §8 : jours du critère n° 2 comptés en heure de Paris (précision de D13) ; validée le 2026-10-06 (pull request #40) |
-| v1.17 | 2026-10-06 | §6 : couverture des tests ≥ 85 %, nommage et complexité contrôlés, bilan de chaque exécution (#39) ; §7 : outil `coverage` |
+| v1.17 | 2026-10-06 | §6 : couverture des tests ≥ 85 %, nommage et complexité contrôlés, bilan de chaque exécution (#39) ; §7 : outil `coverage` ; validée le 2026-10-06 (pull request #41) |
 
 ---
 
