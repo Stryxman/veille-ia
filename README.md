@@ -4,7 +4,7 @@
 
 Une page web qui rassemble chaque jour l'actualité de l'intelligence artificielle, dédoublonnée et classée par thème, à partir de sources françaises et anglophones.
 
-> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) terminée le 6 octobre 2026 (V1 en ligne le 2 octobre, mise à jour automatique depuis le 3) ; finitions (J4) en cours.
+> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) terminée le 6 octobre 2026 (V1 en ligne le 2 octobre, mise à jour automatique depuis le 3) ; finitions (J4) terminées le 7 octobre 2026 : **V1 terminée**, tous les critères de réussite remplis ([bilan](docs/bilan.md)). Prochaine étape envisagée : synthèse par thème (V2, [#43](https://github.com/Stryxman/veille-ia/issues/43)).
 
 **Page en ligne :** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — mise à jour automatique plusieurs fois par jour (trois lancements planifiés ; GitHub les exécute souvent avec plusieurs heures de retard).
 
@@ -40,7 +40,7 @@ Le projet est mené en jalons courts, avec des documents de pilotage tenus à jo
 | J1 — Collecte | Lecture des flux RSS | 30 septembre 2026 |
 | J2 — Traitement | Nettoyage, doublons, classement | 1er octobre 2026 |
 | J3 — Restitution | Page web, publication quotidienne : V1 en ligne | 6 octobre 2026 (V1 en ligne le 2 octobre) |
-| J4 — Finitions | Extraits manquants, étude d'un modèle de langage, thèmes, documentation, bilan | cible : 6 octobre 2026 |
+| J4 — Finitions | Extraits manquants, étude d'un modèle de langage, thèmes, documentation, bilan | 7 octobre 2026 |
 
 - **Décisions tracées** : chaque choix structurant est consigné avec les options envisagées et sa justification, puis validé par le chef de projet ([journal de décisions](docs/decisions.md)).
 - **Risques suivis** : probabilité, impact et mesures, revus à chaque fin de jalon ([registre des risques](docs/risques.md)).
