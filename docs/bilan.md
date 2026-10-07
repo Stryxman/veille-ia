@@ -1,6 +1,6 @@
 # Bilan de projet — Veille IA
 
-> **Statut :** mise à jour du 2026-10-07 en revue (pull request #46) ; version précédente validée le 2026-10-07 (pull request #44)
+> **Statut :** validé par le chef de projet le 2026-10-07 (dernière mise à jour validée avec la pull request #46)
 > **Date :** 2026-10-07
 > **Références :** [cahier des charges](cahier-des-charges.md) §8 et §9, [décisions](decisions.md) (D1 à D20), [registre des risques](risques.md) (R1 à R13)
 

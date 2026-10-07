@@ -137,7 +137,7 @@ def test_redirects_leaving_the_site_or_the_web_are_refused():
     assert handler.redirect_request(request, None, 302, "Found", {}, "https://hf.example/b")
 
 
-def test_page_text_keeps_quoted_tags_and_entities():
+def test_page_text_keeps_quoted_tags():
     paragraph = "To wrap text in &lt;p&gt; tags, write AT&amp;T in full. " * 3
     pages = {"https://hf.example/blog/a": page(paragraph)}
     [result] = enrich([story()], fetch=pages.__getitem__)
