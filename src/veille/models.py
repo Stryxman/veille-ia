@@ -40,3 +40,11 @@ class Story:
 class Theme:
     name: str
     keywords: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Synthesis:
+    """Summary of one theme, checked: every sentence cites the theme's cards ([n])."""
+
+    text: str
+    model: str  # shown under the summary, e.g. "Mistral, mistral-small-latest"
