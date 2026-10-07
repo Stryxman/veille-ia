@@ -1,6 +1,6 @@
 # Bilan de projet — Veille IA
 
-> **Statut :** mise à jour du 2026-10-07 (clôture de J4) en revue (pull request #47) ; version précédente validée le 2026-10-07 (pull request #46)
+> **Statut :** validé par le chef de projet le 2026-10-07 (dernière mise à jour validée avec la pull request #47)
 > **Date :** 2026-10-07
 > **Références :** [cahier des charges](cahier-des-charges.md) §8 et §9, [décisions](decisions.md) (D1 à D20), [registre des risques](risques.md) (R1 à R14)
 
@@ -64,7 +64,7 @@ Au-delà du plan initial, J3 et J4 ont intégré des travaux arbitrés en cours 
 
 ## 6. Pistes d'évolution
 
-- **Synthèse par thème avec citations** (V2, [#43](https://github.com/Stryxman/veille-ia/issues/43)) : rouvre D19 ; à cadrer avec une attention particulière à la sécurité du jeton d'accès.
+- **Synthèse par thème avec citations** (V2, [#43](https://github.com/Stryxman/veille-ia/issues/43)) : rouvre D19 ; à cadrer avec une attention particulière à la sécurité du jeton d’accès, ainsi que la durée de vie souhaitée de la page (R3).
 - **Doublons de même sujet** (R12) : à reconsidérer si un modèle de langage est adopté.
 - **Maintenance** : figer les versions des dépendances et des actions GitHub ; suivre l'évolution de GitHub Actions (actions forcées en Node 24, ubuntu-latest en Ubuntu 26 à partir du 2026-10-19 ; R14) ; vérifier chaque mois que le workflow planifié reste actif (R3, désactivation après 60 jours sans activité).
 - **Points mineurs reportés** pendant les revues : nettoyage du HTML de certains flux, comparaison des liens (http/https, www), quelques cas de dates et de compteurs ; aucun n'affecte les critères de réussite.
