@@ -4,7 +4,7 @@
 
 A web page that gathers the news about artificial intelligence every day, with duplicates grouped and articles sorted by theme, from French and English-language sources. The page and the project documents are in French.
 
-> **Status:** scoping (J0) completed on 30 September 2026; collection (J1) completed on 30 September 2026; processing (J2) completed on 1 October 2026; delivery (J3) completed on 6 October 2026 (V1 online on 2 October, updated automatically since the 3rd); finishing (J4) in progress.
+> **Status:** scoping (J0) completed on 30 September 2026; collection (J1) completed on 30 September 2026; processing (J2) completed on 1 October 2026; delivery (J3) completed on 6 October 2026 (V1 online on 2 October, updated automatically since the 3rd); finishing (J4) completed on 7 October 2026: **V1 complete**, all success criteria met ([project report](docs/bilan.md)). Next step under consideration: summary by theme (V2, [#43](https://github.com/Stryxman/veille-ia/issues/43)).
 
 **Live page:** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — updated automatically several times a day (three scheduled runs; GitHub often runs them several hours late).
 
@@ -40,7 +40,7 @@ The project is run in short milestones, with project management documents kept u
 | J1 — Collection | Reading the RSS feeds | 30 September 2026 |
 | J2 — Processing | Cleaning, duplicates, classification | 1 October 2026 |
 | J3 — Delivery | Web page, daily publication: V1 online | 6 October 2026 (V1 online on 2 October) |
-| J4 — Finishing | Missing excerpts, language model study, themes, documentation, project report | target: 6 October 2026 |
+| J4 — Finishing | Missing excerpts, language model study, themes, documentation, project report | 7 October 2026 |
 
 - **Recorded decisions**: every structural choice is recorded with the options considered and its rationale, then approved by the project manager ([decision log](docs/decisions.md)).
 - **Tracked risks**: likelihood, impact and measures, reviewed at the end of each milestone ([risk register](docs/risques.md)).
