@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -25,6 +25,7 @@
 | D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
 | D18 | 2026-10-03 | Extraits manquants | Début du texte principal de la page de l'article, extrait avec `trafilatura` |
 | D19 | 2026-10-03 | Modèle de langage (LLM) | Pas de LLM pour l'instant : classement par mots-clés conservé |
+| D20 | 2026-10-07 | Découpage des thèmes | « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation |
 
 ---
 
@@ -252,3 +253,14 @@
 - **Décision :** option 3.
 - **Justification :** la V1 tient son critère de classement (≥ 70 %, critère n° 5) sans LLM ; le projet reste gratuit, déterministe et sans secret à gérer ; le découpage des thèmes, étudié dans #26, pourrait améliorer la lecture par simple configuration.
 - **Conséquences :** pas de résumé ni de traduction en français ; les doublons de même sujet restent non regroupés (R12, limite acceptée) ; R7 devient sans objet ; la piste pourra être rouverte après le bilan, par une nouvelle décision.
+
+## D20 — Découpage des thèmes
+
+- **Date :** 2026-10-07
+- **Contexte :** le thème « Modèles & recherche » regroupait près de la moitié des actualités et servait de fourre-tout : des mots très fréquents (« model », « agent », « GPT », « Claude ») y attiraient des articles d'autres thèmes (issue #26). D19 écartant le modèle de langage, l'amélioration passe par la configuration (O5).
+- **Options envisagées :**
+  1. Découper « Modèles & recherche » en trois thèmes : Modèles, Agents, Recherche & évaluation — mesuré sur trois jours de vrais flux (2026-10-03, 06 et 07) : 3 à 4 points de classement en plus (76 → 80 %, 77 → 81 %, 81 → 84 %), thème le plus gros divisé par 1,7 à 2 (29 → 14, 29 → 14, 33 → 19), « Autres » réduit (18 → 15, 17 → 14, 14 → 12).
+  2. Garder les quatre thèmes — rien à changer, mais un thème trop gros pour être parcouru facilement.
+- **Décision :** option 1.
+- **Justification :** gain stable sur trois mesures, par simple configuration ; tous les mots-clés de l'ancien thème sont conservés dans les trois nouveaux, complétés par 24 mots-clés propres à ces thèmes (ceux du brouillon mesuré). À égalité de mots-clés, le premier thème du fichier l'emporte : un article contenant « safety cases » va ainsi en Recherche & évaluation plutôt qu'en Régulation & éthique.
+- **Conséquences :** six thèmes sur la page (les six couleurs prévues par le gabarit sont toutes utilisées) ; les erreurs propres aux mots-clés demeurent (R2) ; les liens vers les sections et les couleurs des thèmes suivants changent, car elles suivent la position dans la configuration (`#theme-1` désigne désormais « Modèles ») ; captures du README refaites.

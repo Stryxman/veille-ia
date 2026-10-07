@@ -2,26 +2,37 @@
 # Un article reçoit le thème qui a le plus de mots-clés présents dans son titre et son extrait ;
 # en cas d'égalité, le premier thème du fichier. Sans aucun mot-clé : « Autres » (CdC §4.2).
 # Mots entiers, sans tenir compte des majuscules ni des accents.
+# « Modèles », « Agents » et « Recherche & évaluation » découpent l'ancien thème
+# « Modèles & recherche » (D20, mesuré sur trois jours de vrais flux, #26).
 themes:
-  - name: Modèles & recherche
-    keywords: [model, models, modèle, modèles, llm, llms, research, recherche, paper, benchmark,
-               benchmarks, dataset, training, entraînement, reasoning, raisonnement, open source,
-               open-source, open-weight, weights, multimodal, agent, agents, agentic, fine-tuning,
-               inference, inférence, architecture, embedding, embeddings, gpt, gemini, claude, llama, mistral, qwen, evaluation, évaluation, leaderboard]
+  - name: Modèles
+    keywords: [model, models, modèle, modèles, llm, llms, open source, open-source, open-weight,
+               weights, multimodal, gpt, gemini, claude, llama, mistral, qwen, olmo, sonnet, opus,
+               frontier, fine-tuning, inference, inférence, embedding, embeddings, moe]
+  - name: Agents
+    keywords: [agent, agents, agentic, agentique, computer-use, mcp, codex, autonomous, autonome,
+               autonomes, operator, workflow, workflows]
+  - name: Recherche & évaluation
+    keywords: [research, recherche, researchers, chercheurs, paper, study, étude, benchmark,
+               benchmarks, dataset, training, entraînement, reasoning, raisonnement, evaluation,
+               évaluation, leaderboard, architecture, science, scientific, scientifique,
+               safety cases, distillation]
   - name: Produits & outils
     keywords: [launch, launches, launched, lance, lancement, release, releases, released, app,
-               feature, features, fonctionnalité, fonctionnalités, tool, tools, outil,
-               outils, api, chatbot, assistant, copilot, chatgpt, update, mise à jour, plugin,
-               integration, intégration, device, smartphone, glasses, browser, navigateur,
-               available, disponible, rolls out, sdk, platform, plateforme, product, robot, robots, search]
+               feature, features, fonctionnalité, fonctionnalités, tool, tools, outil, outils, api,
+               chatbot, assistant, copilot, chatgpt, update, mise à jour, plugin, integration,
+               intégration, device, smartphone, glasses, browser, navigateur, available,
+               disponible, rolls out, sdk, platform, plateforme, product, robot, robots, search]
   - name: Business & financement
     keywords: [funding, raises, raised, lève, levée, fonds, investment, investissement, investit,
                valuation, valorisation, startup, start-up, acquisition, acquires, rachète, rachat,
-               ipo, revenue, chiffre d'affaires, billion, milliard, milliards, million, millions, deal,
-               partnership, partenariat, accord, contract, contrat, market, marché, spending,
-               dépenses, economics, économie, earnings, layoffs, licenciements, ceo, data center, datacenter]
+               ipo, revenue, chiffre d'affaires, billion, milliard, milliards, million, millions,
+               deal, partnership, partenariat, accord, contract, contrat, market, marché, spending,
+               dépenses, economics, économie, earnings, layoffs, licenciements, ceo, data center,
+               datacenter]
   - name: Régulation & éthique
     keywords: [regulation, réglementation, regulator, régulateur, law, loi, ai act, policy,
-               politique, government, gouvernement, ban, interdiction, lawsuit, procès, tribunal, copyright, droit d'auteur, privacy, vie privée, rgpd, gdpr, safety,
-               sécurité, ethics, éthique, bias, biais, senate, congress, cnil, antitrust,
-               ftc, deepfake, deepfakes, guardrails, garde-fous, sovereignty, souveraineté]
+               politique, government, gouvernement, ban, interdiction, lawsuit, procès, tribunal,
+               copyright, droit d'auteur, privacy, vie privée, rgpd, gdpr, safety, sécurité,
+               ethics, éthique, bias, biais, senate, congress, cnil, antitrust, ftc, deepfake,
+               deepfakes, guardrails, garde-fous, sovereignty, souveraineté]
