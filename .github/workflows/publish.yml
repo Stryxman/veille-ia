@@ -2,9 +2,10 @@ name: Publication
 
 on:
   schedule:
-    # GitHub does not guarantee scheduled runs (2026-10-02 and 03 were skipped, later runs
-    # started 3 to 9 hours late): three slots a day in UTC, 17 past the hour (runs on the hour
-    # are delayed or dropped most often). No update time is promised.
+    # GitHub does not guarantee scheduled runs (the 2026-10-02 run and the first 2026-10-03
+    # slot were skipped, later runs started 3 to 9 hours late): three slots a day in UTC,
+    # 17 past the hour (runs on the hour are delayed or dropped most often).
+    # No update time is promised.
     - cron: "17 4 * * *"
     - cron: "17 10 * * *"
     - cron: "17 16 * * *"

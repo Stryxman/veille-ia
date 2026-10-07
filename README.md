@@ -74,3 +74,4 @@ python3 -m venv .venv
 | [Sources](docs/sources.md) | Sources suivies et raisons de leur choix |
 | [Journal de décisions](docs/decisions.md) | Choix structurants, options envisagées, justifications |
 | [Registre des risques](docs/risques.md) | Risques, probabilité, impact, mesures et jalon de mise en œuvre |
+| [Bilan de projet](docs/bilan.md) | Critères de réussite, écarts de planning, risques survenus, enseignements |
