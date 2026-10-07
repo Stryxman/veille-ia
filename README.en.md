@@ -74,3 +74,4 @@ python3 -m venv .venv
 | [Sources](docs/sources.md) | Sources followed and why they were chosen |
 | [Decision log](docs/decisions.md) | Structural choices, options considered, rationale |
 | [Risk register](docs/risques.md) | Risks, likelihood, impact, measures and implementation milestone |
+| [Project report](docs/bilan.md) | Success criteria, schedule deviations, risks that occurred, lessons learned |
