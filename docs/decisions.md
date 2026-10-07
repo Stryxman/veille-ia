@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42) ; précision de D18 en revue (pull request #46).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -23,7 +23,7 @@
 | D15 | 2026-09-30 | Dates publiées sans fuseau horaire | Fuseau déclaré par source dans la configuration (UTC par défaut) |
 | D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
 | D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
-| D18 | 2026-10-03 | Extraits manquants | Début du texte principal de la page de l'article, extrait avec `trafilatura` |
+| D18 | 2026-10-03 | Extraits manquants | Début du texte principal de la page de l'article, extrait avec `trafilatura` ; site de la source seulement, 120 s au plus (2026-10-07) |
 | D19 | 2026-10-03 | Modèle de langage (LLM) | Pas de LLM pour l'instant : classement par mots-clés conservé |
 | D20 | 2026-10-07 | Découpage des thèmes | « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation |
 
@@ -241,6 +241,7 @@
 - **Décision :** option 1.
 - **Justification :** gain immédiat et visible pour la source la plus touchée, avec une bibliothèque maintenue plutôt qu'une extraction propre à chaque site. Le texte est traité comme un extrait de flux : titre répété retiré, nettoyé, limité à environ 300 caractères (R6), affiché échappé (R13), et utilisé pour le classement par thème. Le site de Hugging Face autorise la lecture de ses pages par les robots (`robots.txt` : « Allow: / »).
 - **Conséquences :** nouvelle dépendance ; une requête par article retenu sans extrait (6 par exécution le 2026-10-03, environ 2 s, soit environ 18 par jour avec les trois lancements de §4.4) ; une page inaccessible ou sans texte laisse l'article sans extrait et n'arrête pas la mise à jour (CdC §6) ; seule exception au « scraping » exclu du périmètre (CdC §5). Le site d'OpenAI refuse les requêtes automatiques : ses rares articles sans extrait le resteront. L'extraction n'est pas parfaite : il arrive que le premier paragraphe soit sauté.
+- **Précision (2026-10-07, #45) :** seules les pages du site de la source (même domaine ou sous-domaine) sont lues, sans suivre de redirection vers un autre site ou hors http/https ; aucune nouvelle page n'est lue au-delà de 120 secondes par exécution ; contrairement à la justification initiale, le texte extrait n'est plus nettoyé une seconde fois (balises citées et entités conservées).
 
 ## D19 — Modèle de langage (LLM)
 

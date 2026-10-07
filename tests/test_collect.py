@@ -87,6 +87,16 @@ def test_item_whose_link_has_no_site_is_skipped():
     assert [a.title for a in parse_feed(feed, source())] == ["Web"]
 
 
+def test_malformed_link_skips_only_its_entry(caplog):
+    feed = b"""<?xml version="1.0"?><rss version="2.0"><channel><title>T</title>
+<item><title>Broken</title><link>http://[bad/x</link></item>
+<item><title>Web</title><link>https://example.org/ok</link></item>
+</channel></rss>"""
+    with caplog.at_level("WARNING", logger="veille.collect"):
+        assert [a.title for a in parse_feed(feed, source())] == ["Web"]  # not the whole source
+    assert "T1: 1 entry skipped" in caplog.text
+
+
 def test_skipped_items_are_logged(caplog):
     with caplog.at_level("WARNING", logger="veille.collect"):
         parse_feed(fixture("rss2.xml"), source())

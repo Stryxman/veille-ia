@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.18 — validé par le chef de projet le 2026-10-07
+> **Statut :** v1.19 — en revue (pull request #46) ; v1.18 validée le 2026-10-07
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D20)
@@ -33,6 +33,7 @@
 | v1.16 | 2026-10-06 | §4.4 : aucune heure de mise à jour promise (retards constatés) ; §8 : jours du critère n° 2 comptés en heure de Paris (précision de D13) ; validée le 2026-10-06 (pull request #40) |
 | v1.17 | 2026-10-06 | §6 : couverture des tests ≥ 85 %, nommage et complexité contrôlés, bilan de chaque exécution (#39) ; §7 : outil `coverage` ; validée le 2026-10-06 (pull request #41) |
 | v1.18 | 2026-10-07 | §4.2 : six thèmes, « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation (D20) ; validée le 2026-10-07 (pull request #42) |
+| v1.19 | 2026-10-07 | §6 : pages d'articles lues sur le site de la source seulement, durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes) ; lien mal formé sans effet sur la source (#45) |
 
 ---
 
@@ -118,7 +119,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 ## 6. Exigences non fonctionnelles
 
-- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible. Une page d'article illisible (inaccessible, refusée, sans texte) laisse l'article sans extrait et n'empêche pas la génération de la page (D18).
+- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible. Une page d'article illisible (inaccessible, refusée, sans texte) laisse l'article sans extrait et n'empêche pas la génération de la page (D18) ; seules les pages du site de la source sont lues (redirections hors du site refusées), dans une durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes). Un lien mal formé dans un flux n'écarte que son entrée.
 - **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
 - **Maintenabilité :** code Python découpé en quatre modules indépendants (`collect`, `process`, `enrich`, `render`), testés.
 - **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff, y compris conventions de nommage et complexité) exécutés à chaque pull request ; la CI échoue si moins de 85 % du code est couvert par les tests ; les tests n'appellent pas le réseau. Chaque exécution affiche un bilan dans son journal (articles par source, histoires conservées, extraits complétés, taux de classement, durée de chaque étape) ; en cas d'échec, l'état des sources et la durée des étapes effectuées.

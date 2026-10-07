@@ -135,7 +135,7 @@ def test_page_without_stories_says_so():
 
 
 def test_main_writes_the_page(tmp_path, monkeypatch):
-    article = Article("Live news about a model", "https://n.example/1", S1, None, "x", "en")
+    article = Article("Live news about a model", "https://hf.example/news/1", S1, None, "x", "en")
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
     assert render_module.main(["--output", str(tmp_path)]) == 0
     assert "Live news about a model" in (tmp_path / "index.html").read_text(encoding="utf-8")
@@ -180,7 +180,7 @@ def test_main_publishes_nothing_when_no_story_is_recent(tmp_path, monkeypatch):
 
 
 def test_main_completes_missing_excerpts_from_the_article_page(tmp_path, monkeypatch):
-    article = Article("Live news about a model", "https://n.example/1", S1, None, "", "en")
+    article = Article("Live news about a model", "https://hf.example/news/1", S1, None, "", "en")
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
     paragraph = "From the page: " + "a sentence about the model and its training data. " * 3
     html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()
@@ -190,7 +190,7 @@ def test_main_completes_missing_excerpts_from_the_article_page(tmp_path, monkeyp
 
 
 def test_completed_excerpt_is_used_to_classify_the_story(tmp_path, monkeypatch):
-    article = Article("Company news", "https://n.example/2", S1, None, "", "en")
+    article = Article("Company news", "https://hf.example/news/2", S1, None, "", "en")
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
     monkeypatch.setattr(render_module, "load_themes", lambda: THEMES)
     paragraph = "The startup announced new funding today. " * 4
@@ -201,19 +201,20 @@ def test_completed_excerpt_is_used_to_classify_the_story(tmp_path, monkeypatch):
     assert '<section class="c2" aria-labelledby="theme-2">' in page_html  # Business, not Autres
 
 
-def test_markup_in_the_article_page_cannot_break_the_page(tmp_path, monkeypatch):
-    article = Article("Live news about a model", "https://n.example/3", S1, None, "", "en")
+def test_markup_in_the_article_page_is_escaped(tmp_path, monkeypatch):
+    article = Article("Live news about a model", "https://hf.example/news/3", S1, None, "", "en")
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
-    paragraph = "Use &lt;script&gt;alert(1)&lt;/script&gt; carefully in a sentence. " * 3
+    paragraph = "The model writes &lt;think&gt; before answering, carefully. " * 3
     html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()
     monkeypatch.setattr("veille.enrich.fetch_page", lambda url: html)
     assert render_module.main(["--output", str(tmp_path)]) == 0
     page_html = (tmp_path / "index.html").read_text(encoding="utf-8")
-    assert "<script>alert(1)" not in page_html  # page text is escaped like feed text (R13)
+    assert "The model writes &lt;think&gt; before answering" in page_html  # escaped, not dropped
+    assert "<think>" not in page_html
 
 
 def test_comparison_signs_in_the_article_page_are_escaped(tmp_path, monkeypatch):
-    article = Article("Live news about a model", "https://n.example/4", S1, None, "", "en")
+    article = Article("Live news about a model", "https://hf.example/news/4", S1, None, "", "en")
     monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
     paragraph = "The new model scores a &lt; b on one benchmark, which surprised the authors. " * 3
     html = f"<html><body><article><p>{paragraph}</p></article></body></html>".encode()

@@ -1,6 +1,6 @@
 # Bilan de projet — Veille IA
 
-> **Statut :** validé par le chef de projet le 2026-10-07 (pull request #44)
+> **Statut :** mise à jour du 2026-10-07 en revue (pull request #46) ; version précédente validée le 2026-10-07 (pull request #44)
 > **Date :** 2026-10-07
 > **Références :** [cahier des charges](cahier-des-charges.md) §8 et §9, [décisions](decisions.md) (D1 à D20), [registre des risques](risques.md) (R1 à R13)
 
@@ -31,9 +31,9 @@ La V1 est en ligne depuis le 2 octobre 2026 : [stryxman.github.io/veille-ia](htt
 | J1 — Collecte | 2026-09-30 | 2026-09-30 | à l'heure | — |
 | J2 — Traitement | 2026-10-01 | 2026-10-01 | à l'heure | — |
 | J3 — Restitution (V1) | 2026-10-02 | 2026-10-06 | +4 jours (V1 en ligne à la date cible) | L'exécution planifiée du 2 octobre et le premier créneau du 3 octobre (04:17 UTC) n'ont pas eu lieu ; trois créneaux par jour ont été mis en place (#34) et la clôture attendait la preuve d'exécutions planifiées fiables (9 réussies du 3 au 5 octobre, en UTC) |
-| J4 — Finitions | 2026-10-06 | prévue le 2026-10-07, à la fusion de ce bilan | +1 jour | Le critère n° 2 ne pouvait être constaté qu'après 5 jours de mises à jour automatiques, à partir du 3 octobre (règle de D13) |
+| J4 — Finitions | 2026-10-06 | prévue le 2026-10-07, à la fusion des correctifs de la revue de code de fin de J4 (#45) | +1 jour | Le critère n° 2 ne pouvait être constaté qu'après 5 jours de mises à jour automatiques, à partir du 3 octobre (règle de D13) |
 
-Au-delà du plan initial, J3 et J4 ont intégré des travaux arbitrés en cours de route : correctifs de la revue de code de fin de J3 (#31), fiabilisation de la planification (#34), extraits manquants (#27, D18), qualité et observabilité (#39), découpage des thèmes (#26, D20). Chacun a été décidé par le chef de projet et tracé.
+Au-delà du plan initial, J3 et J4 ont intégré des travaux arbitrés en cours de route : correctifs de la revue de code de fin de J3 (#31), fiabilisation de la planification (#34), extraits manquants (#27, D18), qualité et observabilité (#39), découpage des thèmes (#26, D20), correctifs de la revue de code de fin de J4 (#45). Chacun a été décidé par le chef de projet et tracé.
 
 ## 4. Risques survenus et efficacité des mesures
 
@@ -42,7 +42,7 @@ Au-delà du plan initial, J3 et J4 ont intégré des travaux arbitrés en cours 
 | R1 — source qui change ou disparaît | Pas en production | Isolement des sources démontré par l'essai du critère 3 ; signalement sur la page en place |
 | R2 — classement imprécis | Oui, partiellement | 90 % le 1er octobre ; 76 à 81 % avec 4 thèmes (3, 6 et 7 octobre) ; 84 % avec 6 thèmes ; découpage des thèmes (D20) efficace ; les erreurs propres aux mots-clés demeurent ; LLM non retenu pour l'instant (D19) |
 | R3 — désactivation du workflow planifié | Non (désactivation) ; incidents voisins suivis sous R3 | La désactivation après 60 jours n'est pas survenue. Incidents de planification suivis sous ce risque : exécution du 2 octobre et premier créneau du 3 octobre sautés, puis retards de 3 à 9 heures ; trois créneaux par jour (#34) : aucune journée sans mise à jour depuis le 3 octobre |
-| R4 — dérive du périmètre | Contenue | Ajouts en J3 et J4 (#27, #31, #34, #39, #26) tous arbitrés par le chef de projet et tracés ; la synthèse demandée le 2026-10-07 est renvoyée en V2 (#43) ; mesure efficace |
+| R4 — dérive du périmètre | Contenue | Ajouts en J3 et J4 (#27, #31, #34, #39, #26, #45) tous arbitrés par le chef de projet et tracés ; la synthèse demandée le 2026-10-07 est renvoyée en V2 (#43) ; mesure efficace |
 | R5 — retard du planning | **Oui** | +1 jour en J0, +4 jours en J3, +1 jour en J4 ; la V1 a pourtant tenu sa date de mise en ligne ; écarts tracés au fil de l'eau |
 | R6 — droits d'auteur | Non | Titre, court extrait, lien et mention des éditeurs ; extraits issus des pages limités de la même façon (D18) |
 | R7 — clé API d'un LLM | Sans objet | Aucun LLM utilisé (D19) ; redevient d'actualité avec #43 (V2) |
@@ -51,7 +51,7 @@ Au-delà du plan initial, J3 et J4 ont intégré des travaux arbitrés en cours 
 | R10 — désalignement sources.md / configuration | Non | Test automatique en place |
 | R11 — niveaux de confiance arbitraires | Non | Critères documentés ; vérification indépendante des sources |
 | R12 — doublons de même sujet non détectés | **Oui (limite acceptée)** | Aucun regroupement des mêmes sujets titrés différemment en français et en anglais ; limite maintenue après l'étude LLM (D19) |
-| R13 — contenu malveillant dans un flux | Détecté avant tout incident | La revue de sécurité a révélé qu'un lien `javascript:` aurait pu atteindre la page ; liens filtrés, liens relatifs complétés, texte échappé, tests dédiés |
+| R13 — contenu malveillant dans un flux | Détecté avant tout incident | La revue de sécurité a révélé qu'un lien `javascript:` aurait pu atteindre la page ; liens filtrés, liens relatifs complétés, texte échappé, tests dédiés ; la revue de code de fin de J4 a restreint la lecture des pages d'articles au site de la source (#45) |
 
 ## 5. Enseignements
 
