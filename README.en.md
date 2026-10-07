@@ -51,7 +51,7 @@ The project is run in short milestones, with project management documents kept u
 
 - Keyword classification remains approximate: some articles end up in "Autres" ("Other") or in a neighbouring theme ([R2](docs/risques.md)). A language model was studied and is not adopted for now ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
 - Only near-identical titles are recognised as duplicates: the same news item with different titles in French and English is not grouped ([R12](docs/risques.md)).
-- Some article pages refuse automated reading; their articles without an excerpt in the feed stay without an excerpt ([sources](docs/sources.md)).
+- Articles without an excerpt in their feed stay without one when their page refuses automated reading, is not on the source's site, or could not be read within the maximum reading time ([sources](docs/sources.md), [D18](docs/decisions.md#d18--extraits-manquants)).
 - GitHub guarantees neither the time nor even the execution of scheduled runs (delays of 3 to 9 hours observed), hence three slots a day ([specification §4.4](docs/cahier-des-charges.md#44-automatisation), [R3](docs/risques.md)).
 
 ## Development

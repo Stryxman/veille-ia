@@ -85,9 +85,12 @@ def _web_link(link: str, feed_url: str) -> str:
     """
     if not link:
         return ""
-    parts = urllib.parse.urlsplit(link)
-    if not parts.scheme:
-        return urllib.parse.urljoin(feed_url, link)
+    try:
+        parts = urllib.parse.urlsplit(link)
+        if not parts.scheme:
+            return urllib.parse.urljoin(feed_url, link)
+    except ValueError:  # malformed link (e.g. "http://[bad"): skip this entry only
+        return ""
     return link if parts.scheme.lower() in {"http", "https"} and parts.netloc else ""
 
 

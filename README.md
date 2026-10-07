@@ -51,7 +51,7 @@ Le projet est mené en jalons courts, avec des documents de pilotage tenus à jo
 
 - Le classement par mots-clés reste approximatif : une partie des articles tombe dans « Autres » ou dans un thème voisin ([R2](docs/risques.md)). Un modèle de langage a été étudié et n'est pas retenu pour l'instant ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
 - Seuls les titres quasi identiques sont reconnus comme doublons : une même nouvelle titrée différemment en français et en anglais n'est pas regroupée ([R12](docs/risques.md)).
-- Certaines pages d'articles refusent la lecture automatique ; leurs articles sans extrait dans le flux restent sans extrait ([sources](docs/sources.md)).
+- Les articles sans extrait dans leur flux restent sans extrait quand leur page refuse la lecture automatique, n'est pas sur le site de la source, ou n'a pas pu être lue dans la durée maximale de lecture ([sources](docs/sources.md), [D18](docs/decisions.md#d18--extraits-manquants)).
 - GitHub ne garantit pas l'heure ni même l'exécution des lancements planifiés (retards de 3 à 9 heures constatés), d'où trois créneaux par jour ([cahier des charges §4.4](docs/cahier-des-charges.md#44-automatisation), [R3](docs/risques.md)).
 
 ## Développement
