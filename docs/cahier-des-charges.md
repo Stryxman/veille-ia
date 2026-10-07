@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.17 — validé par le chef de projet le 2026-10-06
+> **Statut :** v1.18 — en revue (pull request #42) ; v1.17 validée le 2026-10-06
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D19)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D20)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -32,6 +32,7 @@
 | v1.15 | 2026-10-03 | §8 : contenu de J4 aligné sur le jalon (extraits manquants, découpage des thèmes) ; validée le 2026-10-06 (pull request #38) |
 | v1.16 | 2026-10-06 | §4.4 : aucune heure de mise à jour promise (retards constatés) ; §8 : jours du critère n° 2 comptés en heure de Paris (précision de D13) ; validée le 2026-10-06 (pull request #40) |
 | v1.17 | 2026-10-06 | §6 : couverture des tests ≥ 85 %, nommage et complexité contrôlés, bilan de chaque exécution (#39) ; §7 : outil `coverage` ; validée le 2026-10-06 (pull request #41) |
+| v1.18 | 2026-10-07 | §4.2 : six thèmes, « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation (D20) |
 
 ---
 
@@ -77,12 +78,14 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
   2. Presse spécialisée IA ou tech
   3. Presse généraliste ou hors tech
 - **Limite V1 :** seuls les titres quasi identiques sont reconnus comme doublons ; deux articles traitant du même sujet avec des titres différents ne le sont pas (piste d'amélioration par LLM écartée pour l'instant, D19).
-- **Classement par thème** par mots-clés, définis dans `config/themes.yaml`. Thèmes initiaux :
-  1. Modèles & recherche
-  2. Produits & outils
-  3. Business & financement
-  4. Régulation & éthique
-  5. Autres (articles non classés)
+- **Classement par thème** par mots-clés, définis dans `config/themes.yaml`. Thèmes depuis D20 (2026-10-07 ; le thème initial « Modèles & recherche » est découpé en trois) :
+  1. Modèles
+  2. Agents
+  3. Recherche & évaluation
+  4. Produits & outils
+  5. Business & financement
+  6. Régulation & éthique
+  7. Autres (articles non classés)
 
 ### 4.3 Restitution
 - Une **page web statique unique**, en français, publiée sur GitHub Pages.
@@ -151,7 +154,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 | **J1 — Collecte** | Lecture des 6 flux, format d'article commun | Module `collect` testé | 2026-09-30 |
 | **J2 — Traitement** | Nettoyage, fenêtre 7 jours, regroupement des doublons, classement | Module `process` testé | 2026-10-01 |
 | **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
-| **J4 — Finitions (bonus)** | README FR et EN avec captures, extraits manquants (D18), découpage des thèmes (#26), étude LLM (non retenue, D19), bilan de projet | V1.1 | 2026-10-06 |
+| **J4 — Finitions (bonus)** | README FR et EN avec captures, extraits manquants (D18), découpage des thèmes (#26, D20), étude LLM (non retenue, D19), bilan de projet | V1.1 | 2026-10-06 |
 
 > Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés en jours de l'heure de Paris à partir de la première mise à jour automatique réussie (jour inclus ; D13) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
 
