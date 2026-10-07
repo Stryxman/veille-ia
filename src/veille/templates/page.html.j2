@@ -44,6 +44,9 @@ article { background: var(--card); border: 1px solid var(--line); border-radius:
 article > p:not(.source):not(.also) { margin-top: 0.4rem; }
 .also { margin-top: 0.5rem; }
 .tag { background: var(--tag-bg); color: var(--tag-text); border-radius: 999px; padding: 0 0.5rem; font-size: 0.8rem; white-space: nowrap; }
+.synthesis { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--dot); border-radius: 12px; padding: 0.9rem 1.1rem; margin: 0 0 1rem; }
+.synthesis-title { font-weight: 600; margin: 0; }
+.number { display: inline-block; min-width: 1.5rem; text-align: center; background: var(--bg); color: var(--fg); border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
 footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem; }
 </style>
 </head>
@@ -56,7 +59,7 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem;
 {% if sections %}
 <nav id="themes" aria-label="Thèmes">
 <ul>
-{% for anchor, name, items, colour in sections %}
+{% for anchor, name, items, colour, synthesis in sections %}
 <li><a class="pill {{ colour }}" href="#{{ anchor }}">{{ name }} <span class="count">{{ items | length }}</span></a></li>
 {% endfor %}
 </ul>
@@ -64,12 +67,19 @@ footer { border-top: 1px solid var(--line); margin-top: 3rem; padding-top: 1rem;
 {% endif %}
 </header>
 <main>
-{% for anchor, name, items, colour in sections %}
+{% for anchor, name, items, colour, synthesis in sections %}
 <section class="{{ colour }}" aria-labelledby="{{ anchor }}">
 <h2 id="{{ anchor }}">{{ name }}</h2>
+{% if synthesis %}
+<div class="synthesis">
+<p class="synthesis-title">Synthèse</p>
+<p>{% for part, number in synthesis.text | citations %}{% if number %}<a href="#{{ anchor }}-{{ number }}">{{ part }}</a>{% else %}{{ part }}{% endif %}{% endfor %}</p>
+<p class="meta">Synthèse générée automatiquement par un modèle de langage ({{ synthesis.model }}, {{ generated_at | french_date }}) ; vérifiez dans les articles cités.</p>
+</div>
+{% endif %}
 {% for story in items %}
-<article>
-<p class="source">{{ story.article.source.name }} · {{ story.date | french_date }}{% if not story.date_is_known %} <span class="tag">Date de publication inconnue</span>{% endif %}</p>
+<article{% if synthesis %} id="{{ anchor }}-{{ loop.index }}"{% endif %}>
+<p class="source">{% if synthesis %}<span class="number">{{ loop.index }}</span> {% endif %}{{ story.article.source.name }} · {{ story.date | french_date }}{% if not story.date_is_known %} <span class="tag">Date de publication inconnue</span>{% endif %}</p>
 <h3{% if story.article.language != "fr" %} lang="{{ story.article.language }}"{% endif %}><a href="{{ story.article.link }}">{{ story.article.title }}</a></h3>
 {% if story.article.summary %}
 <p{% if story.article.language != "fr" %} lang="{{ story.article.language }}"{% endif %}>{{ story.article.summary }}</p>
