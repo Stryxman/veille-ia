@@ -48,3 +48,13 @@ class Synthesis:
 
     text: str
     model: str  # shown under the summary, e.g. "Mistral, mistral-small-latest"
+
+
+@dataclass(frozen=True)
+class SynthesisConfig:
+    enabled: bool
+    provider: str  # shown on the page, e.g. "Mistral"
+    base_url: str  # OpenAI-compatible API, https only
+    model: str
+    timeout_seconds: float  # one request
+    budget_seconds: float  # all themes of one run

@@ -5,9 +5,16 @@ and every sentence ends with citations [n] of articles of the theme. Otherwise t
 no summary and the page stays as in V1.
 """
 
+import json
+import logging
 import re
+import time
+import urllib.error
+import urllib.request
+from collections.abc import Callable
 
-from veille.models import Story
+from veille.collect import USER_AGENT
+from veille.models import Story, Synthesis, SynthesisConfig, Theme
 
 MAX_CHARS = 900
 MAX_SENTENCES = 6
@@ -16,6 +23,13 @@ BRACKETS = re.compile(r"\[[^\]]*\]")
 FORBIDDEN = re.compile(r"[<>]|://")  # no markup, no link: our own links are the only ones
 SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
 SPACES = re.compile(r"\s+")
+KEY_VARIABLE = "LLM_API_KEY"
+MAX_RESPONSE_BYTES = 1024 * 1024
+MAX_TOKENS = 1000
+
+logger = logging.getLogger(__name__)
+
+ModelCall = Callable[[list[dict[str, str]]], str]
 
 INSTRUCTIONS = (
     "Tu rédiges la synthèse d'une revue de presse sur l'intelligence artificielle. "
@@ -78,3 +92,71 @@ def segments(text: str) -> list[tuple[str, int | None]]:
     if position < len(text):
         parts.append((text[position:], None))
     return parts
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Never follow a redirect: the Authorization header must not reach another host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(newurl, code, "redirect refused", headers, fp)
+
+
+_OPENER = urllib.request.build_opener(NoRedirect)
+
+
+def call_model(messages, config: SynthesisConfig, key: str, opener=None) -> str:
+    opener = opener or _OPENER.open
+    body = {
+        "model": config.model,
+        "messages": messages,
+        "temperature": 0.2,
+        "max_tokens": MAX_TOKENS,
+    }
+    request = urllib.request.Request(
+        config.base_url.rstrip("/") + "/chat/completions",
+        data=json.dumps(body).encode(),
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
+        },
+    )
+    with opener(request, timeout=config.timeout_seconds) as response:
+        data = json.loads(response.read(MAX_RESPONSE_BYTES))
+    content = data["choices"][0]["message"]["content"]
+    if not isinstance(content, str):
+        raise SynthesisError("no text in the answer")
+    return content
+
+
+def synthesize(
+    stories: list[Story],
+    themes: list[Theme],
+    config: SynthesisConfig,
+    key: str,
+    call: ModelCall | None = None,
+    clock: Callable[[], float] = time.monotonic,
+) -> dict[str, Synthesis]:
+    if not config.enabled:
+        return {}
+    if not key:
+        logger.warning("no model key (%s): the page has no summary", KEY_VARIABLE)
+        return {}
+    call = call or (lambda messages: call_model(messages, config, key))
+    label = f"{config.provider}, {config.model}"
+    start = clock()
+    result: dict[str, Synthesis] = {}
+    for theme in themes:  # "Autres" is never in the configured themes: no summary for it
+        items = [story for story in stories if story.theme == theme.name]
+        if not items:
+            continue
+        if clock() - start >= config.budget_seconds:
+            logger.warning("summary time budget spent: remaining themes have no summary")
+            break
+        try:
+            text = check_synthesis(call(build_messages(theme.name, items)), len(items))
+        except Exception as error:  # a summary must never stop the update; the key is never logged
+            logger.warning("%s: no summary (%s)", theme.name, error)
+            continue
+        result[theme.name] = Synthesis(text, label)
+    return result
