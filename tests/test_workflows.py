@@ -57,3 +57,22 @@ def test_naming_and_complexity_rules_are_checked():
     lint = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["ruff"]
     assert {"N", "C90"} <= set(lint["lint"]["select"])
     assert lint["lint"]["mccabe"]["max-complexity"] == 10
+
+
+def test_model_key_reaches_only_the_page_build_step():
+    build = workflow()["jobs"]["build"]
+    assert build["environment"] == "synthese"  # environment limited to main (docs/cle-api.md)
+    with_env = [step for step in build["steps"] if "env" in step]
+    assert with_env == [
+        {
+            "name": "Build the page",
+            "run": "python -m veille.render --output site",
+            "env": {"LLM_API_KEY": "${{ secrets.LLM_API_KEY }}"},
+        }
+    ]
+    assert "env" not in workflow() and "env" not in build
+
+
+def test_ci_never_uses_secrets():
+    text = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    assert "secrets." not in text
