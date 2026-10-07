@@ -150,3 +150,10 @@ def test_page_reading_stops_when_the_time_budget_is_spent():
     stories = [story(), story(link="https://hf.example/blog/b")]
     first, second = enrich(stories, fetch=pages.__getitem__, budget=60, clock=lambda: next(times))
     assert first.article.summary and second.article.summary == ""
+
+
+def test_spent_time_budget_is_logged(caplog):
+    times = iter([0.0, 100.0, 100.0])
+    with caplog.at_level("WARNING", logger="veille.enrich"):
+        enrich([story()], fetch=lambda url: page(), budget=60, clock=lambda: next(times))
+    assert "reading time budget spent" in caplog.text

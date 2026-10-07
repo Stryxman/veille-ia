@@ -99,7 +99,7 @@ def _excerpt_from_page(story: Story, fetch: PageFetcher) -> str:
     except Exception as error:  # a page must never stop the update (CdC §6, D18)
         logger.warning("%s: article text not read (%s)", link, error)
         return ""
-    # already plain text: only spaces are normalised, quoted tags and entities are kept
+    # already plain text: only spaces are normalised, so tags quoted in the text are kept
     return excerpt(SPACES.sub(" ", text).strip())
 
 
@@ -112,10 +112,15 @@ def enrich(
     fetch = fetch or fetch_page  # looked up at call time, so tests can replace it
     start = clock()
     result = []
+    spent = False
     for story in stories:
-        if not story.article.summary and clock() - start < budget:
-            summary = _excerpt_from_page(story, fetch)
-            if summary:
-                story = replace(story, article=replace(story.article, summary=summary))
+        if not story.article.summary and not spent:
+            spent = clock() - start >= budget
+            if spent:
+                logger.warning("reading time budget spent: remaining pages are not read")
+            else:
+                summary = _excerpt_from_page(story, fetch)
+                if summary:
+                    story = replace(story, article=replace(story.article, summary=summary))
         result.append(story)
     return result
