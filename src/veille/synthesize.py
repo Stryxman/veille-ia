@@ -23,6 +23,7 @@ BRACKETS = re.compile(r"\[[^\]]*\]")
 FORBIDDEN = re.compile(r"[<>]|://")  # no markup, no link: our own links are the only ones
 SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
 SPACES = re.compile(r"\s+")
+EMPHASIS = re.compile(r"\*+")  # markdown bold/italics some models add despite the instructions
 KEY_VARIABLE = "LLM_API_KEY"
 MAX_RESPONSE_BYTES = 1024 * 1024
 MAX_TOKENS = 1000
@@ -34,7 +35,7 @@ ModelCall = Callable[[list[dict[str, str]]], str]
 INSTRUCTIONS = (
     "Tu rédiges la synthèse d'une revue de presse sur l'intelligence artificielle. "
     "À partir des seuls articles numérotés fournis, écris en français un paragraphe de 3 à 6 "
-    "phrases, 900 caractères au plus, qui couvre l'ensemble de ces actualités. "
+    "phrases, 700 caractères au plus, qui couvre l'ensemble de ces actualités. "
     "Chaque phrase se termine par les numéros des articles qui la soutiennent, chacun entre "
     "crochets, avant le point final, par exemple : « OpenAI publie un modèle [1][3]. » "
     "N'invente rien, ne cite aucun numéro absent de la liste, n'écris ni titre, ni liste, "
@@ -61,7 +62,7 @@ def build_messages(theme: str, stories: list[Story]) -> list[dict[str, str]]:
 
 
 def check_synthesis(text: str, count: int) -> str:
-    text = SPACES.sub(" ", text).strip()
+    text = SPACES.sub(" ", EMPHASIS.sub("", text)).strip()
     if not text:
         raise SynthesisError("empty answer")
     if len(text) > MAX_CHARS:

@@ -67,6 +67,17 @@ def test_invalid_synthesis_is_refused(text):
         check_synthesis(text, 3)
 
 
+def test_markdown_emphasis_is_removed():
+    assert check_synthesis("Un *College Planner* et **Copilot** [1].", 1) == (
+        "Un College Planner et Copilot [1]."
+    )
+
+
+def test_instructions_ask_for_less_than_the_hard_limit():
+    system, _ = build_messages("Modèles", [story("A")])
+    assert "700 caractères au plus" in system["content"]
+
+
 def test_segments_split_text_and_citations():
     assert segments("Un fait [1][3]. Fin [2].") == [
         ("Un fait ", None),
