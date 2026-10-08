@@ -289,7 +289,7 @@
   - **Appels :** une synthèse par thème, « Autres » excepté. Cela fait 6 appels par exécution, 12 au plus avec les nouveaux essais, soit 36 par jour au plus. Au prototype, une exécution envoyait environ 6 000 jetons (36 000 par jour au plus) en 40 secondes environ.
   - **Contrôle :** la sortie du modèle doit être du texte brut, de 900 caractères et 6 phrases au plus, chaque phrase citant un article existant du thème. Une synthèse non conforme n'est pas publiée.
   - **Pannes :** toute panne laisse la page sans la synthèse concernée.
-  - **Offre gratuite :** Mistral la présente comme destinée à l'évaluation et au prototypage. Si elle est restreinte, la page reste sans synthèse.
+  - **Offre gratuite :** Mistral la présente comme destinée à l'évaluation et au prototypage ; son usage quotidien a été accepté par le chef de projet le 2026-10-08. Si elle est restreinte, la page reste sans synthèse.
   - **Erreurs possibles :** un petit modèle peut se tromper, d'où la mention « vérifiez dans les articles cités ».
   - **Clé :** gérée selon [cle-api.md](cle-api.md) (R7).
   - **Hors périmètre :** le classement par le sens (R2), les doublons de même sujet (R12) et la traduction restent à évaluer séparément.
