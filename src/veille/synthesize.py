@@ -131,6 +131,13 @@ def call_model(messages, config: SynthesisConfig, key: str, opener=None) -> str:
     return content
 
 
+def _reason(error: Exception) -> str:
+    """Our own messages and HTTP status lines are safe to log; others may quote the request."""
+    if isinstance(error, SynthesisError | urllib.error.HTTPError):
+        return str(error)
+    return type(error).__name__
+
+
 def _theme_summary(call: ModelCall, theme: str, items: list[Story]) -> str:
     for _ in range(ATTEMPTS - 1):
         try:
@@ -153,6 +160,9 @@ def synthesize(
     if not key:
         logger.warning("no model key (%s): the page has no summary", KEY_VARIABLE)
         return {}
+    if not key.isprintable() or any(char.isspace() for char in key):
+        logger.warning("malformed model key (%s): the page has no summary", KEY_VARIABLE)
+        return {}  # such a key would be echoed in http.client's error message
     call = call or (lambda messages: call_model(messages, config, key))
     label = f"{config.provider}, {config.model}"
     start = clock()
@@ -166,8 +176,8 @@ def synthesize(
             break
         try:
             text = _theme_summary(call, theme.name, items)
-        except Exception as error:  # a summary must never stop the update; the key is never logged
-            logger.warning("%s: no summary (%s)", theme.name, error)
+        except Exception as error:  # a summary must never stop the update
+            logger.warning("%s: no summary (%s)", theme.name, _reason(error))
             continue
         result[theme.name] = Synthesis(text, label)
     return result

@@ -305,3 +305,15 @@ def test_main_never_prints_the_key(tmp_path, monkeypatch, capsys, caplog):
     assert render_module.main(["--output", str(tmp_path)]) == 0
     assert received == [key]
     assert key not in capsys.readouterr().out + caplog.text
+
+
+def test_main_strips_the_key_read_from_the_environment(tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_API_KEY", "sk-test-not-a-real-key\n")
+    article = Article("Live news about a model", "https://hf.example/news/1", S1, None, "x", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    received = []
+    monkeypatch.setattr(
+        render_module, "synthesize", lambda s, t, c, key: received.append(key) or {}
+    )
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    assert received == ["sk-test-not-a-real-key"]

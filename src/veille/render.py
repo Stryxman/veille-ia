@@ -151,7 +151,7 @@ def main(argv: list[str] | None = None) -> int:
     durations["enrich"] = time.perf_counter() - start
     start = time.perf_counter()
     # one summary per theme from a free model (V2, #43); no key or any failure: no summary
-    key = os.environ.get(KEY_VARIABLE, "")
+    key = os.environ.get(KEY_VARIABLE, "").strip()  # a pasted key may end with a newline
     syntheses = synthesize(stories, themes, load_synthesis_config(), key)
     durations["synthesize"] = time.perf_counter() - start
     start = time.perf_counter()

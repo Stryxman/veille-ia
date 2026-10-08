@@ -47,7 +47,7 @@ class Synthesis:
     """Summary of one theme, checked: every sentence cites the theme's cards ([n])."""
 
     text: str
-    model: str  # shown under the summary, e.g. "Mistral, mistral-small-latest"
+    model: str  # shown under the summary, e.g. "Mistral, ministral-8b-latest"
 
 
 @dataclass(frozen=True)

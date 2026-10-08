@@ -213,3 +213,23 @@ def test_a_theme_is_asked_at_most_twice():
 
     assert synthesize([story("A")], THEMES, CONFIG, KEY, call=call) == {}
     assert len(calls) == 2
+
+
+def test_unexpected_error_is_logged_without_its_message(caplog):
+    def call(messages):
+        raise ValueError(f"Invalid header value b'Bearer {KEY}\\n'")
+
+    with caplog.at_level("WARNING", logger="veille.synthesize"):
+        assert synthesize([story("A")], THEMES, CONFIG, KEY, call=call) == {}
+    assert "Modèles: no summary (ValueError)" in caplog.text
+    assert KEY not in caplog.text
+
+
+@pytest.mark.parametrize("bad_key", ["sk two words", "sk-key\x00", "sk-key\n"])
+def test_malformed_key_is_refused_without_any_call(bad_key, caplog):
+    def fail(messages):
+        raise AssertionError("unexpected call")
+
+    with caplog.at_level("WARNING", logger="veille.synthesize"):
+        assert synthesize([story("A")], THEMES, CONFIG, bad_key, call=fail) == {}
+    assert "malformed" in caplog.text and bad_key not in caplog.text
