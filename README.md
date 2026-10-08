@@ -4,7 +4,7 @@
 
 Une page web qui rassemble chaque jour l'actualité de l'intelligence artificielle, dédoublonnée et classée par thème, à partir de sources françaises et anglophones.
 
-> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) terminée le 6 octobre 2026 (V1 en ligne le 2 octobre, mise à jour automatique depuis le 3) ; finitions (J4) terminées le 7 octobre 2026 : **V1 terminée**, tous les critères de réussite remplis ([bilan](docs/bilan.md)). Prochaine étape envisagée : synthèse par thème (V2, [#43](https://github.com/Stryxman/veille-ia/issues/43)).
+> **Statut :** cadrage (J0) terminé le 30 septembre 2026 ; collecte (J1) terminée le 30 septembre 2026 ; traitement (J2) terminé le 1er octobre 2026 ; restitution (J3) terminée le 6 octobre 2026 (V1 en ligne le 2 octobre, mise à jour automatique depuis le 3) ; finitions (J4) terminées le 7 octobre 2026 : **V1 terminée**, tous les critères de réussite remplis ([bilan](docs/bilan.md)). V2 en cours : synthèse par thème avec citations ([#43](https://github.com/Stryxman/veille-ia/issues/43), [D21](docs/decisions.md#d21--synthèse-par-thème-modèle-de-langage)).
 
 **Page en ligne :** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — mise à jour automatique plusieurs fois par jour (trois lancements planifiés ; GitHub les exécute souvent avec plusieurs heures de retard).
 
@@ -20,15 +20,17 @@ L'actualité IA est dispersée entre de nombreux sites et très redondante : une
 
 1. **Collecte** de 6 flux RSS, 4 anglophones et 2 francophones ([sources et raisons de leur choix](docs/sources.md)). Une source en panne n'arrête pas les autres.
 2. **Traitement** : nettoyage du texte, conservation des 7 derniers jours, regroupement des doublons (l'article retenu vient de la source la plus fiable, les autres sont cités en « Aussi couvert par »), extrait complété depuis la page de l'article quand le flux n'en fournit pas, classement par thème à partir de mots-clés.
-3. **Restitution** : une page web unique, en français, lisible sur téléphone, en mode clair ou sombre, sans compte ni installation.
-4. **Publication automatique** sur GitHub Pages (trois lancements planifiés par jour) ; si aucune source ne répond, la page précédente reste en ligne.
+3. **Synthèse** (V2) : pour chaque thème, un paragraphe en français généré par un modèle de langage gratuit (Mistral), dont chaque phrase renvoie aux articles qui la soutiennent ; une synthèse non conforme n'est pas publiée.
+4. **Restitution** : une page web unique, en français, lisible sur téléphone, en mode clair ou sombre, sans compte ni installation.
+5. **Publication automatique** sur GitHub Pages (trois lancements planifiés par jour) ; si aucune source ne répond, la page précédente reste en ligne.
 
 ```
-config/sources.yaml ─► collect ─► process ─► enrich ─► render ─► site/index.html ─► GitHub Pages
-config/themes.yaml ─────────────────┘
+config/sources.yaml ─► collect ─► process ─► enrich ─► synthesize ─► render ─► site/index.html ─► GitHub Pages
+config/themes.yaml ─────────────────┘                  │
+config/synthesis.yaml ─────────────────────────────────┘
 ```
 
-Sources et thèmes se règlent dans deux fichiers de configuration, sans toucher au code. Le projet est gratuit : dépôt public, GitHub Actions et GitHub Pages.
+Sources, thèmes et modèle de synthèse se règlent dans des fichiers de configuration, sans toucher au code. Le projet est gratuit : dépôt public, GitHub Actions, GitHub Pages et offre gratuite de l'API de Mistral (compte sans moyen de paiement). La clé de cette API est protégée selon une [procédure dédiée](docs/cle-api.md).
 
 ## La démarche
 
@@ -49,9 +51,10 @@ Le projet est mené en jalons courts, avec des documents de pilotage tenus à jo
 
 ## Limites connues
 
-- Le classement par mots-clés reste approximatif : une partie des articles tombe dans « Autres » ou dans un thème voisin ([R2](docs/risques.md)). Un modèle de langage a été étudié et n'est pas retenu pour l'instant ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
+- Le classement par mots-clés reste approximatif : une partie des articles tombe dans « Autres » ou dans un thème voisin ([R2](docs/risques.md)). Le classement par un modèle de langage a été étudié et n'est pas retenu pour l'instant ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
 - Seuls les titres quasi identiques sont reconnus comme doublons : une même nouvelle titrée différemment en français et en anglais n'est pas regroupée ([R12](docs/risques.md)).
 - Les articles sans extrait dans leur flux restent sans extrait quand leur page refuse la lecture automatique, n'est pas sur le site de la source, ou n'a pas pu être lue dans la durée maximale de lecture ([sources](docs/sources.md), [D18](docs/decisions.md#d18--extraits-manquants)).
+- La synthèse est rédigée automatiquement par un petit modèle de langage : elle peut contenir des erreurs, d'où les renvois aux articles cités, à vérifier. Elle manque pour un thème si le modèle échoue ou si l'offre gratuite est restreinte ([D21](docs/decisions.md#d21--synthèse-par-thème-modèle-de-langage)).
 - GitHub ne garantit pas l'heure ni même l'exécution des lancements planifiés (retards de 3 à 9 heures constatés), d'où trois créneaux par jour ([cahier des charges §4.4](docs/cahier-des-charges.md#44-automatisation), [R3](docs/risques.md)).
 
 ## Développement
@@ -74,4 +77,5 @@ python3 -m venv .venv
 | [Sources](docs/sources.md) | Sources suivies et raisons de leur choix |
 | [Journal de décisions](docs/decisions.md) | Choix structurants, options envisagées, justifications |
 | [Registre des risques](docs/risques.md) | Risques, probabilité, impact, mesures et jalon de mise en œuvre |
+| [Clé de l'API](docs/cle-api.md) | Où la clé est lisible, création, rotation et révocation |
 | [Bilan de projet](docs/bilan.md) | Critères de réussite, écarts de planning, risques survenus, enseignements |

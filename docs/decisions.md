@@ -2,14 +2,14 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42) ; précision de D18 validée le 2026-10-07 (pull request #46).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42) ; précision de D18 validée le 2026-10-07 (pull request #46) ; D21, mise à jour de D19 et précision de D4 en revue (pull request #48).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
 | D1 | 2026-09-29 | Mode de restitution | Page web statique (GitHub Pages) |
 | D2 | 2026-09-29 | Stack technique | Python |
 | D3 | 2026-09-29 | Exécution et hébergement | GitHub Actions planifié + GitHub Pages |
-| D4 | 2026-09-29 | Méthode de classement | Mots-clés en V1, LLM en J4 (étudié, non retenu : D19) |
+| D4 | 2026-09-29 | Méthode de classement | Mots-clés en V1, classement par LLM étudié en J4 et non retenu (D19) |
 | D5 | 2026-09-29 | Sources et fréquence | ~6 flux RSS FR + EN, mise à jour quotidienne |
 | D6 | 2026-09-29 | Langue du projet | Docs et page en français, code en anglais |
 | D7 | 2026-09-29 | Nom et visibilité du repo | `veille-ia`, public dès J0 |
@@ -24,8 +24,9 @@
 | D16 | 2026-10-01 | Règles de regroupement des doublons | Nombres différents = actualités différentes ; comparaison avec l'article retenu, sans chaînage |
 | D17 | 2026-10-01 | Garde sur les mots pour le regroupement | Un mot d'au moins 3 lettres présent dans un seul des deux titres = actualités différentes |
 | D18 | 2026-10-03 | Extraits manquants | Début du texte principal de la page de l'article, extrait avec `trafilatura` ; site de la source seulement, 120 s au plus (2026-10-07) |
-| D19 | 2026-10-03 | Modèle de langage (LLM) | Pas de LLM pour l'instant : classement par mots-clés conservé |
+| D19 | 2026-10-03 | Modèle de langage (LLM) | Pas de LLM pour l'instant : classement par mots-clés conservé (rouverte pour la synthèse par D21, 2026-10-08) |
 | D20 | 2026-10-07 | Découpage des thèmes | « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation |
+| D21 | 2026-10-08 | Synthèse par thème (modèle de langage) | Synthèse en français par l'API gratuite de Mistral (`ministral-8b-latest`), citations contrôlées ; succède à D19 |
 
 ---
 
@@ -254,6 +255,7 @@
 - **Décision :** option 3.
 - **Justification :** la V1 tient son critère de classement (≥ 70 %, critère n° 5) sans LLM ; le projet reste gratuit, déterministe et sans secret à gérer ; le découpage des thèmes, étudié dans #26, pourrait améliorer la lecture par simple configuration.
 - **Conséquences :** pas de résumé ni de traduction en français ; les doublons de même sujet restent non regroupés (R12, limite acceptée) ; R7 devient sans objet ; la piste pourra être rouverte après le bilan, par une nouvelle décision.
+- **Mise à jour (2026-10-08) :** rouverte pour la synthèse par thème par D21 ; R7 de nouveau ouvert ; le classement par mots-clés, l'absence de traduction et la limite des doublons de même sujet (R12) restent inchangés.
 
 ## D20 — Découpage des thèmes
 
@@ -265,3 +267,29 @@
 - **Décision :** option 1.
 - **Justification :** gain stable sur trois mesures, par simple configuration ; tous les mots-clés de l'ancien thème sont conservés dans les trois nouveaux, complétés par 24 mots-clés propres à ces thèmes (ceux du brouillon mesuré). À égalité de mots-clés, le premier thème du fichier l'emporte : un article contenant « safety cases » va ainsi en Recherche & évaluation plutôt qu'en Régulation & éthique.
 - **Conséquences :** six thèmes sur la page (les six couleurs prévues par le gabarit sont toutes utilisées) ; les erreurs propres aux mots-clés demeurent (R2) ; les liens vers les sections et les couleurs des thèmes suivants changent, car elles suivent la position dans la configuration (`#theme-1` désigne désormais « Modèles ») ; captures du README refaites.
+
+## D21 — Synthèse par thème (modèle de langage)
+
+- **Date :** 2026-10-08
+- **Contexte :** demande du chef de projet (2026-10-07, issue #43) : ne plus devoir lire chaque article. Pour chaque thème, un paragraphe en français résume les actualités des 7 jours affichés, et chaque phrase renvoie aux articles qui la soutiennent. Contraintes : aucun frais supplémentaire ; sécurité de la clé au premier plan. Cette demande rouvre D19.
+- **Options envisagées :**
+  1. GitHub Models avec le jeton temporaire de l'exécution (aucun secret stocké) — écartée : service retiré par GitHub le 2026-07-30.
+  2. Hugging Face Inference Providers — écartée : crédit gratuit d'environ 0,10 $ par mois, insuffisant.
+  3. Petit modèle ouvert exécuté dans GitHub Actions (aucun secret) — écartée : qualité en français et durée d'exécution moindres.
+  4. Abonnement Claude sur le poste du chef de projet — écartée : dépend d'un poste allumé.
+  5. API gratuite au format OpenAI, clé en secret GitHub. Conditions vérifiées le 2026-10-07 sur les sites officiels (commentaire de #43) : Gemini écarté, car son offre gratuite est fermée aux utilisateurs de l'Union européenne. Prototype du 2026-10-08 sur les vrais flux (76 actualités, 6 thèmes, un nouvel essai par synthèse refusée) :
+     - Mistral `ministral-8b-latest` : 5 synthèses valides sur 6 ;
+     - Mistral `open-mistral-nemo` : 4 sur 6 ;
+     - Groq `openai/gpt-oss-120b` : 3 sur 6 (quota dépassé, une réponse vide, une synthèse en anglais) ;
+     - Groq `llama-3.3-70b-versatile` : aucune (modèle introuvable) ;
+     - Mistral `mistral-small-latest` : indisponible sur l'offre gratuite.
+- **Décision :** option 5, avec Mistral `ministral-8b-latest`.
+- **Justification :** 0 € (compte sans moyen de paiement) ; meilleur taux de synthèses valides et bon français au prototype ; une clé divulguée ne peut rien coûter ; changer de fournisseur ou de modèle ne demande que la configuration (`config/synthesis.yaml`).
+- **Conséquences :**
+  - **Appels :** une synthèse par thème, « Autres » excepté. Cela fait 6 appels par exécution, 12 au plus avec les nouveaux essais, soit 36 par jour au plus.
+  - **Contrôle :** la sortie du modèle doit être du texte brut, de 900 caractères et 6 phrases au plus, chaque phrase citant un article existant du thème. Une synthèse non conforme n'est pas publiée.
+  - **Pannes :** toute panne laisse la page sans la synthèse concernée.
+  - **Offre gratuite :** Mistral la présente comme destinée à l'évaluation et au prototypage. Si elle est restreinte, la page reste sans synthèse.
+  - **Erreurs possibles :** un petit modèle peut se tromper, d'où la mention « vérifiez dans les articles cités ».
+  - **Clé :** gérée selon [cle-api.md](cle-api.md) (R7).
+  - **Hors périmètre :** le classement par le sens (R2), les doublons de même sujet (R12) et la traduction restent à évaluer séparément.
