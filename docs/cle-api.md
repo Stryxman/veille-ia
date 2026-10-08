@@ -1,6 +1,6 @@
 # Clé de l'API du modèle de langage — procédure
 
-> **Statut :** en revue (pull request #48)
+> **Statut :** validé par le chef de projet le 2026-10-08 (pull request #48)
 > **Références :** [D21](decisions.md#d21--synthèse-par-thème-modèle-de-langage), [R7](risques.md), `config/synthesis.yaml`
 
 La synthèse par thème (D21) appelle l'API gratuite de Mistral. La clé de cette API est le seul secret du projet. Elle n'est **jamais** écrite dans le code, la configuration, une issue, une pull request ou une conversation.
