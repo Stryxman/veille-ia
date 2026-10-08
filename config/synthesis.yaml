@@ -3,6 +3,6 @@
 enabled: true
 provider: Mistral
 base_url: https://api.mistral.ai/v1
-model: mistral-small-latest
+model: ministral-8b-latest
 timeout_seconds: 30
 budget_seconds: 180
