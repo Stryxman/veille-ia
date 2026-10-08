@@ -188,3 +188,28 @@ def test_summaries_stop_when_the_time_budget_is_spent(caplog):
         )
     assert list(result) == ["Modèles"]
     assert "summary time budget spent" in caplog.text
+
+
+def test_refused_answer_is_asked_once_more():
+    answers = iter(["Trop long " * 200 + "[1].", "Un fait [1]."])
+    calls = []
+
+    def call(messages):
+        calls.append(messages)
+        return next(answers)
+
+    assert (
+        synthesize([story("A")], THEMES, CONFIG, KEY, call=call)["Modèles"].text == "Un fait [1]."
+    )
+    assert len(calls) == 2
+
+
+def test_a_theme_is_asked_at_most_twice():
+    calls = []
+
+    def call(messages):
+        calls.append(messages)
+        return "Sans citation."
+
+    assert synthesize([story("A")], THEMES, CONFIG, KEY, call=call) == {}
+    assert len(calls) == 2

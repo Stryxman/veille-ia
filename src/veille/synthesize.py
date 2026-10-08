@@ -27,6 +27,7 @@ EMPHASIS = re.compile(r"\*+")  # markdown bold/italics some models add despite t
 KEY_VARIABLE = "LLM_API_KEY"
 MAX_RESPONSE_BYTES = 1024 * 1024
 MAX_TOKENS = 1000
+ATTEMPTS = 2  # a refused answer is asked once more: small models often overrun the length
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +131,15 @@ def call_model(messages, config: SynthesisConfig, key: str, opener=None) -> str:
     return content
 
 
+def _theme_summary(call: ModelCall, theme: str, items: list[Story]) -> str:
+    for _ in range(ATTEMPTS - 1):
+        try:
+            return check_synthesis(call(build_messages(theme, items)), len(items))
+        except Exception:  # noqa: S110 - asked once more below; the last error is logged
+            pass
+    return check_synthesis(call(build_messages(theme, items)), len(items))
+
+
 def synthesize(
     stories: list[Story],
     themes: list[Theme],
@@ -155,7 +165,7 @@ def synthesize(
             logger.warning("summary time budget spent: remaining themes have no summary")
             break
         try:
-            text = check_synthesis(call(build_messages(theme.name, items)), len(items))
+            text = _theme_summary(call, theme.name, items)
         except Exception as error:  # a summary must never stop the update; the key is never logged
             logger.warning("%s: no summary (%s)", theme.name, error)
             continue
