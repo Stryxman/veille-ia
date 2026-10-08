@@ -286,7 +286,7 @@
 - **Décision :** option 5, avec Mistral `ministral-8b-latest`.
 - **Justification :** 0 € (compte sans moyen de paiement) ; meilleur taux de synthèses valides et bon français au prototype ; une clé divulguée ne peut rien coûter ; changer de fournisseur ou de modèle ne demande que la configuration (`config/synthesis.yaml`).
 - **Conséquences :**
-  - **Appels :** une synthèse par thème, « Autres » excepté. Cela fait 6 appels par exécution, 12 au plus avec les nouveaux essais, soit 36 par jour au plus.
+  - **Appels :** une synthèse par thème, « Autres » excepté. Cela fait 6 appels par exécution, 12 au plus avec les nouveaux essais, soit 36 par jour au plus. Au prototype, une exécution envoyait environ 6 000 jetons (36 000 par jour au plus) en 40 secondes environ.
   - **Contrôle :** la sortie du modèle doit être du texte brut, de 900 caractères et 6 phrases au plus, chaque phrase citant un article existant du thème. Une synthèse non conforme n'est pas publiée.
   - **Pannes :** toute panne laisse la page sans la synthèse concernée.
   - **Offre gratuite :** Mistral la présente comme destinée à l'évaluation et au prototypage. Si elle est restreinte, la page reste sans synthèse.

@@ -15,6 +15,8 @@ La synthèse par thème (D21) appelle l'API gratuite de Mistral. La clé de cett
 | Pull requests, forks, autres branches | Non : l'environnement `synthese` n'accepte que `main` |
 | Journal d'exécution | Non : le code n'écrit jamais la clé et GitHub masque sa valeur (`***`) |
 
+**Portée :** la clé donne accès à l'API de l'espace de travail Mistral du compte, à réserver à ce projet. **Validité :** si la console propose une date d'expiration à la création, la fixer à 90 jours, au rythme de la rotation.
+
 Le compte Mistral est **gratuit, sans moyen de paiement** : une clé divulguée ne peut rien coûter ; au pire, un tiers épuise le quota gratuit et la page sort sans synthèse.
 
 ## Créer ou remplacer la clé
@@ -26,7 +28,7 @@ Le compte Mistral est **gratuit, sans moyen de paiement** : une clé divulguée 
    gh secret set LLM_API_KEY --env synthese --repo Stryxman/veille-ia
    ```
 
-3. Lancer le workflow de publication (« Run workflow » sur `main`) et vérifier la ligne `Summaries: k of n` dans le bilan d'exécution.
+3. Lancer le workflow de publication (« Run workflow » sur `main` : lancé depuis une autre branche, le job de génération est refusé par l'environnement et rien n'est publié) et vérifier la ligne `Summaries: k of n` dans le bilan d'exécution.
 4. En cas de remplacement, révoquer l'ancienne clé dans la console Mistral.
 
 **Rotation :** tous les 90 jours.
