@@ -4,7 +4,7 @@
 
 A web page that gathers the news about artificial intelligence every day, with duplicates grouped and articles sorted by theme, from French and English-language sources. The page and the project documents are in French.
 
-> **Status:** scoping (J0) completed on 30 September 2026; collection (J1) completed on 30 September 2026; processing (J2) completed on 1 October 2026; delivery (J3) completed on 6 October 2026 (V1 online on 2 October, updated automatically since the 3rd); finishing (J4) completed on 7 October 2026: **V1 complete**, all success criteria met ([project report](docs/bilan.md)). Next step under consideration: summary by theme (V2, [#43](https://github.com/Stryxman/veille-ia/issues/43)).
+> **Status:** scoping (J0) completed on 30 September 2026; collection (J1) completed on 30 September 2026; processing (J2) completed on 1 October 2026; delivery (J3) completed on 6 October 2026 (V1 online on 2 October, updated automatically since the 3rd); finishing (J4) completed on 7 October 2026: **V1 complete**, all success criteria met ([project report](docs/bilan.md)). V2 in progress: summary by theme with citations ([#43](https://github.com/Stryxman/veille-ia/issues/43), [D21](docs/decisions.md#d21--synthèse-par-thème-modèle-de-langage)).
 
 **Live page:** [stryxman.github.io/veille-ia](https://stryxman.github.io/veille-ia/) — updated automatically several times a day (three scheduled runs; GitHub often runs them several hours late).
 
@@ -20,15 +20,17 @@ AI news is scattered across many sites and highly redundant: the same announceme
 
 1. **Collection** of 6 RSS feeds, 4 in English and 2 in French ([sources and why they were chosen](docs/sources.md), in French). A failing source does not stop the others.
 2. **Processing**: text cleaning, only the last 7 days kept, duplicates grouped (the retained article comes from the most reliable source, the others are listed under "Aussi couvert par", i.e. "Also covered by"), excerpt completed from the article page when the feed gives none, classification by theme using keywords.
-3. **Delivery**: a single web page, in French, readable on a phone, in light or dark mode, with no account or installation.
-4. **Automatic publication** on GitHub Pages (three scheduled runs a day); if no source answers, the previous page stays online.
+3. **Summary** (V2): for each theme, a paragraph in French written by a free language model (Mistral), each sentence citing the articles that support it; a summary that breaks the rules is not published.
+4. **Delivery**: a single web page, in French, readable on a phone, in light or dark mode, with no account or installation.
+5. **Automatic publication** on GitHub Pages (three scheduled runs a day); if no source answers, the previous page stays online.
 
 ```
-config/sources.yaml ─► collect ─► process ─► enrich ─► render ─► site/index.html ─► GitHub Pages
-config/themes.yaml ─────────────────┘
+config/sources.yaml ─► collect ─► process ─► enrich ─► synthesize ─► render ─► site/index.html ─► GitHub Pages
+config/themes.yaml ─────────────────┘                  │
+config/synthesis.yaml ─────────────────────────────────┘
 ```
 
-Sources and themes are set in two configuration files, without touching the code. The project costs nothing: public repository, GitHub Actions and GitHub Pages.
+Sources, themes and the summary model are set in configuration files, without touching the code. The project costs nothing: public repository, GitHub Actions, GitHub Pages and Mistral's free API tier (account without any payment method). The API key is protected by a [dedicated procedure](docs/cle-api.md) (in French).
 
 ## The approach
 
@@ -49,9 +51,10 @@ The project is run in short milestones, with project management documents kept u
 
 ## Known limitations
 
-- Keyword classification remains approximate: some articles end up in "Autres" ("Other") or in a neighbouring theme ([R2](docs/risques.md)). A language model was studied and is not adopted for now ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
+- Keyword classification remains approximate: some articles end up in "Autres" ("Other") or in a neighbouring theme ([R2](docs/risques.md)). Classification by a language model was studied and is not adopted for now ([D19](docs/decisions.md#d19--modèle-de-langage-llm)).
 - Only near-identical titles are recognised as duplicates: the same news item with different titles in French and English is not grouped ([R12](docs/risques.md)).
 - Articles without an excerpt in their feed stay without one when their page refuses automated reading, is not on the source's site, or could not be read within the maximum reading time ([sources](docs/sources.md), [D18](docs/decisions.md#d18--extraits-manquants)).
+- The summary is written automatically by a small language model: it may contain errors, hence the references to the cited articles, to be checked. It is missing for a theme when the model fails or if the free tier is restricted ([D21](docs/decisions.md#d21--synthèse-par-thème-modèle-de-langage)).
 - GitHub guarantees neither the time nor even the execution of scheduled runs (delays of 3 to 9 hours observed), hence three slots a day ([specification §4.4](docs/cahier-des-charges.md#44-automatisation), [R3](docs/risques.md)).
 
 ## Development
@@ -74,4 +77,5 @@ python3 -m venv .venv
 | [Sources](docs/sources.md) | Sources followed and why they were chosen |
 | [Decision log](docs/decisions.md) | Structural choices, options considered, rationale |
 | [Risk register](docs/risques.md) | Risks, likelihood, impact, measures and implementation milestone |
+| [API key](docs/cle-api.md) | Where the key can be read, creation, rotation and revocation |
 | [Project report](docs/bilan.md) | Success criteria, schedule deviations, risks that occurred, lessons learned |

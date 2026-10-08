@@ -21,6 +21,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: synthese  # holds the model key; limited to main (docs/cle-api.md)
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +34,8 @@ jobs:
         # Fails (exit 1) when no article is collected: nothing is deployed,
         # the previous page stays online.
         run: python -m veille.render --output site
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}  # environment secret, this step only
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

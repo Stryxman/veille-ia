@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 import sys
 import time
 from collections import Counter
@@ -12,10 +13,11 @@ from zoneinfo import ZoneInfo
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from veille.collect import CollectResult, collect
-from veille.config import OTHER_THEME, load_sources, load_themes
+from veille.config import OTHER_THEME, load_sources, load_synthesis_config, load_themes
 from veille.enrich import enrich
-from veille.models import Source, Story, Theme
+from veille.models import Source, Story, Synthesis, Theme
 from veille.process import classify, process
+from veille.synthesize import KEY_VARIABLE, segments, synthesize
 
 PARIS = ZoneInfo("Europe/Paris")
 MONTHS = (
@@ -39,6 +41,7 @@ def render_page(
     sources: list[Source],
     unavailable: list[Source],
     generated_at: datetime,
+    syntheses: dict[str, Synthesis] | None = None,
 ) -> str:
     env = Environment(
         loader=PackageLoader("veille", "templates"),
@@ -47,6 +50,7 @@ def render_page(
         lstrip_blocks=True,
     )
     env.filters["french_date"] = french_date
+    env.filters["citations"] = segments
     # anchor and colour follow the position in the configuration, so they stay stable when a
     # theme is empty; beyond COLOURS themes, colours start again (themes configurable, O5)
     names = [
@@ -58,7 +62,7 @@ def render_page(
     for anchor, name, colour in names:
         items = [story for story in stories if story.theme == name]
         if items:  # no empty section nor table of contents entry
-            sections.append((anchor, name, items, colour))
+            sections.append((anchor, name, items, colour, (syntheses or {}).get(name)))
     return env.get_template("page.html.j2").render(
         sections=sections,
         count=len(stories),
@@ -112,6 +116,13 @@ def run_summary(
     return "\n".join(lines)
 
 
+def synthesis_line(
+    syntheses: dict[str, Synthesis], stories: list[Story], themes: list[Theme]
+) -> str:
+    expected = sum(1 for theme in themes if any(story.theme == theme.name for story in stories))
+    return f"Summaries: {len(syntheses)} of {expected}"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the Veille IA page.")
     parser.add_argument("--output", type=Path, default=Path("site"))
@@ -139,11 +150,17 @@ def main(argv: list[str] | None = None) -> int:
     stories = classify(enrich(stories), themes)
     durations["enrich"] = time.perf_counter() - start
     start = time.perf_counter()
+    # one summary per theme from a free model (V2, #43); no key or any failure: no summary
+    key = os.environ.get(KEY_VARIABLE, "").strip()  # a pasted key may end with a newline
+    syntheses = synthesize(stories, themes, load_synthesis_config(), key)
+    durations["synthesize"] = time.perf_counter() - start
+    start = time.perf_counter()
     args.output.mkdir(parents=True, exist_ok=True)
-    page = render_page(stories, themes, sources, collected.unavailable, now)
+    page = render_page(stories, themes, sources, collected.unavailable, now, syntheses)
     (args.output / "index.html").write_text(page, encoding="utf-8")
     durations["render"] = time.perf_counter() - start
     print(run_summary(collected, sources, stories, without_excerpt, durations))
+    print(synthesis_line(syntheses, stories, themes))
     print(f"Page written to {args.output / 'index.html'} ({len(stories)} stories)")
     return 0
 

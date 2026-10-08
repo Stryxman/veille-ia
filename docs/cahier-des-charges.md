@@ -1,9 +1,9 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.19 — validé par le chef de projet le 2026-10-07
+> **Statut :** v1.20 — validé par le chef de projet le 2026-10-08
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
-> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D20)
+> **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D21)
 > **Risques associés :** voir [risques.md](risques.md)
 > **Sources :** voir [sources.md](sources.md)
 
@@ -34,6 +34,7 @@
 | v1.17 | 2026-10-06 | §6 : couverture des tests ≥ 85 %, nommage et complexité contrôlés, bilan de chaque exécution (#39) ; §7 : outil `coverage` ; validée le 2026-10-06 (pull request #41) |
 | v1.18 | 2026-10-07 | §4.2 : six thèmes, « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation (D20) ; validée le 2026-10-07 (pull request #42) |
 | v1.19 | 2026-10-07 | §6 : pages d'articles lues sur le site de la source seulement, durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes) ; lien mal formé sans effet sur la source (#45) ; validée le 2026-10-07 (pull request #46) |
+| v1.20 | 2026-10-08 | §4.3 : synthèse par thème avec citations (D21) ; §4.4 : étape de synthèse ; §5 : synthèse par modèle de langage retenue en V2 ; §6 : panne du modèle sans effet sur la mise à jour, sécurité de la clé de l'API ; §7 : module `synthesize` ; §8 : jalon V2 ; validée le 2026-10-08 (pull request #48) |
 
 ---
 
@@ -91,6 +92,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 ### 4.3 Restitution
 - Une **page web statique unique**, en français, publiée sur GitHub Pages.
 - Articles groupés par thème, triés du plus récent au plus ancien.
+- **Synthèse par thème (V2, D21) :** en tête de chaque thème (sauf « Autres »), un paragraphe en français de 6 phrases et 900 caractères au plus, généré par un modèle de langage, résume les actualités du thème. Chaque phrase se termine par les numéros des articles qui la soutiennent (par exemple [1][3]), liés aux cartes numérotées du thème. Une mention indique le modèle et la date, et invite à vérifier dans les articles cités. Une synthèse non conforme (phrase sans citation, numéro absent du thème, balisage, longueur) n'est pas publiée : la section s'affiche alors comme en V1.
 - Chaque article affiche : titre (lien vers la source originale), source, date, extrait (s'il n'a pu être obtenu ni du flux ni de la page de l'article, l'article s'affiche sans extrait ; voir [sources.md](sources.md)).
 - Un article sans date de publication affiche sa date de collecte et l'étiquette « Date de publication inconnue ».
 - Sous un article qui a des doublons : mention « Aussi couvert par : » suivie des autres sources, avec leurs liens.
@@ -99,7 +101,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 - Lisible sur mobile.
 
 ### 4.4 Automatisation
-- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → extraits manquants (D18) → génération → publication. Trois lancements planifiés par jour (04:17, 10:17 et 16:17 UTC), en dehors de l'heure pile : GitHub ne garantit ni l'heure ni l'exécution des lancements planifiés (retards de 3 à 9 heures constatés du 3 au 5 octobre 2026, en UTC), et un seul lancement réussi suffit à mettre la page à jour dans la journée. Aucune heure de mise à jour n'est donc promise.
+- Exécution **quotidienne** planifiée via GitHub Actions : collecte → traitement → extraits manquants (D18) → synthèse par thème (D21) → génération → publication. Trois lancements planifiés par jour (04:17, 10:17 et 16:17 UTC), en dehors de l'heure pile : GitHub ne garantit ni l'heure ni l'exécution des lancements planifiés (retards de 3 à 9 heures constatés du 3 au 5 octobre 2026, en UTC), et un seul lancement réussi suffit à mettre la page à jour dans la journée. Aucune heure de mise à jour n'est donc promise.
 - Déclenchement manuel possible (bouton « Run workflow »).
 
 ## 5. Hors périmètre V1
@@ -108,7 +110,7 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 | Élément | Statut |
 |---|---|
-| Classement et résumé par modèle de langage (LLM) | Étudié en J4, non retenu pour l'instant (D19) |
+| Classement et résumé par modèle de langage (LLM) | Étudié en J4, non retenu pour l'instant (D19) ; synthèse par thème retenue en V2 (D21), classement par le sens toujours non retenu |
 | Envoi du résumé par email | Candidat J4 |
 | Archives / historique des éditions précédentes | Candidat J4 |
 | Traduction des articles anglophones | Non retenu pour l'instant (supposait un LLM, D19) |
@@ -119,24 +121,28 @@ Les éléments suivants sont **exclus de la V1**. Certains sont candidats pour l
 
 ## 6. Exigences non fonctionnelles
 
-- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible. Une page d'article illisible (inaccessible, refusée, sans texte) laisse l'article sans extrait et n'empêche pas la génération de la page (D18) ; seules les pages du site de la source sont lues (redirections hors du site refusées), dans une durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes). Un lien mal formé dans un flux n'écarte que son entrée.
-- **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits).
-- **Maintenabilité :** code Python découpé en quatre modules indépendants (`collect`, `process`, `enrich`, `render`), testés.
-- **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff, y compris conventions de nommage et complexité) exécutés à chaque pull request ; la CI échoue si moins de 85 % du code est couvert par les tests ; les tests n'appellent pas le réseau. Chaque exécution affiche un bilan dans son journal (articles par source, histoires conservées, extraits complétés, taux de classement, durée de chaque étape) ; en cas d'échec, l'état des sources et la durée des étapes effectuées.
-- **Respect des sources :** seuls le titre, un court extrait et le lien vers l'article original sont affichés.
-- **Évolutivité :** sources et thèmes définis uniquement dans `config/sources.yaml` et `config/themes.yaml`.
+- **Robustesse :** l'indisponibilité d'une source n'empêche pas la génération de la page. Si **aucune** source ne répond, ou si aucun article ne date des 7 derniers jours, la page précédente reste en ligne et l'exécution est signalée en échec. Un flux de plus de 10 Mio (téléchargé ou décompressé), vide, tronqué ou sans aucune entrée exploitable est traité comme une source indisponible. Une page d'article illisible (inaccessible, refusée, sans texte) laisse l'article sans extrait et n'empêche pas la génération de la page (D18) ; seules les pages du site de la source sont lues (redirections hors du site refusées), dans une durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes). Un lien mal formé dans un flux n'écarte que son entrée. Une panne du modèle de langage (clé absente, erreur, quota, délai dépassé) ou une synthèse non conforme laisse le thème sans synthèse et n'empêche pas la génération de la page ; les synthèses sont limitées à 180 secondes par exécution (D21).
+- **Coût :** 0 € (repo public, GitHub Actions et GitHub Pages gratuits ; offre gratuite de l'API du modèle de langage, compte sans moyen de paiement, D21).
+- **Maintenabilité :** code Python découpé en cinq modules indépendants (`collect`, `process`, `enrich`, `synthesize`, `render`), testés.
+- **Sécurité :** la clé de l'API du modèle de langage n'est jamais dans le code ; elle est stockée en secret de l'environnement GitHub `synthese`, réservé à la branche `main`, et transmise à la seule étape de génération de la page ; procédure dans [cle-api.md](cle-api.md) (R7).
+- **Qualité :** tests automatisés (pytest) et contrôle de la qualité du code (ruff, y compris conventions de nommage et complexité) exécutés à chaque pull request ; la CI échoue si moins de 85 % du code est couvert par les tests ; les tests n'appellent pas le réseau. Chaque exécution affiche un bilan dans son journal (articles par source, histoires conservées, extraits complétés, taux de classement, synthèses produites, durée de chaque étape) ; en cas d'échec, l'état des sources et la durée des étapes effectuées.
+- **Respect des sources :** seuls le titre, un court extrait et le lien vers l'article original sont affichés ; la synthèse par thème reformule et cite ses articles (D21).
+- **Évolutivité :** sources et thèmes définis uniquement dans `config/sources.yaml` et `config/themes.yaml` ; fournisseur et modèle de la synthèse dans `config/synthesis.yaml`.
 - **Langue :** documentation et page en français ; code, noms techniques et messages de commit en anglais. Un README en anglais (`README.en.md`) présente le projet aux lecteurs non francophones ; il est rédigé en J4, une fois le README français stabilisé.
 
 ## 7. Solution technique (résumé)
 
 ```
-config/sources.yaml ─► collect ─► process ─► enrich ─► render ─► site/index.html ─► GitHub Pages
-config/themes.yaml ─────────────────┘   (enrich : extraits manquants, D18)
+config/sources.yaml ─► collect ─► process ─► enrich ─► synthesize ─► render ─► site/index.html ─► GitHub Pages
+config/themes.yaml ─────────────────┘                  │
+config/synthesis.yaml ─────────────────────────────────┘
+(enrich : extraits manquants, D18 ; synthesize : synthèse par thème, D21)
 ```
 
 - **Langage :** Python ≥ 3.12 (bibliothèques : `feedparser`, `Jinja2`, `PyYAML`, `trafilatura` ; outils : `pytest`, `coverage`, `ruff`).
 - **Environnement :** pip + venv, dépendances déclarées dans `pyproject.toml` (D14).
 - **Exécution :** workflow GitHub Actions planifié (quotidien) + workflow d'intégration continue (tests, qualité du code et couverture).
+- **Modèle de langage :** API gratuite de Mistral au format OpenAI, appelée avec la bibliothèque standard de Python (D21).
 - **Hébergement :** GitHub Pages.
 - **Stockage :** aucun ; la page est entièrement régénérée à chaque exécution.
 
@@ -156,6 +162,7 @@ Justification des choix : voir [decisions.md](decisions.md).
 | **J2 — Traitement** | Nettoyage, fenêtre 7 jours, regroupement des doublons, classement | Module `process` testé | 2026-10-01 |
 | **J3 — Restitution (V1)** | Page HTML, workflow quotidien, publication Pages | **V1 en ligne** | 2026-10-02 |
 | **J4 — Finitions (bonus)** | README FR et EN avec captures, extraits manquants (D18), découpage des thèmes (#26, D20), étude LLM (non retenue, D19), bilan de projet | V1.1 | 2026-10-06 |
+| **V2 — Synthèses** | Synthèse par thème avec citations (#43, D21) | Page avec synthèses | Non fixée |
 
 > Échéances arbitrées par le chef de projet le 2026-09-29 (D13). Ce sont des cibles ; le critère de réussite n° 2 est constaté au terme de 5 jours consécutifs de mise à jour automatique, comptés en jours de l'heure de Paris à partir de la première mise à jour automatique réussie (jour inclus ; D13) ; si ce constat intervient après l'échéance cible de J4, le bilan est complété à cette date. L'avancement est suivi au quotidien et tout écart (avance ou retard) est tracé. Les écarts sont analysés dans le bilan de projet.
 

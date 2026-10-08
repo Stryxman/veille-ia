@@ -4,8 +4,8 @@ from datetime import UTC, datetime
 from veille import render as render_module
 from veille.collect import CollectResult
 from veille.config import OTHER_THEME
-from veille.models import Article, Source, Story, Theme
-from veille.render import french_date, render_page
+from veille.models import Article, Source, Story, Synthesis, Theme
+from veille.render import french_date, render_page, synthesis_line
 
 GENERATED = datetime(2026, 10, 2, 4, 0, tzinfo=UTC)
 S1 = Source("S1", "Hugging Face Blog", "https://hf.example/feed", "https://hf.example/", "en", 1)
@@ -251,3 +251,69 @@ def test_failed_run_still_prints_the_sources_and_durations(tmp_path, monkeypatch
     out = capsys.readouterr().out
     assert "S1 Hugging Face Blog: unavailable" in out and "S2 ActuIA: unavailable" in out
     assert re.search(r"Durations: collect \d+\.\d s", out)
+
+
+def with_synthesis(stories, text="Un fait [1]. Un autre [2].", theme="Modèles & recherche"):
+    syntheses = {theme: Synthesis(text, "Mistral, small")}
+    return render_page(stories, THEMES, [S1, S2], [], GENERATED, syntheses)
+
+
+def test_synthesis_is_shown_above_the_cards_with_linked_citations():
+    html = with_synthesis([story("A", "Modèles & recherche"), story("B", "Modèles & recherche")])
+    assert html.index('class="synthesis"') < html.index("<article")
+    assert '<a href="#theme-1-1">[1]</a>' in html and '<a href="#theme-1-2">[2]</a>' in html
+    assert '<article id="theme-1-1">' in html and '<span class="number">2</span>' in html
+    assert "Synthèse générée automatiquement par un modèle de langage (Mistral, small" in html
+
+
+def test_section_without_synthesis_is_unchanged():
+    stories = [story("A", "Modèles & recherche")]
+    assert with_synthesis(stories, theme="Business & financement") == page(stories)
+
+
+def test_synthesis_text_is_escaped():
+    html = with_synthesis([story("A", "Modèles & recherche")], text="AT&T et 2 < 3 [1].")
+    assert "AT&amp;T et 2 &lt; 3 " in html
+
+
+def test_run_summary_counts_the_summaries():
+    stories = [story("A", "Modèles & recherche"), story("B", OTHER_THEME)]
+    syntheses = {"Modèles & recherche": Synthesis("x [1].", "m")}
+    assert synthesis_line(syntheses, stories, THEMES) == "Summaries: 1 of 1"
+
+
+def test_main_without_key_publishes_the_page_without_summary(tmp_path, monkeypatch, capsys):
+    article = Article("Live news about a model", "https://hf.example/news/1", S1, None, "x", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    assert "Summaries: 0 of" in capsys.readouterr().out
+    assert 'class="synthesis"' not in (tmp_path / "index.html").read_text(encoding="utf-8")
+
+
+def test_main_never_prints_the_key(tmp_path, monkeypatch, capsys, caplog):
+    key = "sk-test-not-a-real-key"
+    monkeypatch.setenv("LLM_API_KEY", key)
+    article = Article("Live news about a model", "https://hf.example/news/1", S1, None, "x", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    received = []
+
+    def spy(stories, themes, config, given_key):
+        received.append(given_key)
+        return {}
+
+    monkeypatch.setattr(render_module, "synthesize", spy)
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    assert received == [key]
+    assert key not in capsys.readouterr().out + caplog.text
+
+
+def test_main_strips_the_key_read_from_the_environment(tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_API_KEY", "sk-test-not-a-real-key\n")
+    article = Article("Live news about a model", "https://hf.example/news/1", S1, None, "x", "en")
+    monkeypatch.setattr(render_module, "collect", lambda sources: CollectResult([article], []))
+    received = []
+    monkeypatch.setattr(
+        render_module, "synthesize", lambda s, t, c, key: received.append(key) or {}
+    )
+    assert render_module.main(["--output", str(tmp_path)]) == 0
+    assert received == ["sk-test-not-a-real-key"]

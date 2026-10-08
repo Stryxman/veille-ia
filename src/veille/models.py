@@ -40,3 +40,21 @@ class Story:
 class Theme:
     name: str
     keywords: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Synthesis:
+    """Summary of one theme, checked: every sentence cites the theme's cards ([n])."""
+
+    text: str
+    model: str  # shown under the summary, e.g. "Mistral, ministral-8b-latest"
+
+
+@dataclass(frozen=True)
+class SynthesisConfig:
+    enabled: bool
+    provider: str  # shown on the page, e.g. "Mistral"
+    base_url: str  # OpenAI-compatible API, https only
+    model: str
+    timeout_seconds: float  # one request
+    budget_seconds: float  # all themes of one run

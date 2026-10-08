@@ -8,6 +8,7 @@ from veille.config import (
     OTHER_THEME,
     ConfigError,
     load_sources,
+    load_synthesis_config,
     load_themes,
 )
 
@@ -104,3 +105,37 @@ def test_project_themes_split_models_and_research():
         "Business & financement",
         "Régulation & éthique",
     ]
+
+
+SYNTHESIS_YAML = """enabled: true
+provider: Mistral
+base_url: https://api.mistral.ai/v1
+model: mistral-small-latest
+timeout_seconds: 30
+budget_seconds: 180
+"""
+
+
+def test_synthesis_config_is_read(tmp_path):
+    path = tmp_path / "synthesis.yaml"
+    path.write_text(SYNTHESIS_YAML, encoding="utf-8")
+    config = load_synthesis_config(path)
+    assert config.enabled and config.provider == "Mistral" and config.timeout_seconds == 30
+
+
+def test_synthesis_config_requires_https(tmp_path):
+    path = tmp_path / "synthesis.yaml"
+    path.write_text(SYNTHESIS_YAML.replace("https://", "http://"), encoding="utf-8")
+    with pytest.raises(ConfigError, match="https"):
+        load_synthesis_config(path)
+
+
+def test_synthesis_config_requires_every_field(tmp_path):
+    path = tmp_path / "synthesis.yaml"
+    path.write_text("enabled: true\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="missing"):
+        load_synthesis_config(path)
+
+
+def test_project_synthesis_config_is_valid():
+    assert load_synthesis_config().base_url.startswith("https://")

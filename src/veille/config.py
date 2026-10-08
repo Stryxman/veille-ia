@@ -1,11 +1,11 @@
-"""Load and validate the source list (config/sources.yaml)."""
+"""Load and validate the configuration (sources, themes, summaries)."""
 
 from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import yaml
 
-from veille.models import Source, Theme
+from veille.models import Source, SynthesisConfig, Theme
 
 DEFAULT_SOURCES_PATH = Path("config/sources.yaml")
 FIELDS = ("id", "name", "feed_url", "site_url", "language", "trust_level")
@@ -70,3 +70,19 @@ def load_themes(path: Path = DEFAULT_THEMES_PATH) -> list[Theme]:
             raise ConfigError(f"{path}: theme {name} needs a non-empty list of keywords")
         themes.append(Theme(name=name, keywords=tuple(keywords)))
     return themes
+
+
+DEFAULT_SYNTHESIS_PATH = Path("config/synthesis.yaml")
+SYNTHESIS_FIELDS = ("enabled", "provider", "base_url", "model", "timeout_seconds", "budget_seconds")
+
+
+def load_synthesis_config(path: Path = DEFAULT_SYNTHESIS_PATH) -> SynthesisConfig:
+    data = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict):
+        raise ConfigError(f"{path}: expected a mapping")
+    missing = [name for name in SYNTHESIS_FIELDS if name not in data]
+    if missing:
+        raise ConfigError(f"{path}: missing: {', '.join(missing)}")
+    if not str(data["base_url"]).startswith("https://"):
+        raise ConfigError(f"{path}: base_url must use https")  # the key travels in a header
+    return SynthesisConfig(**{name: data[name] for name in SYNTHESIS_FIELDS})

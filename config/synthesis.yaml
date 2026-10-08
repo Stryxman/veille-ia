@@ -1,0 +1,8 @@
+# Synthèse par thème (V2, #43) : API gratuite au format OpenAI.
+# La clé n'est jamais ici : variable d'environnement LLM_API_KEY (secret GitHub, docs/cle-api.md).
+enabled: true
+provider: Mistral
+base_url: https://api.mistral.ai/v1
+model: ministral-8b-latest
+timeout_seconds: 30
+budget_seconds: 180
