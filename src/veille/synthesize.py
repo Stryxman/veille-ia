@@ -36,7 +36,7 @@ ModelCall = Callable[[list[dict[str, str]]], str]
 INSTRUCTIONS = (
     "Tu rédiges la synthèse d'une revue de presse sur l'intelligence artificielle. "
     "À partir des seuls articles numérotés fournis, écris en français un paragraphe de 3 à 6 "
-    "phrases, 700 caractères au plus, qui couvre l'ensemble de ces actualités. "
+    "phrases, 600 caractères au plus, qui couvre l'ensemble de ces actualités. "
     "Chaque phrase se termine par les numéros des articles qui la soutiennent, chacun entre "
     "crochets, avant le point final, par exemple : « OpenAI publie un modèle [1][3]. » "
     "N'invente rien, ne cite aucun numéro absent de la liste, n'écris ni titre, ni liste, "
@@ -62,17 +62,28 @@ def build_messages(theme: str, stories: list[Story]) -> list[dict[str, str]]:
     ]
 
 
+def _fit(sentences: list[str]) -> list[str]:
+    """Whole sentences from the start, as long as they fit in MAX_CHARS (#49)."""
+    kept: list[str] = []
+    for sentence in sentences:
+        if len(" ".join([*kept, sentence])) > MAX_CHARS:
+            break
+        kept.append(sentence)
+    return kept
+
+
 def check_synthesis(text: str, count: int) -> str:
     text = SPACES.sub(" ", EMPHASIS.sub("", text)).strip()
     if not text:
         raise SynthesisError("empty answer")
-    if len(text) > MAX_CHARS:
-        raise SynthesisError(f"too long ({len(text)} characters)")
     if FORBIDDEN.search(text):
         raise SynthesisError("markup or link in the answer")
     if any(not CITATION.fullmatch(group) for group in BRACKETS.findall(text)):
         raise SynthesisError("citation not in the [n] form")
-    sentences = SENTENCE_END.split(text)
+    sentences = _fit(SENTENCE_END.split(text))
+    if not sentences:
+        raise SynthesisError(f"first sentence too long (over {MAX_CHARS} characters)")
+    text = " ".join(sentences)
     if len(sentences) > MAX_SENTENCES:
         raise SynthesisError(f"{len(sentences)} sentences")
     if any(not CITATION.search(sentence) for sentence in sentences):
