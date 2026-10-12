@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.21 — en revue (pull request #50) ; v1.20 validée par le chef de projet le 2026-10-08
+> **Statut :** v1.21 — validé par le chef de projet le 2026-10-12
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D21)
@@ -35,7 +35,7 @@
 | v1.18 | 2026-10-07 | §4.2 : six thèmes, « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation (D20) ; validée le 2026-10-07 (pull request #42) |
 | v1.19 | 2026-10-07 | §6 : pages d'articles lues sur le site de la source seulement, durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes) ; lien mal formé sans effet sur la source (#45) ; validée le 2026-10-07 (pull request #46) |
 | v1.20 | 2026-10-08 | §4.3 : synthèse par thème avec citations (D21) ; §4.4 : étape de synthèse ; §5 : synthèse par modèle de langage retenue en V2 ; §6 : panne du modèle sans effet sur la mise à jour, sécurité de la clé de l'API ; §7 : module `synthesize` ; §8 : jalon V2 ; validée le 2026-10-08 (pull request #48) |
-| v1.21 | 2026-10-12 | §4.3 : synthèse trop longue coupée après sa dernière phrase entière qui tient en 900 caractères (#49, précision de D21) |
+| v1.21 | 2026-10-12 | §4.3 : synthèse trop longue coupée après sa dernière phrase entière qui tient en 900 caractères (#49, précision de D21) ; validée le 2026-10-12 (pull request #50) |
 
 ---
 
