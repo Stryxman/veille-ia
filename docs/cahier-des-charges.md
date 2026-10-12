@@ -1,6 +1,6 @@
 # Cahier des charges — Veille IA
 
-> **Statut :** v1.20 — validé par le chef de projet le 2026-10-08
+> **Statut :** v1.21 — validé par le chef de projet le 2026-10-12
 > **Chef de projet :** Richard
 > **Date :** 2026-09-29
 > **Décisions associées :** voir [decisions.md](decisions.md) (D1 à D21)
@@ -35,6 +35,7 @@
 | v1.18 | 2026-10-07 | §4.2 : six thèmes, « Modèles & recherche » découpé en Modèles, Agents, Recherche & évaluation (D20) ; validée le 2026-10-07 (pull request #42) |
 | v1.19 | 2026-10-07 | §6 : pages d'articles lues sur le site de la source seulement, durée de lecture limitée (aucune nouvelle page au-delà de 120 secondes) ; lien mal formé sans effet sur la source (#45) ; validée le 2026-10-07 (pull request #46) |
 | v1.20 | 2026-10-08 | §4.3 : synthèse par thème avec citations (D21) ; §4.4 : étape de synthèse ; §5 : synthèse par modèle de langage retenue en V2 ; §6 : panne du modèle sans effet sur la mise à jour, sécurité de la clé de l'API ; §7 : module `synthesize` ; §8 : jalon V2 ; validée le 2026-10-08 (pull request #48) |
+| v1.21 | 2026-10-12 | §4.3 : synthèse trop longue coupée après sa dernière phrase entière qui tient en 900 caractères (#49, précision de D21) ; validée le 2026-10-12 (pull request #50) |
 
 ---
 
@@ -92,7 +93,7 @@ La solution doit rester simple, gratuite et fonctionner sans intervention, afin 
 ### 4.3 Restitution
 - Une **page web statique unique**, en français, publiée sur GitHub Pages.
 - Articles groupés par thème, triés du plus récent au plus ancien.
-- **Synthèse par thème (V2, D21) :** en tête de chaque thème (sauf « Autres »), un paragraphe en français de 6 phrases et 900 caractères au plus, généré par un modèle de langage, résume les actualités du thème. Chaque phrase se termine par les numéros des articles qui la soutiennent (par exemple [1][3]), liés aux cartes numérotées du thème. Une mention indique le modèle et la date, et invite à vérifier dans les articles cités. Une synthèse non conforme (phrase sans citation, numéro absent du thème, balisage, longueur) n'est pas publiée : la section s'affiche alors comme en V1.
+- **Synthèse par thème (V2, D21) :** en tête de chaque thème (sauf « Autres »), un paragraphe en français de 6 phrases et 900 caractères au plus, généré par un modèle de langage, résume les actualités du thème. Chaque phrase se termine par les numéros des articles qui la soutiennent (par exemple [1][3]), liés aux cartes numérotées du thème. Une mention indique le modèle et la date, et invite à vérifier dans les articles cités. Une synthèse trop longue est coupée après sa dernière phrase entière qui tient en 900 caractères (#49). Une synthèse non conforme (phrase sans citation, numéro absent du thème, balisage, première phrase trop longue) n'est pas publiée : la section s'affiche alors comme en V1.
 - Chaque article affiche : titre (lien vers la source originale), source, date, extrait (s'il n'a pu être obtenu ni du flux ni de la page de l'article, l'article s'affiche sans extrait ; voir [sources.md](sources.md)).
 - Un article sans date de publication affiche sa date de collecte et l'étiquette « Date de publication inconnue ».
 - Sous un article qui a des doublons : mention « Aussi couvert par : » suivie des autres sources, avec leurs liens.

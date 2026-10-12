@@ -75,7 +75,24 @@ def test_markdown_emphasis_is_removed():
 
 def test_instructions_ask_for_less_than_the_hard_limit():
     system, _ = build_messages("Modèles", [story("A")])
-    assert "700 caractères au plus" in system["content"]
+    assert "600 caractères au plus" in system["content"]
+
+
+def test_long_answer_is_cut_after_the_last_whole_sentence_that_fits():
+    first, second = "Premier fait " + "a" * 430 + " [1].", "Deuxième fait " + "b" * 430 + " [2]."
+    text = f"{first} {second} Troisième fait qui dépasse [3]."
+    assert check_synthesis(text, 3) == f"{first} {second}"
+
+
+def test_cut_part_is_still_checked_for_markup():
+    text = "Fait " + "a" * 880 + " [1]. Lien <a href=x>ici</a> [2]."
+    with pytest.raises(SynthesisError):
+        check_synthesis(text, 3)
+
+
+def test_kept_sentences_must_still_cite_the_theme():
+    with pytest.raises(SynthesisError):
+        check_synthesis("Fait sans citation. " + "x" * 900 + " [1].", 3)
 
 
 def test_segments_split_text_and_citations():

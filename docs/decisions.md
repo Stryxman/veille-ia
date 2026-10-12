@@ -2,7 +2,7 @@
 
 > Chaque choix structurant du projet est consigné ici : contexte, options envisagées, décision et justification.
 > **Décideur :** Richard (chef de projet). Les options sont préparées avec l'assistance de Claude Code.
-> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42) ; précision de D18 validée le 2026-10-07 (pull request #46) ; D21, mise à jour de D19 et précision de D4 validées le 2026-10-08 (pull request #48).
+> **Statut :** décisions D1 à D17 validées par le chef de projet (D1 à D12 le 2026-09-29, D13 à D15 le 2026-09-30, D16 et D17 le 2026-10-01) ; précision de D13 (départ du critère n° 2) validée le 2026-10-02 (pull request #33) ; précision de D13 (fuseau du décompte) validée le 2026-10-06 (pull request #40) ; précision de D14 (nommage, complexité, couverture) validée le 2026-10-06 (pull request #41) ; D18 validée le 2026-10-03 (pull request #36) ; D19 validée le 2026-10-03 (pull request #37) ; D20 validée le 2026-10-07 (pull request #42) ; précision de D18 validée le 2026-10-07 (pull request #46) ; D21, mise à jour de D19 et précision de D4 validées le 2026-10-08 (pull request #48) ; précision de D21 (coupe aux phrases) validée le 2026-10-12 (pull request #50).
 
 | ID | Date | Sujet | Décision |
 |---|---|---|---|
@@ -287,7 +287,8 @@
 - **Justification :** 0 € (compte sans moyen de paiement) ; meilleur taux de synthèses valides et bon français au prototype ; une clé divulguée ne peut rien coûter ; changer de fournisseur ou de modèle ne demande que la configuration (`config/synthesis.yaml`).
 - **Conséquences :**
   - **Appels :** une synthèse par thème, « Autres » excepté. Cela fait 6 appels par exécution, 12 au plus avec les nouveaux essais, soit 36 par jour au plus. Au prototype, une exécution envoyait environ 6 000 jetons (36 000 par jour au plus) en 40 secondes environ.
-  - **Contrôle :** la sortie du modèle doit être du texte brut, de 900 caractères et 6 phrases au plus, chaque phrase citant un article existant du thème. Une synthèse non conforme n'est pas publiée.
+  - **Contrôle :** la sortie du modèle doit être du texte brut, de 900 caractères (après la coupe, voir la précision ci-dessous) et 6 phrases au plus, chaque phrase citant un article existant du thème. Une synthèse non conforme n'est pas publiée.
+  - **Précision (2026-10-12, #49) :** en production, 36 synthèses publiées sur 72 du 8 au 11 octobre, 35 refus sur 36 pour la longueur. Une réponse trop longue est désormais coupée après sa dernière phrase entière qui tient en 900 caractères, et la consigne demande 600 caractères au plus. Le balisage reste refusé dans toute la réponse, y compris la partie coupée.
   - **Pannes :** toute panne laisse la page sans la synthèse concernée.
   - **Offre gratuite :** Mistral la présente comme destinée à l'évaluation et au prototypage ; son usage quotidien a été accepté par le chef de projet le 2026-10-08. Si elle est restreinte, la page reste sans synthèse.
   - **Erreurs possibles :** un petit modèle peut se tromper, d'où la mention « vérifiez dans les articles cités ».
